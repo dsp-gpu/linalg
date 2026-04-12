@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
-project(DspLinalg VERSION 0.1.0 LANGUAGES CXX HIP)
+project(DspLinalg VERSION 0.1.0
+  DESCRIPTION "GPU linear algebra: vector operations, Capon/MVDR"
+  LANGUAGES CXX HIP)
 
 # ── Опции ──────────────────────────────────────────────────────────
 option(DSP_LINALG_BUILD_TESTS  "Build tests"            ON)
