@@ -3,12 +3,23 @@
   "configurePresets": [
     {
       "name": "local-dev",
-      "displayName": "Local Development (E:\DSP-GPU\)",
+      "displayName": "Local Development (E:\\DSP-GPU\\)",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "FETCHCONTENT_SOURCE_DIR_DSPCORE": "E:/DSP-GPU/core",
         "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "debian-local-dev",
+      "displayName": "Debian Local (ROCm, ~/dsp-gpu/)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_PREFIX_PATH": "/opt/rocm",
+        "FETCHCONTENT_SOURCE_DIR_DSPCORE": "${sourceDir}/../core"
       }
     },
     {
@@ -20,7 +31,8 @@
     }
   ],
   "buildPresets": [
-    { "name": "local-dev", "configurePreset": "local-dev" },
-    { "name": "ci",        "configurePreset": "ci" }
+    { "name": "local-dev",        "configurePreset": "local-dev"        },
+    { "name": "debian-local-dev", "configurePreset": "debian-local-dev" },
+    { "name": "ci",               "configurePreset": "ci"               }
   ]
 }
