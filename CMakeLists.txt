@@ -19,7 +19,13 @@ add_library(DspLinalg STATIC)
 add_library(DspLinalg::DspLinalg ALIAS DspLinalg)
 
 target_sources(DspLinalg PRIVATE
-  # Phase 1 skeleton — sources added in Phase 2
+  # vector_algebra
+  src/vector_algebra/src/matrix_ops_rocm.cpp
+  src/vector_algebra/src/cholesky_inverter_rocm.cpp
+  src/vector_algebra/src/diagonal_load_regularizer.cpp
+  src/vector_algebra/src/symmetrize_gpu_rocm.cpp
+  # capon
+  src/capon/src/capon_processor.cpp
 )
 
 target_include_directories(DspLinalg
@@ -27,6 +33,8 @@ target_include_directories(DspLinalg
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
   PRIVATE
+    src/vector_algebra/include
+    src/capon/include
     kernels/
     src
 )
