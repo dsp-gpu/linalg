@@ -21,8 +21,8 @@
 #if ENABLE_ROCM
 
 #include "capon_test_helpers.hpp"
-#include "capon_processor.hpp"
-#include "services/console_output.hpp"
+#include <linalg/capon_processor.hpp>
+#include <core/services/console_output.hpp>
 
 #include <hip/hip_runtime.h>
 

@@ -24,9 +24,9 @@
 #include <rocblas/rocblas.h>
 #include <rocsolver/rocsolver.h>
 
-#include "cholesky_inverter_rocm.hpp"
-#include "interface/i_backend.hpp"
-#include "services/console_output.hpp"
+#include <linalg/cholesky_inverter_rocm.hpp>
+#include <core/interface/i_backend.hpp>
+#include <core/services/console_output.hpp>
 
 #include "test_cholesky_inverter_rocm.hpp"
 

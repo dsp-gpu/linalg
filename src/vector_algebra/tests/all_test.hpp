@@ -16,8 +16,8 @@
 #include "test_cross_backend_conversion.hpp"
 #include "test_benchmark_symmetrize.hpp"
 #include "test_stage_profiling.hpp"
-#include "backends/rocm/rocm_core.hpp"
-#include "backends/rocm/rocm_backend.hpp"
+#include <core/backends/rocm/rocm_core.hpp>
+#include <core/backends/rocm/rocm_backend.hpp>
 #endif
 
 namespace vector_algebra_all_test {

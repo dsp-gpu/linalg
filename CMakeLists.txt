@@ -32,20 +32,29 @@ target_sources(DspLinalg PRIVATE
 
 target_include_directories(DspLinalg
   PUBLIC
+    # Стандарт AMD: #include <linalg/operations/...>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
     $<INSTALL_INTERFACE:include>
   PRIVATE
-    src/vector_algebra/include
-    src/capon/include
     kernels/
     src
 )
+
+# hiprtc: portable через find_library + CMAKE_PREFIX_PATH
+find_library(HIPRTC_LIB NAMES hiprtc PATH_SUFFIXES lib lib64 REQUIRED)
+message(STATUS "[DspLinalg] hiprtc: ${HIPRTC_LIB}")
+
 target_link_libraries(DspLinalg
   PUBLIC  DspCore::DspCore roc::rocblas roc::rocsolver
-  PRIVATE hiprtc
+  PRIVATE ${HIPRTC_LIB}
 )
 target_compile_features(DspLinalg PUBLIC cxx_std_17)
+
+# ENABLE_ROCM для #if блоков
+if(ENABLE_ROCM)
+  target_compile_definitions(DspLinalg PUBLIC ENABLE_ROCM=1)
+endif()
 
 # ── Git Version ────────────────────────────────────────────────────
 find_package(Git QUIET)

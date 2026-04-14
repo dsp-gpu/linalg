@@ -107,13 +107,13 @@
 // ──────────────────────────────────────────────────────────────────────
 
 // Алгоритм Кейпона и вспомогательные утилиты для загрузки данных
-#include "capon_processor.hpp"
+#include <linalg/capon_processor.hpp>
 #include "capon_test_helpers.hpp"
 
 // Обёртки GPUWorkLib над OpenCL и ROCm backend'ами
-#include "backends/opencl/opencl_backend.hpp"
-#include "backends/rocm/rocm_backend.hpp"
-#include "services/console_output.hpp"
+#include <core/backends/opencl/opencl_backend.hpp>
+#include <core/backends/rocm/rocm_backend.hpp>
+#include <core/services/console_output.hpp>
 
 // Нативные OpenCL и HIP заголовки — нужны для прямых вызовов API
 #include <CL/cl.h>

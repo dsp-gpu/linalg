@@ -30,7 +30,7 @@
 
 #if ENABLE_ROCM
 
-#include "interface/gpu_context.hpp"
+#include <core/interface/gpu_context.hpp>
 
 #include <rocblas/rocblas.h>
 #include <cstdint>

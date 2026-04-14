@@ -14,8 +14,8 @@
 
 #if ENABLE_ROCM
 
-#include "cholesky_inverter_rocm.hpp"
-#include "kernels/symmetrize_kernel_sources_rocm.hpp"
+#include <linalg/cholesky_inverter_rocm.hpp>
+#include <linalg/kernels/symmetrize_kernel_sources_rocm.hpp>
 
 #include <cstdint>
 #include <stdexcept>
@@ -25,9 +25,9 @@
 #include <hip/hip_runtime.h>
 #include <hip/hiprtc.h>
 
-#include "services/console_output.hpp"
-#include "services/kernel_cache_service.hpp"
-#include "backends/rocm/rocm_backend.hpp"
+#include <core/services/console_output.hpp>
+#include <core/services/kernel_cache_service.hpp>
+#include <core/backends/rocm/rocm_backend.hpp>
 
 namespace vector_algebra {
 

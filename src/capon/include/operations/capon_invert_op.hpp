@@ -20,13 +20,13 @@
 
 #if ENABLE_ROCM
 
-#include "services/gpu_kernel_op.hpp"
-#include "interface/gpu_context.hpp"
-#include "interface/input_data.hpp"
-#include "capon_types.hpp"
+#include <core/services/gpu_kernel_op.hpp>
+#include <core/interface/gpu_context.hpp>
+#include <core/interface/input_data.hpp>
+#include <linalg/capon_types.hpp>
 
-#include "cholesky_inverter_rocm.hpp"   // vector_algebra::CholeskyInverterROCm
-#include "vector_algebra_types.hpp"     // vector_algebra::CholeskyResult
+#include <linalg/cholesky_inverter_rocm.hpp>   // vector_algebra::CholeskyInverterROCm
+#include <linalg/vector_algebra_types.hpp>     // vector_algebra::CholeskyResult
 
 #include <hip/hip_runtime.h>
 #include <stdexcept>

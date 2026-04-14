@@ -14,7 +14,7 @@
 
 #if ENABLE_ROCM
 
-#include "matrix_ops_rocm.hpp"
+#include <linalg/matrix_ops_rocm.hpp>
 
 namespace vector_algebra {
 

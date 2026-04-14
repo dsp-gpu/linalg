@@ -17,8 +17,8 @@
  * @date 2026-03-16
  */
 
-#include "i_matrix_regularizer.hpp"
-#include "interface/i_backend.hpp"
+#include <linalg/i_matrix_regularizer.hpp>
+#include <core/interface/i_backend.hpp>
 
 #include <hip/hip_runtime.h>
 

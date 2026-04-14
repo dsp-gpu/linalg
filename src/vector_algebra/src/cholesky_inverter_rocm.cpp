@@ -10,7 +10,7 @@
 
 #if ENABLE_ROCM
 
-#include "cholesky_inverter_rocm.hpp"
+#include <linalg/cholesky_inverter_rocm.hpp>
 
 #include <cmath>
 #include <cstring>
@@ -22,11 +22,11 @@
 #include <rocblas/rocblas.h>
 #include <rocsolver/rocsolver.h>
 
-#include "services/kernel_cache_service.hpp"
+#include <core/services/kernel_cache_service.hpp>
 
 // ZeroCopy (Task_08) — только если собирается с OpenCL
 #ifdef CL_VERSION_1_0
-#include "backends/hybrid/zero_copy_bridge.hpp"
+#include <core/backends/hybrid/zero_copy_bridge.hpp>
 #endif
 
 namespace vector_algebra {

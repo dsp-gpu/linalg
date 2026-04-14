@@ -30,9 +30,9 @@
 
 #if ENABLE_ROCM
 
-#include "capon_processor.hpp"
+#include <linalg/capon_processor.hpp>
 #include "capon_test_helpers.hpp"
-#include "services/console_output.hpp"
+#include <core/services/console_output.hpp>
 
 #include <vector>
 #include <complex>

@@ -14,7 +14,7 @@
 
 #include <complex>
 #include <vector>
-#include "interface/i_backend.hpp"
+#include <core/interface/i_backend.hpp>
 
 namespace vector_algebra {
 

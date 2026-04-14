@@ -25,9 +25,9 @@
 
 #if ENABLE_ROCM
 
-#include "capon_processor.hpp"
-#include "kernels/capon_kernels_rocm.hpp"
-#include "services/console_output.hpp"
+#include <linalg/capon_processor.hpp>
+#include <linalg/kernels/capon_kernels_rocm.hpp>
+#include <core/services/console_output.hpp>
 
 #include <hip/hip_runtime.h>
 #include <stdexcept>

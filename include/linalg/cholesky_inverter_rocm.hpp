@@ -21,9 +21,9 @@
 #include <complex>
 #include <memory>
 #include <vector>
-#include "interface/i_backend.hpp"
-#include "interface/input_data.hpp"
-#include "vector_algebra_types.hpp"
+#include <core/interface/i_backend.hpp>
+#include <core/interface/input_data.hpp>
+#include <linalg/vector_algebra_types.hpp>
 
 namespace drv_gpu_lib { class KernelCacheService; }
 
@@ -182,9 +182,9 @@ private:
 #include <complex>
 #include <vector>
 #include <stdexcept>
-#include "interface/i_backend.hpp"
-#include "interface/input_data.hpp"
-#include "vector_algebra_types.hpp"
+#include <core/interface/i_backend.hpp>
+#include <core/interface/input_data.hpp>
+#include <linalg/vector_algebra_types.hpp>
 
 namespace vector_algebra {
 

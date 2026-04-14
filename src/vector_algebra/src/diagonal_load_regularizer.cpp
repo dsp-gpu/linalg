@@ -8,9 +8,9 @@
 
 #if ENABLE_ROCM
 
-#include "diagonal_load_regularizer.hpp"
-#include "kernels/diagonal_load_kernel_rocm.hpp"
-#include "backends/rocm/rocm_backend.hpp"
+#include <linalg/diagonal_load_regularizer.hpp>
+#include <linalg/kernels/diagonal_load_kernel_rocm.hpp>
+#include <core/backends/rocm/rocm_backend.hpp>
 
 #include <hip/hiprtc.h>
 #include <stdexcept>

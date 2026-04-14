@@ -24,7 +24,7 @@
 
 #if ENABLE_ROCM
 
-#include "backends/rocm/rocm_backend.hpp"
+#include <core/backends/rocm/rocm_backend.hpp>
 
 #include <vector>
 #include <complex>

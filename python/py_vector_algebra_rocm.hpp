@@ -17,7 +17,7 @@
 
 #if ENABLE_ROCM
 
-#include "cholesky_inverter_rocm.hpp"
+#include <linalg/cholesky_inverter_rocm.hpp>
 
 // ════════════════════════════════════════════════════════════════════════════
 // PyCholeskyInverterROCm — Python wrapper

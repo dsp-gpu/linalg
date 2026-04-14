@@ -22,9 +22,9 @@
 
 #if ENABLE_ROCM
 
-#include "services/gpu_kernel_op.hpp"
-#include "interface/gpu_context.hpp"
-#include "capon_types.hpp"
+#include <core/services/gpu_kernel_op.hpp>
+#include <core/interface/gpu_context.hpp>
+#include <linalg/capon_types.hpp>
 
 #include <hip/hip_runtime.h>
 #include <stdexcept>

@@ -59,15 +59,15 @@
 #if ENABLE_ROCM
 
 // -- Алгоритм Кейпона ---------------------------------------------------
-#include "capon_processor.hpp"
+#include <linalg/capon_processor.hpp>
 #include "capon_test_helpers.hpp"
 
 // -- GPU инфраструктура --------------------------------------------------
-#include "backends/opencl/opencl_backend.hpp"
-#include "backends/opencl/opencl_export.hpp"
-#include "backends/rocm/rocm_backend.hpp"
-#include "backends/rocm/zero_copy_bridge.hpp"
-#include "services/console_output.hpp"
+#include <core/backends/opencl/opencl_backend.hpp>
+#include <core/backends/opencl/opencl_export.hpp>
+#include <core/backends/rocm/rocm_backend.hpp>
+#include <core/backends/rocm/zero_copy_bridge.hpp>
+#include <core/services/console_output.hpp>
 
 // -- OpenCL и HIP --------------------------------------------------------
 #include <CL/cl.h>

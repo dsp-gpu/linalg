@@ -33,27 +33,27 @@
 
 #if ENABLE_ROCM
 
-#include "capon_types.hpp"
-#include "interface/gpu_context.hpp"
+#include <linalg/capon_types.hpp>
+#include <core/interface/gpu_context.hpp>
 
 // Op классы (Layer 5)
-#include "operations/covariance_matrix_op.hpp"
-#include "operations/capon_invert_op.hpp"      // обёртка над CholeskyInverterROCm
-#include "operations/compute_weights_op.hpp"   // W = R^{-1}*U  (единый, без дублирования)
-#include "operations/capon_relief_op.hpp"
-#include "operations/adapt_beam_op.hpp"
+#include <linalg/operations/covariance_matrix_op.hpp>
+#include <linalg/operations/capon_invert_op.hpp>      // обёртка над CholeskyInverterROCm
+#include <linalg/operations/compute_weights_op.hpp>   // W = R^{-1}*U  (единый, без дублирования)
+#include <linalg/operations/capon_relief_op.hpp>
+#include <linalg/operations/adapt_beam_op.hpp>
 
 // Тип результата инверсии из vector_algebra
-#include "vector_algebra_types.hpp"
+#include <linalg/vector_algebra_types.hpp>
 
 // Регуляризация через Strategy (DIP — зависим от интерфейсе)
-#include "i_matrix_regularizer.hpp"
-#include "diagonal_load_regularizer.hpp"
+#include <linalg/i_matrix_regularizer.hpp>
+#include <linalg/diagonal_load_regularizer.hpp>
 
 // GEMM операции через vector_algebra (единый фасад для rocBLAS)
-#include "matrix_ops_rocm.hpp"
+#include <linalg/matrix_ops_rocm.hpp>
 
-#include "interface/i_backend.hpp"
+#include <core/interface/i_backend.hpp>
 
 #include <complex>
 #include <memory>
@@ -207,8 +207,8 @@ private:
 
 #else  // !ENABLE_ROCM — Windows stub
 
-#include "capon_types.hpp"
-#include "interface/i_backend.hpp"
+#include <linalg/capon_types.hpp>
+#include <core/interface/i_backend.hpp>
 #include <stdexcept>
 #include <complex>
 #include <vector>

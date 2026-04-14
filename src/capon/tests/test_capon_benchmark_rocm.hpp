@@ -22,8 +22,8 @@
 
 #include "capon_benchmark.hpp"
 #include "capon_test_helpers.hpp"
-#include "backends/rocm/rocm_core.hpp"
-#include "services/console_output.hpp"
+#include <core/backends/rocm/rocm_core.hpp>
+#include <core/services/console_output.hpp>
 
 #include <complex>
 #include <stdexcept>

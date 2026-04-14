@@ -16,13 +16,13 @@
 
 #include <hip/hip_runtime.h>
 
-#include "cholesky_inverter_rocm.hpp"
-#include "DrvGPU/interface/i_backend.hpp"
-#include "DrvGPU/interface/input_data.hpp"
-#include "services/console_output.hpp"
+#include <linalg/cholesky_inverter_rocm.hpp>
+#include <core/interface/i_backend.hpp>
+#include <core/interface/input_data.hpp>
+#include <core/services/console_output.hpp>
 
 // Для другого ROCm контекста
-#include "backends/rocm/rocm_backend.hpp"
+#include <core/backends/rocm/rocm_backend.hpp>
 
 // Helpers из основных тестов
 #include "test_cholesky_inverter_rocm.hpp"

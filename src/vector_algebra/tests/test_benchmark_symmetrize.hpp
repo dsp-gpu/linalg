@@ -34,11 +34,11 @@
 #include <unistd.h>        // gethostname
 #include <sys/utsname.h>   // uname
 
-#include "cholesky_inverter_rocm.hpp"
-#include "interface/i_backend.hpp"
-#include "interface/input_data.hpp"
-#include "services/console_output.hpp"
-#include "services/gpu_profiler.hpp"
+#include <linalg/cholesky_inverter_rocm.hpp>
+#include <core/interface/i_backend.hpp>
+#include <core/interface/input_data.hpp>
+#include <core/services/console_output.hpp>
+#include <core/services/gpu_profiler.hpp>
 
 #include "test_cholesky_inverter_rocm.hpp"
 
