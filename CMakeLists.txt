@@ -37,7 +37,6 @@ target_include_directories(DspLinalg
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
     $<INSTALL_INTERFACE:include>
   PRIVATE
-    kernels/
     src
 )
 

@@ -28,6 +28,7 @@
 #include <linalg/capon_processor.hpp>
 #include <linalg/kernels/capon_kernels_rocm.hpp>
 #include <core/services/console_output.hpp>
+#include <core/services/cache_dir_resolver.hpp>   // v2: exe-relative cache
 
 #include <hip/hip_runtime.h>
 #include <stdexcept>
@@ -49,7 +50,11 @@ static const std::vector<std::string> kKernelNames = {
 
 CaponProcessor::CaponProcessor(drv_gpu_lib::IBackend* backend)
     : backend_(backend)
-    , ctx_(backend, "Capon", "modules/capon/kernels")
+    // v2 (2026-04-15): exe-relative cache вместо хардкода "modules/capon/kernels".
+    // ResolveCacheDir("capon") возвращает <exe_dir>/kernels_cache/capon/
+    // (или fallback: $DSP_CACHE_DIR → $HOME/.cache/dsp-gpu → ""). Per-arch
+    // подкаталог (gfx908/gfx1100/…) добавит GpuContext через KernelCacheService.
+    , ctx_(backend, "Capon", drv_gpu_lib::ResolveCacheDir("capon"))
     , inv_op_(std::make_unique<CaponInvertOp>(backend))
     , mat_ops_(&ctx_)
     , regularizer_(std::make_unique<vector_algebra::DiagonalLoadRegularizer>(backend)) {

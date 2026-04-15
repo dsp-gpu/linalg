@@ -2,17 +2,6 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "local-dev",
-      "displayName": "Local Development (E:\\DSP-GPU\\)",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
-      "cacheVariables": {
-        "FETCHCONTENT_SOURCE_DIR_DSPCORE": "E:/DSP-GPU/core",
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
-      }
-    },
-    {
       "name": "debian-local-dev",
       "displayName": "Debian Local (ROCm, ~/dsp-gpu/)",
       "generator": "Ninja",
@@ -33,12 +22,10 @@
     }
   ],
   "buildPresets": [
-    { "name": "local-dev",        "configurePreset": "local-dev"        },
     { "name": "debian-local-dev", "configurePreset": "debian-local-dev" },
     { "name": "ci",               "configurePreset": "ci"               }
   ],
   "testPresets": [
-    { "name": "local-dev",        "configurePreset": "local-dev",        "output": { "outputOnFailure": true } },
     { "name": "debian-local-dev", "configurePreset": "debian-local-dev", "output": { "outputOnFailure": true } },
     { "name": "ci",               "configurePreset": "ci",               "output": { "outputOnFailure": true } }
   ]

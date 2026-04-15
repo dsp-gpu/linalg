@@ -23,6 +23,8 @@
 #include <rocsolver/rocsolver.h>
 
 #include <core/services/kernel_cache_service.hpp>
+#include <core/services/cache_dir_resolver.hpp>   // v2: exe-relative cache
+#include <core/backends/rocm/rocm_backend.hpp>    // v2: доступ к GetArchName()
 
 // ZeroCopy (Task_08) — только если собирается с OpenCL
 #ifdef CL_VERSION_1_0
@@ -137,9 +139,21 @@ CholeskyInverterROCm::CholeskyInverterROCm(drv_gpu_lib::IBackend* backend,
   }
   d_info_ = static_cast<void*>(info_ptr);
 
-  // Дисковый кеш HSACO (modules/vector_algebra/kernels/bin/)
+  // Дисковый кеш HSACO (v2, 2026-04-15):
+  //   base: <exe_dir>/kernels_cache/vector_algebra/   ← ResolveCacheDir
+  //   + подкаталог arch (gfx908/gfx1100/…) добавит KernelCacheService
+  // Arch берём из ROCmBackend.GetCore().GetArchName() — safe fallback на "".
+  std::string arch_name;
+  try {
+    auto* rocm_be = dynamic_cast<drv_gpu_lib::ROCmBackend*>(backend);
+    if (rocm_be) arch_name = rocm_be->GetCore().GetArchName();
+  } catch (...) {
+    arch_name.clear();  // Non-ROCm backend или ошибка — cache без arch subdir
+  }
   kernel_cache_ = std::make_unique<drv_gpu_lib::KernelCacheService>(
-      "modules/vector_algebra/kernels", drv_gpu_lib::BackendType::ROCm);
+      drv_gpu_lib::ResolveCacheDir("vector_algebra"),
+      drv_gpu_lib::BackendType::ROCm,
+      arch_name);
 
   // Eager compile: предкомпиляция hiprtc kernel при GpuKernel mode
   if (mode_ == SymmetrizeMode::GpuKernel) {

@@ -7,7 +7,7 @@
  * Include AFTER ROCmGPUContext and vector_to_numpy definitions.
  *
  * Usage from Python:
- *   inverter = gpuworklib.CholeskyInverterROCm(ctx, gpuworklib.SymmetrizeMode.GpuKernel)
+ *   inverter = dsp_linalg.CholeskyInverterROCm(ctx, dsp_linalg.SymmetrizeMode.GpuKernel)
  *   A_inv = inverter.invert_cpu(A.flatten(), n=341)     # (n, n) ndarray
  *   results = inverter.invert_batch_cpu(flat, n=64, batch_count=4)  # (4, 64, 64)
  *
@@ -151,8 +151,8 @@ inline void register_cholesky_inverter_rocm(py::module& m) {
       "Использует rocSOLVER: POTRF (Cholesky) + POTRI (инверсия).\n"
       "Два режима симметризации: Roundtrip (CPU) и GpuKernel (hiprtc).\n\n"
       "Usage:\n"
-      "  ctx = gpuworklib.ROCmGPUContext(0)\n"
-      "  inverter = gpuworklib.CholeskyInverterROCm(ctx, gpuworklib.SymmetrizeMode.GpuKernel)\n"
+      "  ctx = dsp_linalg.ROCmGPUContext(0)\n"
+      "  inverter = dsp_linalg.CholeskyInverterROCm(ctx, dsp_linalg.SymmetrizeMode.GpuKernel)\n"
       "  A_inv = inverter.invert_cpu(A.flatten(), n=341)\n")
       .def(py::init<ROCmGPUContext&, vector_algebra::SymmetrizeMode>(),
            py::arg("ctx"),
