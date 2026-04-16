@@ -63,15 +63,15 @@ static constexpr double kF0 = 3918e6 + 3.15e6;   // 3921150000 Hz
 static constexpr double kC  = 299792458.0;        // скорость света, м/с
 
 // ============================================================================
-// Путь к данным заказчика (относительно корня проекта)
+// Путь к данным заказчика (относительно рабочей директории сборки)
 //
-// Данные лежат в modules/capon/tests/data/ — локальная копия из прототипа.
+// Данные лежат в tests/Data/ (перенесены из GPUWorkLib modules/capon/tests/data/).
 // Оригинал: Doc_Addition/Capon/capon_test/build/
-// См. памятку: modules/capon/tests/data/README_DATA.md
+// См. памятку: tests/Data/README_DATA.md
 // ============================================================================
 
 static const std::string kDataDir =
-    "modules/capon/tests/data/";
+    "tests/Data/";
 
 // ============================================================================
 // Steering matrix (ULA — синтетическая)

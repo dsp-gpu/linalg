@@ -9,8 +9,7 @@ pybind11_add_module(dsp_linalg dsp_linalg_module.cpp)
 target_link_libraries(dsp_linalg PRIVATE DspLinalg::DspLinalg)
 target_include_directories(dsp_linalg PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/src/vector_algebra/include
-  ${CMAKE_SOURCE_DIR}/src/capon/include)
+  ${FETCHCONTENT_SOURCE_DIR_DSPCORE}/python)
 target_compile_definitions(dsp_linalg PRIVATE
   $<$<BOOL:${ENABLE_ROCM}>:ENABLE_ROCM=1>)
 install(TARGETS dsp_linalg DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

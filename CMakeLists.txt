@@ -16,9 +16,16 @@ find_package(hiprtc   REQUIRED)
 include(cmake/fetch_deps.cmake)
 fetch_dsp_core()
 
+# OPT-IN: rocBLAS в GpuContext (core/gpu_context.cpp нужен ENABLE_ROCBLAS
+# для GetRocblasHandleRaw()). Определяем ПЕРЕД компиляцией DspCore.
+target_compile_definitions(DspCore PUBLIC ENABLE_ROCBLAS=1)
+
 # ── Библиотека ─────────────────────────────────────────────────────
 add_library(DspLinalg STATIC)
 add_library(DspLinalg::DspLinalg ALIAS DspLinalg)
+
+# PIC нужен для Python bindings (.so линкует static lib)
+set_target_properties(DspLinalg PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_sources(DspLinalg PRIVATE
   # vector_algebra
@@ -50,9 +57,9 @@ target_link_libraries(DspLinalg
 )
 target_compile_features(DspLinalg PUBLIC cxx_std_17)
 
-# ENABLE_ROCM для #if блоков
+# ENABLE_ROCM для #if блоков + ENABLE_ROCBLAS для GpuContext::GetRocblasHandleRaw()
 if(ENABLE_ROCM)
-  target_compile_definitions(DspLinalg PUBLIC ENABLE_ROCM=1)
+  target_compile_definitions(DspLinalg PUBLIC ENABLE_ROCM=1 ENABLE_ROCBLAS=1)
 endif()
 
 # ── Git Version ────────────────────────────────────────────────────

@@ -86,11 +86,12 @@ inline void test_01_relief_noise_only() {
 }
 
 // ============================================================================
-// Test 02: Рельеф с помехой — MVDR минимален на направлении помехи
+// Test 02: Рельеф с помехой — Capon показывает ПИК на направлении помехи
 //
-// Физика:  MVDR минимизирует мощность выхода при ограничении «пропустить
-//          сигнал из нужного направления». На направлении мощной помехи
-//          z[m] = 1/(u^H * R^{-1} * u) будет МИНИМАЛЬНЫМ (подавление).
+// Физика:  Capon spatial spectrum P(θ) = 1/(a^H R^{-1} a) — оценка
+//          мощности из каждого направления. Сильная CW-помеха из θ_int
+//          создаёт БОЛЬШОЙ пик в рельефе: z[m_int] >> mean(z).
+//          Шумовые направления дают малые значения z ≈ σ².
 // ============================================================================
 
 inline void test_02_relief_with_interference() {
@@ -129,15 +130,20 @@ inline void test_02_relief_with_interference() {
     if (diff < min_diff) { min_diff = diff; m_int = m; }
   }
 
-  // MVDR: на направлении помехи рельеф должен быть значительно меньше среднего
+  // Capon: на направлении помехи рельеф должен быть значительно ВЫШЕ среднего
   float mean_relief = 0.0f;
   for (auto v : result.relief) mean_relief += v;
   mean_relief /= static_cast<float>(M);
 
-  // z[m_int] < mean/2 — Capon хорошо подавляет помеху
-  assert(result.relief[m_int] < mean_relief * 0.5f);
+  TestPrint("  z[m_int=" + std::to_string(m_int) + "] = " +
+            std::to_string(result.relief[m_int]) +
+            ", mean = " + std::to_string(mean_relief) +
+            ", ratio = " + std::to_string(result.relief[m_int] / mean_relief));
 
-  TestPrint("[test_capon_rocm::02] PASS (MVDR suppression confirmed at interference direction)");
+  // z[m_int] > mean * 2 — Capon показывает пик помехи
+  assert(result.relief[m_int] > mean_relief * 2.0f);
+
+  TestPrint("[test_capon_rocm::02] PASS (Capon peak confirmed at interference direction)");
 }
 
 // ============================================================================

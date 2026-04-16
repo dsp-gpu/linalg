@@ -28,12 +28,15 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 // CaponProcessor владеет GPU ресурсами (ctx_, rocblas handle, CholeskyResult).
-// В Python передаём указатель на backend (IBackend*) — ROCm backend должен
-// быть создан и инициализирован до конструктора (обычно через dsp_core).
+// В Python передаём ROCmGPUContext& (py_gpu_context.hpp) — backend берётся
+// из ctx.backend(). Единый паттерн для всех модулей DSP-GPU.
 class PyCaponProcessor {
 public:
-  explicit PyCaponProcessor(drv_gpu_lib::IBackend* backend)
-      : processor_(backend) {}
+  explicit PyCaponProcessor(ROCmGPUContext& ctx)
+      : ctx_(ctx), processor_(ctx.backend()) {}
+private:
+  ROCmGPUContext& ctx_;  // prevent GC from collecting context before processor
+public:
 
   // ── CPU API (H2D → GPU → D2H) ─────────────────────────────────────────────
   py::array_t<float> compute_relief(
@@ -142,10 +145,15 @@ inline void register_capon_processor(py::module& m) {
       .def_readwrite("mu",           &capon::CaponParams::mu);
 
   // CaponProcessor wrapper
-  py::class_<PyCaponProcessor>(m, "CaponProcessor")
-      .def(py::init<drv_gpu_lib::IBackend*>(),
-           py::arg("backend"),
-           py::keep_alive<1, 2>())  // processor держит ссылку на backend
+  py::class_<PyCaponProcessor>(m, "CaponProcessor",
+      "MVDR (Capon) beamformer — full GPU pipeline.\n\n"
+      "Usage:\n"
+      "  ctx = dsp_linalg.ROCmGPUContext(0)\n"
+      "  cap = dsp_linalg.CaponProcessor(ctx)\n"
+      "  relief = cap.compute_relief(signal, steering, params)\n")
+      .def(py::init<ROCmGPUContext&>(),
+           py::arg("ctx"),
+           py::keep_alive<1, 2>())  // processor держит ссылку на context
       .def("compute_relief",      &PyCaponProcessor::compute_relief,
            py::arg("signal"), py::arg("steering"), py::arg("params"))
       .def("adaptive_beamform",   &PyCaponProcessor::adaptive_beamform,
