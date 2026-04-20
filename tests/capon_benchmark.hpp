@@ -29,6 +29,7 @@
 
 #include <linalg/capon_processor.hpp>
 #include <core/services/gpu_benchmark_base.hpp>
+#include <core/services/scoped_hip_event.hpp>
 
 #include <hip/hip_runtime.h>
 #include <complex>
@@ -82,19 +83,17 @@ protected:
 
   /// Замер — ComputeRelief с hipEvent timing → RecordROCmEvent → GPUProfiler
   void ExecuteKernelTimed() override {
-    hipEvent_t t_start = nullptr, t_stop = nullptr;
-    hipEventCreate(&t_start);
-    hipEventCreate(&t_stop);
+    drv_gpu_lib::ScopedHipEvent t_start, t_stop;
+    t_start.Create();
+    t_stop.Create();
 
-    hipEventRecord(t_start);
+    hipEventRecord(t_start.get());
     proc_.ComputeRelief(signal_, steering_, params_);
-    hipEventRecord(t_stop);
+    hipEventRecord(t_stop.get());
 
     RecordROCmEvent("ComputeRelief_Total",
-                    MakeROCmFromHipEvents(t_start, t_stop));
-
-    hipEventDestroy(t_start);
-    hipEventDestroy(t_stop);
+                    MakeROCmFromHipEvents(t_start.get(), t_stop.get()));
+    // RAII: ScopedHipEvent destructors destroy t_start/t_stop
   }
 
 private:
@@ -129,19 +128,17 @@ protected:
 
   /// Замер — AdaptiveBeamform с hipEvent timing
   void ExecuteKernelTimed() override {
-    hipEvent_t t_start = nullptr, t_stop = nullptr;
-    hipEventCreate(&t_start);
-    hipEventCreate(&t_stop);
+    drv_gpu_lib::ScopedHipEvent t_start, t_stop;
+    t_start.Create();
+    t_stop.Create();
 
-    hipEventRecord(t_start);
+    hipEventRecord(t_start.get());
     proc_.AdaptiveBeamform(signal_, steering_, params_);
-    hipEventRecord(t_stop);
+    hipEventRecord(t_stop.get());
 
     RecordROCmEvent("AdaptiveBeamform_Total",
-                    MakeROCmFromHipEvents(t_start, t_stop));
-
-    hipEventDestroy(t_start);
-    hipEventDestroy(t_stop);
+                    MakeROCmFromHipEvents(t_start.get(), t_stop.get()));
+    // RAII: ScopedHipEvent destructors destroy t_start/t_stop
   }
 
 private:

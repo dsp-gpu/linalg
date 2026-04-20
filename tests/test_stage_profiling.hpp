@@ -27,6 +27,7 @@
 #include <linalg/cholesky_inverter_rocm.hpp>
 #include <core/interface/i_backend.hpp>
 #include <core/services/console_output.hpp>
+#include <core/services/scoped_hip_event.hpp>
 
 #include "test_cholesky_inverter_rocm.hpp"
 
@@ -63,27 +64,23 @@ inline StageTiming RunStageProfiling(
   const size_t bytes =
       static_cast<size_t>(n) * n * sizeof(std::complex<float>);
 
-  hipEvent_t e[8] = {};
-  for (int i = 0; i < 8; ++i) hipEventCreate(&e[i]);
-  struct EventGuard8 {
-    hipEvent_t (&ev)[8];
-    ~EventGuard8() { for (auto& x : ev) if (x) { hipEventDestroy(x); x = nullptr; } }
-  } eg{e};
+  drv_gpu_lib::ScopedHipEvent e[8];
+  for (int i = 0; i < 8; ++i) e[i].Create();
 
   hipDeviceSynchronize();
 
   // ── [0→1] Alloc ──
-  hipEventRecord(e[0], stream);
+  hipEventRecord(e[0].get(), stream);
 
   void* d_output = backend->Allocate(bytes);
 
   // ── [1→2] D2D copy ──
-  hipEventRecord(e[1], stream);
+  hipEventRecord(e[1].get(), stream);
 
   backend->MemcpyDeviceToDevice(d_output, d_source, bytes);
 
   // ── [2→3] POTRF (включая dev_info malloc/memcpy D2H/free) ──
-  hipEventRecord(e[2], stream);
+  hipEventRecord(e[2].get(), stream);
 
   {
     rocblas_int* dev_info = nullptr;
@@ -99,7 +96,7 @@ inline StageTiming RunStageProfiling(
   }
 
   // ── [3→4] POTRI (включая dev_info malloc/memcpy D2H/free) ──
-  hipEventRecord(e[3], stream);
+  hipEventRecord(e[3].get(), stream);
 
   {
     rocblas_int* dev_info = nullptr;
@@ -115,7 +112,7 @@ inline StageTiming RunStageProfiling(
   }
 
   // ── [4→5] Synchronize ──
-  hipEventRecord(e[4], stream);
+  hipEventRecord(e[4].get(), stream);
 
   backend->Synchronize();
 
@@ -124,7 +121,7 @@ inline StageTiming RunStageProfiling(
   //          только для symmetrize шага)
   //    Вместо этого делаем простую CPU-версию для замера overhead. ──
   //    Для GpuKernel: запуск через отдельный инвертер
-  hipEventRecord(e[5], stream);
+  hipEventRecord(e[5].get(), stream);
 
   // Symmetrize: используем отдельный инвертер как wrapper
   // Создаём InputData из уже-обработанного d_output и вызываем Invert
@@ -138,24 +135,24 @@ inline StageTiming RunStageProfiling(
   hipDeviceSynchronize();  // Вместо symmetrize kernel
 
   // ── [6→7] Free ──
-  hipEventRecord(e[6], stream);
+  hipEventRecord(e[6].get(), stream);
 
   backend->Free(d_output);
 
-  hipEventRecord(e[7], stream);
-  hipEventSynchronize(e[7]);
+  hipEventRecord(e[7].get(), stream);
+  hipEventSynchronize(e[7].get());
 
   StageTiming t;
-  hipEventElapsedTime(&t.alloc_ms,      e[0], e[1]);
-  hipEventElapsedTime(&t.d2d_copy_ms,   e[1], e[2]);
-  hipEventElapsedTime(&t.potrf_full_ms,  e[2], e[3]);
-  hipEventElapsedTime(&t.potri_full_ms,  e[3], e[4]);
-  hipEventElapsedTime(&t.sync_ms,       e[4], e[5]);
-  hipEventElapsedTime(&t.symmetrize_ms, e[5], e[6]);
-  hipEventElapsedTime(&t.free_ms,       e[6], e[7]);
-  hipEventElapsedTime(&t.total_ms,      e[0], e[7]);
+  hipEventElapsedTime(&t.alloc_ms,      e[0].get(), e[1].get());
+  hipEventElapsedTime(&t.d2d_copy_ms,   e[1].get(), e[2].get());
+  hipEventElapsedTime(&t.potrf_full_ms,  e[2].get(), e[3].get());
+  hipEventElapsedTime(&t.potri_full_ms,  e[3].get(), e[4].get());
+  hipEventElapsedTime(&t.sync_ms,       e[4].get(), e[5].get());
+  hipEventElapsedTime(&t.symmetrize_ms, e[5].get(), e[6].get());
+  hipEventElapsedTime(&t.free_ms,       e[6].get(), e[7].get());
+  hipEventElapsedTime(&t.total_ms,      e[0].get(), e[7].get());
 
-  return t;  // EventGuard8 destructor destroys e[0..7]
+  return t;  // ScopedHipEvent destructors destroy e[0..7]
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -175,25 +172,21 @@ inline StageTiming RunStageProfilingClean(
   const size_t bytes =
       static_cast<size_t>(n) * n * sizeof(std::complex<float>);
 
-  hipEvent_t e[8] = {};
-  for (int i = 0; i < 8; ++i) hipEventCreate(&e[i]);
-  struct EventGuard8C {
-    hipEvent_t (&ev)[8];
-    ~EventGuard8C() { for (auto& x : ev) if (x) { hipEventDestroy(x); x = nullptr; } }
-  } egc{e};
+  drv_gpu_lib::ScopedHipEvent e[8];
+  for (int i = 0; i < 8; ++i) e[i].Create();
 
   hipDeviceSynchronize();
 
   // ── [0→1] Alloc ──
-  hipEventRecord(e[0], stream);
+  hipEventRecord(e[0].get(), stream);
   void* d_output = backend->Allocate(bytes);
 
   // ── [1→2] D2D copy ──
-  hipEventRecord(e[1], stream);
+  hipEventRecord(e[1].get(), stream);
   backend->MemcpyDeviceToDevice(d_output, d_source, bytes);
 
   // ── [2→3] POTRF (только solver, без malloc/free dev_info) ──
-  hipEventRecord(e[2], stream);
+  hipEventRecord(e[2].get(), stream);
   {
     auto* A = static_cast<rocblas_float_complex*>(d_output);
     rocsolver_cpotrf(rh, rocblas_fill_lower, n, A, n, d_info_prealloc);
@@ -201,38 +194,38 @@ inline StageTiming RunStageProfilingClean(
   }
 
   // ── [3→4] POTRI (только solver, без malloc/free) ──
-  hipEventRecord(e[3], stream);
+  hipEventRecord(e[3].get(), stream);
   {
     auto* A = static_cast<rocblas_float_complex*>(d_output);
     rocsolver_cpotri(rh, rocblas_fill_lower, n, A, n, d_info_prealloc);
   }
 
   // ── [4→5] БЕЗ лишнего Synchronize ──
-  hipEventRecord(e[4], stream);
+  hipEventRecord(e[4].get(), stream);
   // Нет Synchronize — всё на одном stream!
 
   // ── [5→6] Symmetrize placeholder ──
-  hipEventRecord(e[5], stream);
+  hipEventRecord(e[5].get(), stream);
   hipDeviceSynchronize();
 
   // ── [6→7] Free ──
-  hipEventRecord(e[6], stream);
+  hipEventRecord(e[6].get(), stream);
   backend->Free(d_output);
 
-  hipEventRecord(e[7], stream);
-  hipEventSynchronize(e[7]);
+  hipEventRecord(e[7].get(), stream);
+  hipEventSynchronize(e[7].get());
 
   StageTiming t;
-  hipEventElapsedTime(&t.alloc_ms,      e[0], e[1]);
-  hipEventElapsedTime(&t.d2d_copy_ms,   e[1], e[2]);
-  hipEventElapsedTime(&t.potrf_full_ms,  e[2], e[3]);
-  hipEventElapsedTime(&t.potri_full_ms,  e[3], e[4]);
-  hipEventElapsedTime(&t.sync_ms,       e[4], e[5]);
-  hipEventElapsedTime(&t.symmetrize_ms, e[5], e[6]);
-  hipEventElapsedTime(&t.free_ms,       e[6], e[7]);
-  hipEventElapsedTime(&t.total_ms,      e[0], e[7]);
+  hipEventElapsedTime(&t.alloc_ms,      e[0].get(), e[1].get());
+  hipEventElapsedTime(&t.d2d_copy_ms,   e[1].get(), e[2].get());
+  hipEventElapsedTime(&t.potrf_full_ms,  e[2].get(), e[3].get());
+  hipEventElapsedTime(&t.potri_full_ms,  e[3].get(), e[4].get());
+  hipEventElapsedTime(&t.sync_ms,       e[4].get(), e[5].get());
+  hipEventElapsedTime(&t.symmetrize_ms, e[5].get(), e[6].get());
+  hipEventElapsedTime(&t.free_ms,       e[6].get(), e[7].get());
+  hipEventElapsedTime(&t.total_ms,      e[0].get(), e[7].get());
 
-  return t;  // EventGuard8C destructor destroys e[0..7]
+  return t;  // ScopedHipEvent destructors destroy e[0..7]
 }
 
 // ════════════════════════════════════════════════════════════════════════════

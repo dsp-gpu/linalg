@@ -39,6 +39,7 @@
 #include <core/interface/input_data.hpp>
 #include <core/services/console_output.hpp>
 #include <core/services/gpu_profiler.hpp>
+#include <core/services/scoped_hip_event.hpp>
 
 #include "test_cholesky_inverter_rocm.hpp"
 
@@ -100,17 +101,10 @@ inline BenchStats MeasureGpuTime(drv_gpu_lib::IBackend* backend,
     }
   }
 
-  // hipEvent создаём один раз
-  hipEvent_t ev_start = nullptr, ev_stop = nullptr;
-  hipEventCreate(&ev_start);
-  hipEventCreate(&ev_stop);
-  struct EvGuard {
-    hipEvent_t& s; hipEvent_t& e;
-    ~EvGuard() {
-      if (s) { hipEventDestroy(s); s = nullptr; }
-      if (e) { hipEventDestroy(e); e = nullptr; }
-    }
-  } ev_guard{ev_start, ev_stop};
+  // hipEvent создаём один раз — RAII через ScopedHipEvent
+  drv_gpu_lib::ScopedHipEvent ev_start, ev_stop;
+  ev_start.Create();
+  ev_stop.Create();
 
   // Measurement — один inverter на все замеры
   CholeskyInverterROCm inverter(backend, mode);
@@ -120,7 +114,7 @@ inline BenchStats MeasureGpuTime(drv_gpu_lib::IBackend* backend,
   for (int r = 0; r < runs; ++r) {
     hipDeviceSynchronize();  // чистое состояние GPU
 
-    hipEventRecord(ev_start, stream);
+    hipEventRecord(ev_start.get(), stream);
 
     if (batch == 1) {
       drv_gpu_lib::InputData<void*> input;
@@ -136,15 +130,15 @@ inline BenchStats MeasureGpuTime(drv_gpu_lib::IBackend* backend,
       auto result = inverter.InvertBatch(input, n);
     }
 
-    hipEventRecord(ev_stop, stream);
-    hipEventSynchronize(ev_stop);
+    hipEventRecord(ev_stop.get(), stream);
+    hipEventSynchronize(ev_stop.get());
 
     float ms_f = 0.0f;
-    hipEventElapsedTime(&ms_f, ev_start, ev_stop);
+    hipEventElapsedTime(&ms_f, ev_start.get(), ev_stop.get());
     times[r] = static_cast<double>(ms_f);
   }
 
-  BenchStats stats;  // ev_guard destructor destroys ev_start/ev_stop
+  BenchStats stats;  // ScopedHipEvent destructors destroy ev_start/ev_stop
   stats.avg_ms = std::accumulate(times.begin(), times.end(), 0.0) / runs;
   stats.min_ms = *std::min_element(times.begin(), times.end());
   stats.max_ms = *std::max_element(times.begin(), times.end());
