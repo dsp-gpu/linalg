@@ -40,6 +40,7 @@
 #include <core/services/console_output.hpp>
 #include <core/services/gpu_profiler.hpp>
 #include <core/services/scoped_hip_event.hpp>
+#include <core/services/profiling/profiling_facade.hpp>
 
 #include "test_cholesky_inverter_rocm.hpp"
 
@@ -474,9 +475,8 @@ inline void TestProfilerIntegration(drv_gpu_lib::IBackend* backend) {
   auto& con = drv_gpu_lib::ConsoleOutput::GetInstance();
   con.Print(0, "VecAlg", "TestProfilerIntegration");
 
-  auto& profiler = drv_gpu_lib::GPUProfiler::GetInstance();
+  auto& facade = drv_gpu_lib::profiling::ProfilingFacade::GetInstance();
 
-  // SetGPUInfo ПЕРЕД Start() — ОБЯЗАТЕЛЬНО!
   auto device_info = backend->GetDeviceInfo();
   int gpu_id = backend->GetDeviceIndex();
   if (gpu_id < 0) gpu_id = 0;
@@ -491,8 +491,8 @@ inline void TestProfilerIntegration(drv_gpu_lib::IBackend* backend) {
   rocm_driver["driver_version"] = device_info.driver_version;
   report_info.drivers.push_back(rocm_driver);
 
-  profiler.SetGPUInfo(gpu_id, report_info);
-  profiler.Start();
+  facade.SetGpuInfo(gpu_id, report_info);
+  facade.Enable(true);
 
   constexpr int n = 341;
   auto A = MakePositiveDefiniteHermitian(n, 77);
@@ -513,7 +513,7 @@ inline void TestProfilerIntegration(drv_gpu_lib::IBackend* backend) {
     drv_gpu_lib::ROCmProfilingData pd;
     pd.end_ns = static_cast<uint64_t>(ms * 1e6);
     pd.kernel_name = "POTRF_POTRI_341_Roundtrip";
-    profiler.Record(gpu_id, "Cholesky", "POTRF_POTRI_341_Roundtrip", pd);
+    facade.Record(gpu_id, "linalg/cholesky", "POTRF_POTRI_341_Roundtrip", pd);
   }
 
   // GpuKernel
@@ -527,15 +527,15 @@ inline void TestProfilerIntegration(drv_gpu_lib::IBackend* backend) {
     drv_gpu_lib::ROCmProfilingData pd;
     pd.end_ns = static_cast<uint64_t>(ms * 1e6);
     pd.kernel_name = "POTRF_POTRI_341_GpuKernel";
-    profiler.Record(gpu_id, "Cholesky", "POTRF_POTRI_341_GpuKernel", pd);
+    facade.Record(gpu_id, "linalg/cholesky", "POTRF_POTRI_341_GpuKernel", pd);
   }
 
-  profiler.Stop();
-
-  profiler.PrintReport();
-  std::string profiler_base = "../Results/Profiler/cholesky/cholesky_profiler_" + GetDateForFilename();
-  profiler.ExportMarkdown(profiler_base + ".md");
-  profiler.ExportJSON(profiler_base + ".json");
+  facade.PrintReport();
+  const std::string profiler_base =
+      "../Results/Profiler/cholesky/cholesky_profiler_" + GetDateForFilename();
+  facade.ExportJsonAndMarkdown(profiler_base + ".json",
+                               profiler_base + ".md",
+                               /*parallel=*/false);
 
   con.Print(0, "VecAlg", "TestProfilerIntegration PASSED");
 }
