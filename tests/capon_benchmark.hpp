@@ -30,6 +30,7 @@
 #include <linalg/capon_processor.hpp>
 #include <core/services/gpu_benchmark_base.hpp>
 #include <core/services/scoped_hip_event.hpp>
+#include <core/services/profiling/profiling_facade.hpp>
 
 #include <hip/hip_runtime.h>
 #include <complex>
@@ -91,8 +92,9 @@ protected:
     proc_.ComputeRelief(signal_, steering_, params_);
     hipEventRecord(t_stop.get());
 
-    RecordROCmEvent("ComputeRelief_Total",
-                    MakeROCmFromHipEvents(t_start.get(), t_stop.get()));
+    drv_gpu_lib::profiling::ProfilingFacade::GetInstance()
+        .Record(gpu_id_, "linalg/capon", "ComputeRelief_Total",
+                MakeROCmFromHipEvents(t_start.get(), t_stop.get()));
     // RAII: ScopedHipEvent destructors destroy t_start/t_stop
   }
 
@@ -136,8 +138,9 @@ protected:
     proc_.AdaptiveBeamform(signal_, steering_, params_);
     hipEventRecord(t_stop.get());
 
-    RecordROCmEvent("AdaptiveBeamform_Total",
-                    MakeROCmFromHipEvents(t_start.get(), t_stop.get()));
+    drv_gpu_lib::profiling::ProfilingFacade::GetInstance()
+        .Record(gpu_id_, "linalg/capon", "AdaptiveBeamform_Total",
+                MakeROCmFromHipEvents(t_start.get(), t_stop.get()));
     // RAII: ScopedHipEvent destructors destroy t_start/t_stop
   }
 
