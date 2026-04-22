@@ -25,7 +25,7 @@
 #include <core/interface/input_data.hpp>
 #include <linalg/vector_algebra_types.hpp>
 
-namespace drv_gpu_lib { class KernelCacheService; }
+namespace drv_gpu_lib { class GpuContext; }
 
 namespace vector_algebra {
 
@@ -117,11 +117,9 @@ private:
   // ─── Предаллоцированный dev_info (Task_12: убираем hipMalloc/hipFree) ──
   void* d_info_ = nullptr;    ///< rocblas_int[2] на GPU (slot 0=potrf, 1=potri)
 
-  // ─── hiprtc kernel state ──────────────────────────────────────────────
-  void* sym_module_ = nullptr;   ///< hipModule_t
-  void* sym_kernel_ = nullptr;   ///< hipFunction_t
-  bool kernels_compiled_ = false;
-  std::unique_ptr<drv_gpu_lib::KernelCacheService> kernel_cache_;
+  // ─── GpuContext (owns hipModule + disk cache v2) ─────────────────────
+  std::unique_ptr<drv_gpu_lib::GpuContext> ctx_;
+  void* sym_kernel_ = nullptr;   ///< hipFunction_t cached after ctx_->GetKernel()
 
   // ─── Core GPU ops ─────────────────────────────────────────────────────
 

@@ -3,32 +3,36 @@
 
 /**
  * @file diagonal_load_regularizer.hpp
- * @brief DiagonalLoadRegularizer — регуляризация A += mu*I на GPU (ROCm/hiprtc)
+ * @brief DiagonalLoadRegularizer — регуляризация A += mu*I на GPU (через GpuContext v2)
  *
  * Concrete Strategy (GoF): реализация IMatrixRegularizer для диагональной загрузки.
  *
  * Операция: A[i,i].re += mu  для всех i = 0..n-1
  * Матрица A: квадратная n×n, complex<float>, column-major.
  *
- * Kernel компилируется через hiprtc в конструкторе (один раз на объект).
- * Запуск через hipModuleLaunchKernel — без GpuContext, напрямую через IBackend.
+ * Kernel компилируется через GpuContext::CompileModule в конструкторе
+ * (disk cache v2 — clean-slate, keyed by CompileKey). Запуск через
+ * hipModuleLaunchKernel, kernel fn получаем через ctx_.GetKernel().
  *
  * @author Кодо (AI Assistant)
- * @date 2026-03-16
+ * @date 2026-03-16  (migrated 2026-04-22 to GpuContext)
  */
 
 #include <linalg/i_matrix_regularizer.hpp>
 #include <core/interface/i_backend.hpp>
 
 #include <hip/hip_runtime.h>
+#include <memory>
+
+namespace drv_gpu_lib { class GpuContext; }
 
 namespace vector_algebra {
 
 /**
  * @class DiagonalLoadRegularizer
- * @brief Диагональная загрузка: A += mu * I (GPU, hiprtc kernel).
+ * @brief Диагональная загрузка: A += mu * I (GPU, compiled via GpuContext).
  *
- * Не копируемый (владеет hipModule_t). Перемещаемый.
+ * Не копируемый (владеет GpuContext). Перемещаемый.
  *
  * @code
  * DiagonalLoadRegularizer reg(backend);
@@ -38,7 +42,7 @@ namespace vector_algebra {
 class DiagonalLoadRegularizer : public IMatrixRegularizer {
 public:
   /**
-   * @brief Конструктор — компилирует HIP kernel через hiprtc.
+   * @brief Конструктор — компилирует HIP kernel через GpuContext (cached).
    * @param backend  ROCm backend (должен быть инициализирован)
    * @throws std::runtime_error при ошибке компиляции или backend не ROCm
    */
@@ -67,12 +71,9 @@ public:
              hipStream_t stream = nullptr) override;
 
 private:
-  hipStream_t   stream_   = nullptr;  ///< Stream из backend (non-owning)
-  void*         module_   = nullptr;  ///< hipModule_t (owning)
-  void*         function_ = nullptr;  ///< hipFunction_t (non-owning, из module_)
-
-  void Compile(drv_gpu_lib::IBackend* backend);
-  void Release() noexcept;
+  hipStream_t                              stream_ = nullptr;  ///< Stream из backend (non-owning)
+  std::unique_ptr<drv_gpu_lib::GpuContext> ctx_;                ///< Owns hipModule + cache v2
+  void*                                    function_ = nullptr; ///< hipFunction_t (non-owning, из ctx_->GetKernel)
 };
 
 }  // namespace vector_algebra
