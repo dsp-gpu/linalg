@@ -1,0 +1,64 @@
+﻿2026-04-21 08:45:07.430 INFO  [ROCmBackend] Creating ROCmCore for device 0
+2026-04-21 08:45:07.430 DEBUG [ROCmCore] Created for device index 0
+2026-04-21 08:45:07.473 DEBUG [ROCmCore] HIP initialized for device 0
+2026-04-21 08:45:07.473 INFO  [ROCmCore] Device 0 initialized: AMD Radeon RX 9070
+2026-04-21 08:45:07.492 INFO  [StreamPool] Initialized with 2 streams
+2026-04-21 08:45:07.492 INFO  [ROCmBackend] Initialized for device 0 (AMD Radeon RX 9070, StreamPool: 2 streams)
+2026-04-21 08:45:07.648 INFO  [OpenCLBackend] Creating OpenCLCore for device 0
+2026-04-21 08:45:07.648 DEBUG [OpenCLCore] Created for device index 0
+2026-04-21 08:45:07.649 DEBUG [OpenCLCore] Context created for device 0
+2026-04-21 08:45:07.649 INFO  [OpenCLCore] Device 0 initialized: gfx1201
+2026-04-21 08:45:07.649 INFO  [OpenCLBackend] Got context and device from OpenCLCore
+2026-04-21 08:45:07.666 INFO  [OpenCLBackend] Command queue created for device 0
+2026-04-21 08:45:07.666 INFO  [OpenCLBackend] Initialized for device 0 (gfx1201)
+2026-04-21 08:45:07.690 WARN  [ZeroCopyBridge] HSA Probe failed, trying DMA-BUF...
+2026-04-21 08:45:07.709 INFO  [ZeroCopyBridge] Imported via GPU Copy Kernel (VRAM→VRAM, size=680000 bytes)
+2026-04-21 08:45:07.709 INFO  [ZeroCopyBridge] Imported via HSA Probe (GPU VA=0x7f29fc200000, offset=+576, size=25160, TRUE zero-copy)
+2026-04-21 08:45:07.721 INFO  [ZeroCopyBridge] Released SVM memory
+2026-04-21 08:45:07.731 INFO  [ZeroCopyBridge] Imported via HSA Probe (GPU VA=0x7f29fc20a000, offset=+776, size=16384, TRUE zero-copy)
+2026-04-21 08:45:07.731 INFO  [ZeroCopyBridge] Imported via HSA Probe (GPU VA=0x7f29fc20e000, offset=+776, size=2048, TRUE zero-copy)
+2026-04-21 08:45:07.745 WARN  [ZeroCopyBridge] HSA Probe failed, trying DMA-BUF...
+2026-04-21 08:45:07.756 INFO  [ZeroCopyBridge] Imported via GPU Copy Kernel (VRAM→VRAM, size=16384 bytes)
+2026-04-21 08:45:07.756 INFO  [ZeroCopyBridge] Imported via HSA Probe (GPU VA=0x7f29fc200000, offset=+664, size=1024, TRUE zero-copy)
+2026-04-21 08:45:07.768 INFO  [ZeroCopyBridge] Released SVM memory
+2026-04-21 08:45:07.779 INFO  [ZeroCopyBridge] Imported via SVM (ptr=0x7f2b27960000, size=16384 bytes, zero-copy)
+2026-04-21 08:45:07.779 INFO  [ZeroCopyBridge] Imported via SVM (ptr=0x7f2b2f38c000, size=2048 bytes, zero-copy)
+2026-04-21 08:45:07.791 INFO  [OpenCLBackend] Creating OpenCLCore for device 0
+2026-04-21 08:45:07.791 DEBUG [OpenCLCore] Created for device index 0
+2026-04-21 08:45:07.791 DEBUG [OpenCLCore] Context created for device 0
+2026-04-21 08:45:07.791 INFO  [OpenCLCore] Device 0 initialized: gfx1201
+2026-04-21 08:45:07.791 INFO  [OpenCLBackend] Got context and device from OpenCLCore
+2026-04-21 08:45:07.797 INFO  [OpenCLBackend] Command queue created for device 0
+2026-04-21 08:45:07.797 INFO  [OpenCLBackend] Initialized for device 0 (gfx1201)
+2026-04-21 08:45:07.857 INFO  [ROCmBackend] Creating ROCmCore for device 0
+2026-04-21 08:45:07.857 DEBUG [ROCmCore] Created for device index 0
+2026-04-21 08:45:07.861 DEBUG [ROCmCore] HIP initialized for device 0
+2026-04-21 08:45:07.861 INFO  [ROCmCore] Device 0 initialized: AMD Radeon RX 9070
+2026-04-21 08:45:07.868 INFO  [StreamPool] Initialized with 2 streams
+2026-04-21 08:45:07.868 INFO  [ROCmBackend] Initialized for device 0 (AMD Radeon RX 9070, StreamPool: 2 streams)
+2026-04-21 08:45:25.770 INFO  [ROCmBackend] Creating ROCmCore for device 0
+2026-04-21 08:45:25.770 DEBUG [ROCmCore] Created for device index 0
+2026-04-21 08:45:25.775 DEBUG [ROCmCore] HIP initialized for device 0
+2026-04-21 08:45:25.775 INFO  [ROCmCore] Device 0 initialized: AMD Radeon RX 9070
+2026-04-21 08:45:25.782 INFO  [StreamPool] Initialized with 2 streams
+2026-04-21 08:45:25.782 INFO  [ROCmBackend] Initialized for device 0 (AMD Radeon RX 9070, StreamPool: 2 streams)
+2026-04-21 08:45:25.783 INFO  [ROCmBackend] Cleanup started for device 0 (owns_resources = true)
+2026-04-21 08:45:25.786 INFO  [ROCmBackend] Cleanup complete
+2026-04-21 08:45:25.809 INFO  [ROCmBackend] Creating ROCmCore for device 0
+2026-04-21 08:45:25.809 DEBUG [ROCmCore] Created for device index 0
+2026-04-21 08:45:25.813 DEBUG [ROCmCore] HIP initialized for device 0
+2026-04-21 08:45:25.813 INFO  [ROCmCore] Device 0 initialized: AMD Radeon RX 9070
+2026-04-21 08:45:25.821 INFO  [StreamPool] Initialized with 2 streams
+2026-04-21 08:45:25.821 INFO  [ROCmBackend] Initialized for device 0 (AMD Radeon RX 9070, StreamPool: 2 streams)
+2026-04-21 08:45:25.822 INFO  [ROCmBackend] Cleanup started for device 0 (owns_resources = true)
+2026-04-21 08:45:25.825 INFO  [ROCmBackend] Cleanup complete
+2026-04-21 08:45:28.544 ERROR [JsonExporter] Cannot open file for write: ../Results/Profiler/cholesky/cholesky_profiler_2026-04-21_08-45-28.json
+2026-04-21 08:45:28.544 ERROR [MarkdownExporter] Cannot open file for write: ../Results/Profiler/cholesky/cholesky_profiler_2026-04-21_08-45-28.md
+2026-04-21 08:51:28.532 INFO  [ROCmBackend] Cleanup started for device 0 (owns_resources = true)
+2026-04-21 08:51:28.536 INFO  [ROCmBackend] Cleanup complete
+2026-04-21 08:51:28.537 INFO  [OpenCLBackend] Cleanup started for device 0 (owns_resources = true)
+2026-04-21 08:51:28.538 DEBUG [OpenCLBackend] Command queue released
+2026-04-21 08:51:28.538 INFO  [OpenCLBackend] Cleanup complete
+2026-04-21 08:51:28.538 INFO  [OpenCLBackend] Cleanup started for device 0 (owns_resources = true)
+2026-04-21 08:51:28.540 DEBUG [OpenCLBackend] Command queue released
+2026-04-21 08:51:28.540 INFO  [OpenCLBackend] Cleanup complete

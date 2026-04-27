@@ -38,7 +38,6 @@
 #include <core/interface/i_backend.hpp>
 #include <core/interface/input_data.hpp>
 #include <core/services/console_output.hpp>
-#include <core/services/gpu_profiler.hpp>
 #include <core/services/scoped_hip_event.hpp>
 #include <core/services/profiling/profiling_facade.hpp>
 
@@ -468,7 +467,7 @@ inline void RunComprehensiveBenchmark(drv_gpu_lib::IBackend* backend) {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// TestProfilerIntegration (оставлен — тестирует GPUProfiler API)
+// TestProfilerIntegration (оставлен — тестирует ProfilingFacade API)
 // ════════════════════════════════════════════════════════════════════════════
 
 inline void TestProfilerIntegration(drv_gpu_lib::IBackend* backend) {

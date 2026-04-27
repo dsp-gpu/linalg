@@ -1,0 +1,23 @@
+﻿2026-04-21 09:37:26.386 INFO  [ROCmBackend] Creating ROCmCore for device 0
+2026-04-21 09:37:26.386 DEBUG [ROCmCore] Created for device index 0
+2026-04-21 09:37:26.421 DEBUG [ROCmCore] HIP initialized for device 0
+2026-04-21 09:37:26.421 INFO  [ROCmCore] Device 0 initialized: AMD Radeon RX 9070
+2026-04-21 09:37:26.441 INFO  [StreamPool] Initialized with 2 streams
+2026-04-21 09:37:26.441 INFO  [ROCmBackend] Initialized for device 0 (AMD Radeon RX 9070, StreamPool: 2 streams)
+2026-04-21 09:37:26.597 INFO  [OpenCLBackend] Creating OpenCLCore for device 0
+2026-04-21 09:37:26.597 DEBUG [OpenCLCore] Created for device index 0
+2026-04-21 09:37:26.598 DEBUG [OpenCLCore] Context created for device 0
+2026-04-21 09:37:26.598 INFO  [OpenCLCore] Device 0 initialized: gfx1201
+2026-04-21 09:37:26.598 INFO  [OpenCLBackend] Got context and device from OpenCLCore
+2026-04-21 09:37:26.622 INFO  [OpenCLBackend] Command queue created for device 0
+2026-04-21 09:37:26.622 INFO  [OpenCLBackend] Initialized for device 0 (gfx1201)
+2026-04-21 09:37:26.647 WARN  [ZeroCopyBridge] HSA Probe failed, trying DMA-BUF...
+2026-04-21 09:37:26.661 INFO  [ZeroCopyBridge] Imported via GPU Copy Kernel (VRAM→VRAM, size=680000 bytes)
+2026-04-21 09:37:26.661 WARN  [ZeroCopyBridge] HSA Probe failed, trying DMA-BUF...
+2026-04-21 09:37:26.671 INFO  [ZeroCopyBridge] Imported via GPU Copy Kernel (VRAM→VRAM, size=25160 bytes)
+2026-04-21 09:37:26.682 INFO  [ZeroCopyBridge] Released SVM memory
+2026-04-21 09:37:26.682 INFO  [ZeroCopyBridge] Released SVM memory
+2026-04-21 09:37:26.693 WARN  [ZeroCopyBridge] HSA Probe failed, trying DMA-BUF...
+2026-04-21 09:37:26.703 INFO  [ZeroCopyBridge] Imported via GPU Copy Kernel (VRAM→VRAM, size=16384 bytes)
+2026-04-21 09:37:26.703 INFO  [ZeroCopyBridge] Imported via HSA Probe (GPU VA=0x7f42ca607000, offset=+872, size=2048, TRUE zero-copy)
+2026-04-21 09:37:26.714 INFO  [ZeroCopyBridge] Released SVM memory

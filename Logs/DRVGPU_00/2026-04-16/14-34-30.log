@@ -1,0 +1,8 @@
+﻿2026-04-16 14:34:30.391 INFO  [ROCmBackend] Creating ROCmCore for device 0
+2026-04-16 14:34:30.391 DEBUG [ROCmCore] Created for device index 0
+2026-04-16 14:34:30.434 DEBUG [ROCmCore] HIP initialized for device 0
+2026-04-16 14:34:30.434 INFO  [ROCmCore] Device 0 initialized: AMD Radeon RX 9070
+2026-04-16 14:34:30.456 INFO  [StreamPool] Initialized with 2 streams
+2026-04-16 14:34:30.456 INFO  [ROCmBackend] Initialized for device 0 (AMD Radeon RX 9070, StreamPool: 2 streams)
+2026-04-16 14:34:30.568 INFO  [ROCmBackend] Cleanup started for device 0 (owns_resources = true)
+2026-04-16 14:34:30.571 INFO  [ROCmBackend] Cleanup complete
