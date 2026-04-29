@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Standalone test for dsp_linalg Python bindings (ROCm).
-NO pytest — запуск: python test_linalg.py
+Запуск: python test_linalg.py
 
 Tests:
   1. Import + ROCmGPUContext creation
