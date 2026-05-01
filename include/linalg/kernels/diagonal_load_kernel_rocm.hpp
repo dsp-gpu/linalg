@@ -3,20 +3,20 @@
 
 /**
  * @file diagonal_load_kernel_rocm.hpp
- * @brief HIP kernel source — диагональная загрузка матрицы (hiprtc)
+ * @brief HIP kernel source для diagonal loading (A[i,i].re += mu) — для hiprtc.
  *
- * Операция: A[i,i] += mu  (для всех i = 0..n-1)
+ * @note Тип B (technical header): R"HIP(...)HIP" source для компиляции через
+ *       GpuContext::CompileModule (disk cache v2). Kernel: diagonal_load
+ *         - 1D grid: n threads (один поток = один диагональный элемент)
+ *         - column-major: A[i,i] → A[i*n + i]
+ *         - Только Re-часть: mu вещественное, A[i,i].im не меняется
+ * @note Применение: регуляризация ковариационной матрицы перед инверсией
+ *       (Тихонов / Ridge), Capon (MVDR) beamformer.
+ * @note Launch: grid = (n + 255) / 256, block = 256.
  *
- * Матрица A — квадратная n×n, комплексная (float2), column-major.
- * mu — вещественный скаляр. Мнимая часть диагонали не меняется.
- *
- * Применение:
- *   - Регуляризация ковариационной матрицы перед инверсией
- *   - Стабилизация плохо обусловленных систем (Тихонов, Ridge)
- *   - Любой pipeline: A += μI
- *
- * @author Кодо (AI Assistant)
- * @date 2026-03-16
+ * История:
+ *   - Создан:  2026-03-16
+ *   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
  */
 
 namespace vector_algebra {

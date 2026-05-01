@@ -1,22 +1,45 @@
 #pragma once
 
-/**
- * @file capon_invert_op.hpp
- * @brief CaponInvertOp — обёртка над vector_algebra::CholeskyInverterROCm
- *
- * Ref03 Layer 5: Concrete Operation.
- *
- * НЕ реализует инверсию самостоятельно — делегирует в уже готовый модуль
- * vector_algebra::CholeskyInverterROCm (POTRF + POTRI + симметризация).
- *
- * Входные разделяемые буферы: kCovMatrix (R) [P × P]
- * Выходные: CholeskyResult (владеет GPU-памятью R^{-1}) — НЕ в shared_buf,
- *           возвращается напрямую и хранится в CaponProcessor::last_inv_result_.
- *
- * @see vector_algebra::CholeskyInverterROCm
- * @author Кодо (AI Assistant)
- * @date 2026-03-16
- */
+// ============================================================================
+// CaponInvertOp — обёртка над CholeskyInverterROCm: R → R^{-1} (Layer 5 Ref03)
+//
+// ЧТО:    Тонкий adapter-Op для шага инверсии в Capon-pipeline. Делегирует
+//         реальную работу в vector_algebra::CholeskyInverterROCm:
+//           - rocSOLVER cpotrf  → нижний треугольный множитель Холецкого L
+//           - rocSOLVER cpotri  → инверсия из L через L^{-T}·L^{-1}
+//           - симметризация     → заполнение верхнего треугольника (HIP kernel)
+//         Не наследует GpuKernelOp (CholeskyInverterROCm — самостоятельный
+//         модуль с собственным жизненным циклом и хэндлами rocSOLVER).
+//
+// ЗАЧЕМ:  Унификация шага в Ref03 pipeline: CovarianceMatrixOp → CaponInvertOp
+//         → ComputeWeightsOp → ... — все шаги имеют одинаковый «вид» (Op с
+//         Execute), даже если внутри разные реализации (rocBLAS / rocSOLVER /
+//         HIP kernel). DRY: не дублировать логику CholeskyInverterROCm в
+//         CaponProcessor — фасад остаётся тонким, инверсия инкапсулирована.
+//
+// ПОЧЕМУ: - Adapter Pattern (GoF): приводит интерфейс CholeskyInverterROCm
+//           (Invert(InputData<void*>, n)) к стилю Capon Op'ов (Execute(gpu_R, P)).
+//         - Не наследует GpuKernelOp: у CholeskyInverterROCm свой backend и
+//           свой набор kernel'ов (для симметризации) — попытка наследовать =
+//           конфликт двух владельцев hiprtc-модуля.
+//         - Возвращает CholeskyResult (RAII-владелец GPU R^{-1}) — caller
+//           (CaponProcessor::last_inv_) хранит его пока R^{-1} нужен. R^{-1}
+//           НЕ кладётся в shared_buf, потому что rocSOLVER выделяет workspace
+//           с собственным lifetime.
+//         - SymmetrizeMode::GpuKernel — единственный быстрый путь на GPU
+//           (CPU-вариант = D2H + симметризация + H2D, ×100 медленнее).
+//
+// Использование:
+//   capon::CaponInvertOp inv_op(rocm_backend);
+//   inv_op.CompileKernels();                // warmup hiprtc (опционально)
+//   void* R_gpu = ctx.GetShared(shared_buf::kCovMatrix);
+//   auto result = inv_op.Execute(R_gpu, P);  // result owns GPU R^{-1}
+//   void* R_inv = result.AsHipPtr();         // → ComputeWeightsOp
+//
+// История:
+//   - Создан:  2026-03-16 (Ref03 Layer 5, Capon pipeline)
+//   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
+// ============================================================================
 
 #if ENABLE_ROCM
 
@@ -34,16 +57,15 @@
 namespace capon {
 
 /**
- * @brief Обёртка инверсии ковариационной матрицы.
+ * @class CaponInvertOp
+ * @brief Layer 5 Ref03 Op-adapter: R → R^{-1} через CholeskyInverterROCm.
  *
- * Держит экземпляр CholeskyInverterROCm (он не наследует GpuKernelOp,
- * поэтому CaponInvertOp также не наследует — это обычный класс).
- *
- * Использование:
- *   CaponInvertOp inv_op(backend);
- *   void* R_gpu = ctx.GetShared(shared_buf::kCovMatrix);
- *   auto result = inv_op.Execute(R_gpu, n_channels);  // result хранит R^{-1} на GPU
- *   void* R_inv_ptr = result.AsHipPtr();               // передать в CaponReliefOp
+ * @note Non-copyable (CholeskyInverterROCm не копируется).
+ * @note НЕ наследник GpuKernelOp — у inverter'а собственный backend и kernels.
+ * @note Требует #if ENABLE_ROCM. Зависит от rocSOLVER.
+ * @note Возвращает CholeskyResult (RAII) — caller хранит, пока R^{-1} нужен.
+ * @see vector_algebra::CholeskyInverterROCm — реальная реализация
+ * @see CaponProcessor::last_inv_ — место хранения CholeskyResult
  */
 class CaponInvertOp {
 public:

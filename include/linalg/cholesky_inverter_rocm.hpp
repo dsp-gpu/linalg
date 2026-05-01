@@ -1,22 +1,51 @@
 #pragma once
 #if ENABLE_ROCM
 
-/**
- * @file cholesky_inverter_rocm.hpp
- * @brief Инверсия эрмитовой положительно определённой матрицы (ROCm, POTRF+POTRI)
- *
- * Task_11 v2: два режима симметризации (Roundtrip / GpuKernel).
- *
- * Поддерживаемые входные форматы:
- *   - InputData<vector<complex<float>>>  — CPU вектор
- *   - InputData<void*>                   — ROCm device pointer
- *   - InputData<cl_mem>                  — OpenCL буфер (ZeroCopy)
- *
- * Результат: CholeskyResult (единый тип, void* d_data на GPU).
- *
- * @author Кодо (AI Assistant)
- * @date 2026-02-26
- */
+// ============================================================================
+// CholeskyInverterROCm — инверсия эрмитовой HPD-матрицы (POTRF + POTRI)
+//
+// ЧТО:    RAII-обёртка над rocSOLVER POTRF (Cholesky факторизация A = U^H·U)
+//         и POTRI (вычисление A^{-1} из U). Работает по комплексным эрмитовым
+//         положительно определённым матрицам. Поддерживает 3 формата входа:
+//         CPU vector, ROCm device pointer, OpenCL cl_mem (ZeroCopy). Batched-
+//         версии InvertBatch проходят все матрицы одним handle. После POTRI
+//         результат — только в верхнем треугольнике, симметризация в полную
+//         форму через 2 режима (Roundtrip / GpuKernel).
+//
+// ЗАЧЕМ:  Capon (MVDR beamformer) и любой adaptive-pipeline требуют R^{-1}
+//         от ковариационной матрицы. rocSOLVER POTRF/POTRI — самый быстрый
+//         путь для HPD на GPU (быстрее общего GETRF + GETRI). Прямой вызов
+//         rocSOLVER из CaponProcessor вынуждал бы тянуть rocsolver.h и
+//         управлять workspace/info вручную — здесь это инкапсулировано.
+//
+// ПОЧЕМУ: - RAII + non-copy/non-move: класс владеет rocBLAS handle, hipModule
+//           компилированного symmetrize-kernel'а и предаллоцированным d_info_
+//           (rocblas_int[2]: slot 0=POTRF info, 1=POTRI info). Копирование
+//           или перемещение этих ресурсов = двойное освобождение / chaos.
+//         - Предаллоцированный d_info_ (Task_12) — убираем hipMalloc/hipFree
+//           на каждый вызов Invert (горячий путь Capon: сотни вызовов в сек).
+//         - SymmetrizeMode runtime-параметр: Roundtrip (Download → CPU sym →
+//           Upload) — отладочный, без HIP kernel. GpuKernel (in-place HIP) —
+//           production. Переключаемо через SetSymmetrizeMode для бенчмарков.
+//         - GpuContext (unique_ptr) владеет hipModule с symmetrize_kernel'ом
+//           через disk cache v2 (CompileKey). Повторный запуск процесса не
+//           перекомпилирует — кэш на диске.
+//         - CheckInfo отложенная — info с GPU читается одной синхронизацией
+//           после всего pipeline (а не после каждого rocSOLVER-вызова), что
+//           критично для batched-режима. Можно отключить (benchmark с
+//           гарантированно HPD матрицами).
+//
+// Использование:
+//   CholeskyInverterROCm inv(backend, SymmetrizeMode::GpuKernel);
+//   auto result = inv.Invert(InputData<vector<complex<float>>>{matrix}, n);
+//   void* d_inv = result.AsHipPtr();   // GPU pointer (caller НЕ Free!)
+//   // batch:
+//   auto batch_result = inv.InvertBatch(InputData<void*>{d_batch}, n);
+//
+// История:
+//   - Создан:  2026-02-26 (Task_11: void* d_data вместо template<T> result)
+//   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
+// ============================================================================
 
 #include <complex>
 #include <memory>
@@ -31,14 +60,16 @@ namespace vector_algebra {
 
 /**
  * @class CholeskyInverterROCm
- * @brief Инверсия эрмитовой положительно определённой матрицы (POTRF + POTRI).
+ * @brief Инверсия эрмитовой HPD-матрицы через rocSOLVER POTRF + POTRI.
  *
- * Два режима симметризации:
- *   - Roundtrip: Download → CPU sym → Upload
- *   - GpuKernel: HIP kernel in-place (hiprtc)
- *
- * Не копируемый, не перемещаемый (владеет rocBLAS handle + hipModule).
- *
+ * @note Не копируемый и не перемещаемый — owns rocBLAS handle, hipModule,
+ *       d_info_, GpuContext.
+ * @note Требует #if ENABLE_ROCM. На non-ROCm — stub бросает runtime_error.
+ * @note Lifecycle: ctor(backend, mode) → Invert*/InvertBatch* → dtor.
+ * @note Не thread-safe (один экземпляр = одна последовательность операций).
+ * @see CholeskyResult — RAII-владелец GPU-памяти результата
+ * @see SymmetrizeMode — выбор GpuKernel vs Roundtrip
+ * @see DiagonalLoadRegularizer — типичный pre-step перед Invert
  * @ingroup grp_vector_algebra
  */
 class CholeskyInverterROCm {

@@ -1,21 +1,25 @@
 #pragma once
 
 /**
- * @file capon_types.hpp
- * @brief Типы данных модуля Capon — параметры, результаты, индексы буферов.
+ * @brief Типы данных модуля Capon — параметры, результаты, индексы shared-буферов.
+ *
+ * @note Тип B (technical header): POD-структуры без логики, только default'ы и enum-индексы.
+ *       Валидация (P>0, N>=P, M>0) — в CaponProcessor::ComputeRelief / AdaptiveBeamform.
  *
  * Алгоритм Кейпона (MVDR — Minimum Variance Distortionless Response):
- *   1. Ковариационная матрица: R = (1/N) * Y * Y^H + μI
- *   2. Обращение матрицы:      R^{-1}  (rocSOLVER POTRF+POTRI)
- *   3. Рельеф Кейпона:         z[m] = 1 / Re(u_m^H * R^{-1} * u_m)
- *   4. Адаптивное ДО:          w = R^{-1} * U,  Y_out = w^H * Y
+ *   1. R = (1/N)·Y·Y^H + μ·I        — ковариационная матрица + регуляризация
+ *   2. R^{-1}                        — rocSOLVER POTRF + POTRI (Cholesky-инверсия)
+ *   3. z[m] = 1 / Re(u_m^H·R^{-1}·u_m)  — рельеф (angular power spectrum)
+ *   4. W = R^{-1}·U,  Y_out = W^H·Y  — адаптивное диаграммообразование
  *
- *   Y — матрица принятого сигнала [n_channels × n_samples]
- *   U — матрица управляющих векторов  [n_channels × n_directions]
- *   R — ковариационная матрица  [n_channels × n_channels]
+ *   Y — матрица сигнала            [n_channels × n_samples]
+ *   U — управляющие векторы        [n_channels × n_directions]
+ *   R — ковариационная матрица     [n_channels × n_channels]
+ *   W — весовая матрица            [n_channels × n_directions]
  *
- * @author Кодо (AI Assistant)
- * @date 2026-03-16
+ * История:
+ *   - Создан:  2026-03-16
+ *   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
  */
 
 #include <complex>

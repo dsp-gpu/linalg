@@ -1,35 +1,62 @@
 #pragma once
 
-/**
- * @file capon_processor.hpp
- * @brief CaponProcessor — фасад для алгоритма Кейпона (MVDR) на GPU (ROCm/HIP)
- *
- * Ref03 Unified Architecture: Layer 6 (Facade).
- *
- * ROCm-only модуль. Реализует:
- *   - Рельеф Кейпона (пространственный спектр MVDR)
- *   - Адаптивное диаграммообразование (adaptive beamforming)
- *
- * Математика:
- *   R = (1/N) * Y * Y^H + μI         — ковариационная матрица с регуляризацией
- *   R^{-1}                            — CholeskyInverterROCm (vector_algebra)
- *   z[m] = 1 / Re(u_m^H * R^{-1} * u_m)  — рельеф Кейпона
- *   Y_out = (R^{-1}*U)^H * Y         — адаптивное ДО
- *
- * Внутренняя структура (Ref03):
- *   GpuContext ctx_               — per-module: stream, compiled kernels, shared buffers
- *   CovarianceMatrixOp cov_op_    — R = (1/N)*Y*Y^H (rocBLAS CGEMM)
- *   CaponInvertOp inv_op_         — R^{-1} через vector_algebra::CholeskyInverterROCm
- *   ComputeWeightsOp weights_op_  — W = R^{-1}*U (rocBLAS CGEMM → kWeight)
- *   CaponReliefOp relief_op_      — z[m] = 1/Re(u^H * W[m]) (HIP kernel)
- *   AdaptBeamformOp beam_op_      — Y_out = W^H * Y (rocBLAS CGEMM)
- *   CholeskyResult last_inv_      — хранит R^{-1} на GPU между шагами пайплайна
- *
- * Прототип: Doc_Addition/Capon/capon_test/ (ArrayFire CPU реализация)
- *
- * @author Кодо (AI Assistant)
- * @date 2026-03-16
- */
+// ============================================================================
+// CaponProcessor — фасад алгоритма Кейпона (MVDR) на GPU (Layer 6 Ref03)
+//
+// ЧТО:    Фасад для adaptive beamforming по методу Кейпона (Minimum Variance
+//         Distortionless Response). Координирует pipeline из 5 Layer-5 Op'ов:
+//           1. CovarianceMatrixOp   → R = (1/N)·Y·Y^H            (rocBLAS CGEMM)
+//           2. DiagonalLoadRegularizer → R += μ·I                (HIP kernel)
+//           3. CaponInvertOp        → R^{-1}                     (rocSOLVER POTRF+POTRI)
+//           4. ComputeWeightsOp     → W = R^{-1}·U               (rocBLAS CGEMM → kWeight)
+//           5a. CaponReliefOp       → z[m] = 1/Re(u_m^H·W[:,m])  (HIP kernel)  — для рельефа
+//           5b. AdaptBeamformOp     → Y_out = W^H·Y              (rocBLAS CGEMM) — для ДО
+//         Поддерживает CPU- и GPU-входы (upload или D2D-копия в kSignal/kSteering).
+//
+// ЗАЧЕМ:  Это публичный API модуля linalg для Capon. Python-биндинги,
+//         RadarPipeline и пользовательские тесты создают один CaponProcessor
+//         и вызывают ComputeRelief/AdaptiveBeamform — без знания о rocBLAS,
+//         rocSOLVER и порядке Op'ов внутри. SRP: фасад ТОЛЬКО координирует
+//         (DI: Op'ы инжектируются как value-члены, IMatrixRegularizer —
+//         через Strategy unique_ptr).
+//
+// ПОЧЕМУ: - Layer 6 Ref03 (Facade): не делает kernel launch'ей сам, делегирует
+//           Op'ам через ctx_ (GpuContext — Layer 1, единая точка для compiled
+//           kernels и shared buffers).
+//         - Op'ы хранятся как value-члены (cov_op_, weights_op_, relief_op_,
+//           beam_op_) — zero-overhead, инициализируются один раз через ctx_.
+//           CaponInvertOp — в unique_ptr (CholeskyInverterROCm non-copyable,
+//           unique_ptr даёт корректный move без boilerplate).
+//         - Strategy IMatrixRegularizer (DiagonalLoadRegularizer по умолчанию)
+//           через unique_ptr → DIP: фасад зависит от абстракции, можно
+//           подменять (LoadingFactor, Tikhonov, MUSIC-like, ...) без правки.
+//         - last_inv_ (CholeskyResult) хранит R^{-1} между шагами pipeline —
+//           ComputeRelief и AdaptiveBeamform не пересчитывают инверсию,
+//           если R не изменилось.
+//         - GpuContext per-module → thread-safe by instance: каждый
+//           CaponProcessor держит свой stream, параллельные вызовы из разных
+//           потоков на разных экземплярах не конфликтуют.
+//         - Move-only (=delete copy) — owns GPU buffers через ctx_; копировать
+//           = chaos с lifetime hipMalloc'ов.
+//         - rocBLAS column-major (как BLAS): Y/U/R/W/Y_out — все column-major,
+//           rocblas_set_stream привязывает handle к ctx_.stream() лениво
+//           внутри MatrixOpsROCm.
+//
+// Использование:
+//   capon::CaponProcessor proc(rocm_backend);
+//   capon::CaponParams params{
+//       .n_channels   = 16,    // P — антенны
+//       .n_samples    = 1024,  // N — снимки
+//       .n_directions = 181,   // M — углы θ ∈ [-90°, +90°]
+//       .mu           = 1e-3f, // диагональная загрузка
+//   };
+//   auto relief = proc.ComputeRelief(signal_iq, steering_vectors, params);
+//   // relief.relief[m] = P(θ_m), m=0..M-1 — angular power spectrum
+//
+// История:
+//   - Создан:  2026-03-16 (миграция Capon из vector_algebra/Doc_Addition)
+//   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
+// ============================================================================
 
 #if ENABLE_ROCM
 
@@ -62,7 +89,19 @@
 
 namespace capon {
 
-/// @ingroup grp_capon
+/**
+ * @class CaponProcessor
+ * @brief Layer 6 Ref03 фасад: pipeline алгоритма Кейпона (MVDR) на ROCm.
+ *
+ * @note Move-only (copy запрещён) — owns GPU buffers через GpuContext.
+ * @note Не thread-safe per-instance. Параллельные вызовы — на разных экземплярах.
+ * @note Требует #if ENABLE_ROCM. Без ROCm — stub с runtime_error.
+ * @note Lifecycle: ctor(backend) → ComputeRelief / AdaptiveBeamform → dtor.
+ * @see CovarianceMatrixOp, CaponInvertOp, ComputeWeightsOp, CaponReliefOp, AdaptBeamformOp
+ * @see vector_algebra::CholeskyInverterROCm — реальная инверсия R^{-1}
+ * @see vector_algebra::IMatrixRegularizer — Strategy для регуляризации
+ * @ingroup grp_capon
+ */
 class CaponProcessor {
 public:
   // =========================================================================

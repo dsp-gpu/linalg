@@ -1,23 +1,42 @@
 #pragma once
 
-/**
- * @file covariance_matrix_op.hpp
- * @brief CovarianceMatrixOp — ковариационная матрица R = (1/N)*Y*Y^H
- *
- * Ref03 Layer 5: Concrete Operation.
- *
- * Шаг:
- *   MatrixOpsROCm::CovarianceMatrix — R = (1/N) * Y * Y^H
- *
- * Регуляризация (R += mu*I) — ответственность IMatrixRegularizer,
- * применяется снаружи в CaponProcessor::RunCovAndInvert().
- *
- * Входные разделяемые буферы: kSignal (Y)
- * Выходные разделяемые буферы: kCovMatrix (R)
- *
- * @author Кодо (AI Assistant)
- * @date 2026-03-16
- */
+// ============================================================================
+// CovarianceMatrixOp — ковариация R = (1/N)·Y·Y^H (Layer 5 Ref03)
+//
+// ЧТО:    Concrete Op (наследник GpuKernelOp): первый шаг Capon-pipeline.
+//         Делегирует в MatrixOpsROCm::CovarianceMatrix:
+//           R[P × P] = (1/N) · Y[P × N] · Y^H[N × P]   (rocBLAS CHERK или CGEMM)
+//         где Y — матрица сигнала из shared kSignal, R записывается в
+//         shared kCovMatrix (lazy alloc через RequireShared).
+//
+// ЗАЧЕМ:  Ковариационная матрица — основа любого MVDR/Capon. Отделение в
+//         собственный Op (а не «всё в одном CaponProcessor») даёт SRP:
+//         замена реализации (CHERK vs CGEMM, batched vs single, MUSIC-style
+//         с выбором размера окна) — изолирована в этом классе. Регуляризация
+//         (R += μ·I) сюда НЕ входит — она через Strategy IMatrixRegularizer
+//         в CaponProcessor (DIP).
+//
+// ПОЧЕМУ: - Layer 5 Ref03: один Op = один логический шаг (rocBLAS gemm/herk).
+//         - Stateless (нет приватных GPU-буферов) — kCovMatrix в shared ctx_.
+//         - rocBLAS column-major: Y[P×N] (P каналов × N снимков) → Y·Y^H даёт
+//           R[P×P] (channel-channel ковариация). Для P=4..32, N=1024..16384 —
+//           ~1 ms на gfx1201 (memory-bound для больших N).
+//         - SRP: регуляризация R += μ·I — ответственность отдельного класса
+//           (DiagonalLoadRegularizer) через IMatrixRegularizer Strategy.
+//           Здесь — только «чистая» ковариация. Можно тестировать раздельно.
+//         - Нормировка 1/N — внутри MatrixOpsROCm::CovarianceMatrix (alpha
+//           параметр CHERK/CGEMM), не делает отдельного pass через память.
+//
+// Использование:
+//   // Внутри CaponProcessor::RunCovAndInvert:
+//   cov_op_.Execute(P, N, mat_ops_);
+//   regularizer_->Apply(ctx_, P, params.mu);   // R += μ·I (Strategy)
+//   inv_op_->Execute(R, P);                     // R^{-1} → last_inv_
+//
+// История:
+//   - Создан:  2026-03-16 (Ref03 Layer 5, Capon pipeline)
+//   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
+// ============================================================================
 
 #if ENABLE_ROCM
 
@@ -30,6 +49,17 @@
 
 namespace capon {
 
+/**
+ * @class CovarianceMatrixOp
+ * @brief Layer 5 Ref03 Op: R = (1/N)·Y·Y^H через rocBLAS, результат в kCovMatrix.
+ *
+ * @note Stateless (нет приватных буферов). kCovMatrix — в shared ctx_.
+ * @note Требует #if ENABLE_ROCM. Зависит от rocBLAS (через MatrixOpsROCm).
+ * @note Регуляризация (R += μ·I) — НЕ здесь, в IMatrixRegularizer (Strategy).
+ * @see vector_algebra::MatrixOpsROCm::CovarianceMatrix
+ * @see vector_algebra::IMatrixRegularizer — Strategy для μ·I
+ * @see CaponInvertOp — следующий шаг pipeline
+ */
 class CovarianceMatrixOp : public drv_gpu_lib::GpuKernelOp {
 public:
   const char* Name() const override { return "CovarianceMatrix"; }

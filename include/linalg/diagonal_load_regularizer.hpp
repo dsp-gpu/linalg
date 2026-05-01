@@ -1,22 +1,49 @@
 #pragma once
 #if ENABLE_ROCM
 
-/**
- * @file diagonal_load_regularizer.hpp
- * @brief DiagonalLoadRegularizer — регуляризация A += mu*I на GPU (через GpuContext v2)
- *
- * Concrete Strategy (GoF): реализация IMatrixRegularizer для диагональной загрузки.
- *
- * Операция: A[i,i].re += mu  для всех i = 0..n-1
- * Матрица A: квадратная n×n, complex<float>, column-major.
- *
- * Kernel компилируется через GpuContext::CompileModule в конструкторе
- * (disk cache v2 — clean-slate, keyed by CompileKey). Запуск через
- * hipModuleLaunchKernel, kernel fn получаем через ctx_.GetKernel().
- *
- * @author Кодо (AI Assistant)
- * @date 2026-03-16  (migrated 2026-04-22 to GpuContext)
- */
+// ============================================================================
+// DiagonalLoadRegularizer — A += mu·I на GPU (Concrete Strategy GoF)
+//
+// ЧТО:    Реализация IMatrixRegularizer: добавляет вещественный коэффициент mu
+//         к диагонали комплексной квадратной матрицы (A[i,i].re += mu).
+//         Запуск HIP kernel diagonal_load через hipModuleLaunchKernel,
+//         kernel компилируется в конструкторе через GpuContext (disk cache v2).
+//         Матрица A: n×n, complex<float>, column-major. In-place на GPU.
+//
+// ЗАЧЕМ:  Diagonal loading (Тихоновская регуляризация / Ridge) — стандартный
+//         приём защиты ковариационной матрицы R от ill-conditioning перед
+//         инверсией в Capon (MVDR), shrinkage estimators, adaptive filtering.
+//         Без регуляризации малые eigenvalue → ε → R^{-1} взрывается. mu·I
+//         сдвигает спектр, делает матрицу гарантированно invertible. Самая
+//         простая и быстрая регуляризация (один kernel-launch, n threads).
+//
+// ПОЧЕМУ: - Concrete Strategy: реализует IMatrixRegularizer, подключается в
+//           CaponProcessor через unique_ptr<IMatrixRegularizer>. Альтернатива
+//           — NoOpRegularizer (отключение). Через DIP фасад не знает про
+//           DiagonalLoadRegularizer напрямую.
+//         - Move-only: copy запрещён (owns GpuContext + hipFunction_t cache).
+//           Move нужен для возврата из factory / хранения в контейнере.
+//         - GpuContext (unique_ptr) — компилирует diagonal_load.hpp source
+//           один раз (disk cache v2, CompileKey keyed by source hash). При
+//           повторном запуске процесса perekompiilaатсiя НЕ нужна.
+//         - function_ кэшируется после ctx_->GetKernel — избегаем lookup
+//           по имени на каждый Apply (горячий путь Capon).
+//         - mu == 0.0f → kernel не запускается (no-op). Защита от пустого
+//           вызова при динамическом выборе регуляризатора.
+//         - stream параметр обязателен (default nullptr → backend stream).
+//           Передавайте ctx.stream() для гарантии порядка после CGEMM.
+//
+// Использование:
+//   DiagonalLoadRegularizer reg(backend);
+//   reg.Apply(d_cov_matrix, P, 0.01f, ctx.stream());   // R += 0.01·I
+//   inverter.Invert(InputData<void*>{d_cov_matrix}, P);
+//
+// История:
+//   - Создан:  2026-03-16 (Concrete Strategy для Capon)
+//   - Изменён: 2026-04-22 (миграция на GpuContext v2 disk cache,
+//                          вместо ручного hiprtc + hipModule)
+//   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
+// ============================================================================
 
 #include <linalg/i_matrix_regularizer.hpp>
 #include <core/interface/i_backend.hpp>
@@ -30,14 +57,15 @@ namespace vector_algebra {
 
 /**
  * @class DiagonalLoadRegularizer
- * @brief Диагональная загрузка: A += mu * I (GPU, compiled via GpuContext).
+ * @brief Concrete Strategy: A += mu·I через скомпилированный HIP kernel.
  *
- * Не копируемый (владеет GpuContext). Перемещаемый.
- *
- * @code
- * DiagonalLoadRegularizer reg(backend);
- * reg.Apply(d_cov_matrix, P, 0.01f);   // R += 0.01 * I
- * @endcode
+ * @note Move-only. Owns GpuContext (hipModule + disk cache v2).
+ * @note Требует #if ENABLE_ROCM. На non-ROCm — класс не компилируется.
+ * @note Не thread-safe (один kernel handle = один владелец).
+ * @note mu == 0 → no-op (kernel не запускается).
+ * @see IMatrixRegularizer (родительский интерфейс)
+ * @see NoOpRegularizer (альтернатива при mu = 0)
+ * @see CaponProcessor (главный потребитель)
  */
 class DiagonalLoadRegularizer : public IMatrixRegularizer {
 public:

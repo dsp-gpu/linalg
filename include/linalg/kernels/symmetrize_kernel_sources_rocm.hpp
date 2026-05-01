@@ -3,13 +3,22 @@
 
 /**
  * @file symmetrize_kernel_sources_rocm.hpp
- * @brief HIP kernel source для симметризации верхнего треугольника (hiprtc)
+ * @brief HIP kernel source для симметризации upper → full (после POTRI), для hiprtc.
  *
- * После POTRI результат хранится только в верхнем треугольнике.
- * Kernel копирует верхний → нижний с conjugate: A[col][row] = conj(A[row][col]).
+ * @note Тип B (technical header): R"HIP(...)HIP" source. Kernel:
+ *       symmetrize_upper_to_full
+ *         - 2D grid: (ceil(n/16), ceil(n/16)), block (16, 16)
+ *         - один поток = один элемент (row, col)
+ *         - copy upper → lower с conjugate: A[col][row] = conj(A[row][col])
+ *           (float2: {.x = re, .y = -im})
+ * @note Применение: после rocSOLVER POTRI результат лежит ТОЛЬКО в верхнем
+ *       треугольнике (LAPACK convention) — для эрмитовости нужно скопировать
+ *       upper → lower с сопряжением. Часть pipeline CholeskyInverterROCm в
+ *       SymmetrizeMode::GpuKernel (in-place GPU, без round-trip на CPU).
  *
- * @author Кодо (AI Assistant)
- * @date 2026-02-26
+ * История:
+ *   - Создан:  2026-02-26
+ *   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
  */
 
 namespace vector_algebra {

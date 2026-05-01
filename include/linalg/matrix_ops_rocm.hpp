@@ -1,32 +1,42 @@
 #pragma once
 
-/**
- * @file matrix_ops_rocm.hpp
- * @brief MatrixOpsROCm — обёртка над rocBLAS CGEMM для complex<float> матриц
- *
- * Централизует rocBLAS CGEMM операции, убирая прямую зависимость от rocblas.h
- * из модулей верхнего уровня (capon, statistics и др.).
- *
- * Использует rocBLAS handle из GpuContext — handle уже привязан к stream_
- * при первом вызове GetRocblasHandleRaw() (lazy init в GpuContext).
- * Дополнительных rocblas_set_stream не требуется.
- *
- * Соглашения:
- *   - Все матрицы complex<float> (rocblas_float_complex = float2)
- *   - Хранение column-major (как в BLAS/LAPACK/rocBLAS)
- *   - Размерности: m=строки C, n=столбцы C, k=внутреннее измерение
- *
- * Поддерживаемые паттерны (capon + общий):
- *   CovarianceMatrix   : R = (1/N) * Y * Y^H          [P×N → P×P]
- *   Multiply           : C = A * B                     [m×k, k×n → m×n]
- *   MultiplyConjTransA : C = A^H * B                   [k×m stored, k×n → m×n]
- *   CGEMM              : C = α*op(A)*op(B) + β*C       (общий вызов)
- *
- * Требования: ROCm 7.2+, rocBLAS
- *
- * @author Кодо (AI Assistant)
- * @date 2026-03-16
- */
+// ============================================================================
+// MatrixOpsROCm — фасад rocBLAS CGEMM для complex<float> матриц (Layer 6 Ref03)
+//
+// ЧТО:    Тонкая обёртка над rocBLAS CGEMM (комплексное матричное умножение).
+//         Предоставляет именованные shortcut'ы под типовые паттерны сигнальной
+//         обработки: CovarianceMatrix (R = Y·Y^H/N), Multiply (C = A·B),
+//         MultiplyConjTransA (C = A^H·B) — плюс общий CGEMM для произвольных
+//         транспозиций. Все матрицы — complex<float>, column-major.
+//
+// ЗАЧЕМ:  Capon, statistics и другие модули верхнего уровня не должны тянуть
+//         rocblas.h в свои public headers (зависимость на конкретный BLAS-
+//         бэкенд). MatrixOpsROCm централизует все CGEMM-вызовы за единым API,
+//         оставляя возможность подменить реализацию (HybridBackend, future
+//         CPU-fallback) без правки потребителей.
+//
+// ПОЧЕМУ: - Layer 6 Facade Ref03 — координирует rocBLAS, не делает kernel-
+//           launch'и. Делегирует rocblas_cgemm через handle из GpuContext.
+//         - rocBLAS handle берём из GpuContext (lazy init, уже привязан к
+//           stream_) → не нужно вручную rocblas_set_stream, синхронизация
+//           гарантирована Layer 1.
+//         - Non-owning ctx_ — MatrixOpsROCm не владеет GpuContext, только
+//           использует. Move разрешён (передача указателя), copy запрещён
+//           (логика владения должна быть явной у вызывающего).
+//         - Именованные методы (CovarianceMatrix / MultiplyConjTransA) над
+//           generic CGEMM — самодокументируемый код в capon без магических
+//           rocblas_operation констант на каждом вызове.
+//
+// Использование:
+//   drv_gpu_lib::GpuContext ctx{backend};
+//   MatrixOpsROCm mat_ops(&ctx);
+//   mat_ops.CovarianceMatrix(d_Y, P, N, d_R);   // R = (1/N) Y Y^H
+//   mat_ops.Multiply(d_R_inv, d_U, d_W, P, M, P);
+//
+// История:
+//   - Создан:  2026-03-16 (вынос rocBLAS из capon/statistics в общий фасад)
+//   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
+// ============================================================================
 
 #if ENABLE_ROCM
 
@@ -41,15 +51,13 @@ namespace vector_algebra {
 
 /**
  * @class MatrixOpsROCm
- * @brief rocBLAS CGEMM операции, привязанные к GpuContext (stream + handle).
+ * @brief Фасад rocBLAS CGEMM, привязанный к GpuContext (stream + handle).
  *
- * Создаётся в конструкторе модуля:
- * @code
- *   MatrixOpsROCm mat_ops(&ctx_);
- *   mat_ops.CovarianceMatrix(Y, P, N, R);
- * @endcode
- *
- * Не копируемый (владеет ссылкой на ctx_). Перемещаемый (меняет указатель).
+ * @note Move-only: copy запрещён, move передаёт non-owning указатель ctx_.
+ * @note Не владеет GpuContext — ctx должен жить дольше MatrixOpsROCm.
+ * @note Требует #if ENABLE_ROCM. На non-ROCm — stub с пустыми методами.
+ * @see drv_gpu_lib::GpuContext (Layer 1 — lazy rocBLAS handle)
+ * @see CaponProcessor (главный потребитель именованных shortcut'ов)
  */
 class MatrixOpsROCm {
 public:

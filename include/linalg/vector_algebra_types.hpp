@@ -3,13 +3,17 @@
 
 /**
  * @file vector_algebra_types.hpp
- * @brief CholeskyResult (единый не-шаблонный тип) + SymmetrizeMode
+ * @brief Публичные типы linalg: CholeskyResult (RAII GPU-владелец) + SymmetrizeMode.
  *
- * Task_11: переделка из шаблонного CholeskyResult<T> в единый тип
- * с void* d_data (GPU). Методы AsVector(), AsHipPtr(), matrix(), matrices().
+ * @note Тип B (technical header): struct + enum для CholeskyInverterROCm.
+ *       CholeskyResult — НЕ POD: имеет ~dtor (Free через backend), move-only.
+ *       Хранит void* d_data (HIP device pointer), методы AsVector / matrix /
+ *       matrices скачивают на CPU. AsHipPtr возвращает raw без передачи
+ *       владения (caller НЕ Free).
  *
- * @author Кодо (AI Assistant)
- * @date 2026-02-26
+ * История:
+ *   - Создан:  2026-02-26 (Task_11: void* d_data вместо template<T>)
+ *   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
  */
 
 #include <complex>

@@ -1,23 +1,42 @@
 #pragma once
 
-/**
- * @file compute_weights_op.hpp
- * @brief ComputeWeightsOp — весовая матрица W = R^{-1} * U
- *
- * Ref03 Layer 5: Concrete Operation.
- *
- * Вычисляет W = R^{-1} * U через MatrixOpsROCm::Multiply.
- * Результат записывается в shared буфер kWeight.
- *
- * Этот Op выделен отдельно, чтобы исключить дублирование CGEMM
- * в CaponReliefOp и AdaptBeamformOp — оба читают kWeight.
- *
- * Входные:  kSteering (U) [P × M],  R_inv_ptr [P × P] (из CholeskyResult)
- * Выходные: kWeight   (W) [P × M]
- *
- * @author Кодо (AI Assistant)
- * @date 2026-03-16
- */
+// ============================================================================
+// ComputeWeightsOp — весовая матрица W = R^{-1}·U (Layer 5 Ref03)
+//
+// ЧТО:    Concrete Op (наследник GpuKernelOp): средний шаг Capon-pipeline.
+//         Один rocBLAS CGEMM:
+//           W[P × M] = R^{-1}[P × P] · U[P × M]   (NoTrans × NoTrans)
+//         Источник R^{-1} — CholeskyResult из CaponInvertOp (передаётся как
+//         R_inv_ptr). U — управляющие векторы из shared kSteering. W —
+//         в shared kWeight (lazy alloc через RequireShared).
+//
+// ЗАЧЕМ:  W используется ОБОИМИ финальными Op'ами (CaponReliefOp для рельефа,
+//         AdaptBeamformOp для ДО). Если бы каждый из них делал свой CGEMM —
+//         R^{-1}·U считался бы дважды для пайплайна, который вычисляет и
+//         рельеф, и beam output (типичный сценарий RadarPipeline). Вынос в
+//         отдельный Op + shared kWeight = вычисляем W один раз, переиспользуем.
+//
+// ПОЧЕМУ: - Layer 5 Ref03: один Op = один логический шаг (CGEMM R^{-1}·U).
+//         - Stateless (нет приватных GPU-буферов) — kWeight в shared ctx_.
+//         - DRY: устранили дублирование CGEMM между CaponReliefOp и
+//           AdaptBeamformOp (см. историю — раньше каждый делал свой gemm).
+//         - rocBLAS NoTrans × NoTrans: R^{-1} симметрична эрмитова после
+//           POTRI+симметризации, прямое умножение корректно.
+//         - column-major: согласованно со всем pipeline (Y, U, R, W, Y_out).
+//         - RequireShared lazy alloc: первый вызов выделит kWeight, повторные
+//           переиспользуют (если M не изменилось).
+//
+// Использование:
+//   // Внутри CaponProcessor::RunComputeWeights:
+//   void* R_inv = last_inv_.AsHipPtr();
+//   weights_op_.Execute(P, M, R_inv, mat_ops_);
+//   // → kWeight содержит W[P×M], готово для CaponReliefOp / AdaptBeamformOp.
+//
+// История:
+//   - Создан:  2026-03-16 (Ref03 Layer 5, Capon pipeline; устранение
+//                          дублирования CGEMM в Relief и Beam Op'ах)
+//   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
+// ============================================================================
 
 #if ENABLE_ROCM
 
@@ -30,6 +49,17 @@
 
 namespace capon {
 
+/**
+ * @class ComputeWeightsOp
+ * @brief Layer 5 Ref03 Op: W = R^{-1}·U через rocBLAS CGEMM, результат в kWeight.
+ *
+ * @note Stateless (нет приватных буферов). kWeight — в shared ctx_.
+ * @note Требует #if ENABLE_ROCM. Зависит от rocBLAS (через MatrixOpsROCm).
+ * @note Предусловие: CaponInvertOp::Execute() вернул валидный R_inv_ptr.
+ * @note Постусловие: kWeight содержит W[P×M] для CaponReliefOp И AdaptBeamformOp.
+ * @see CaponInvertOp — поставщик R^{-1}
+ * @see CaponReliefOp, AdaptBeamformOp — потребители kWeight
+ */
 class ComputeWeightsOp : public drv_gpu_lib::GpuKernelOp {
 public:
   const char* Name() const override { return "ComputeWeights"; }

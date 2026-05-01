@@ -1,22 +1,27 @@
 #pragma once
 
 /**
- * @file capon_kernels_rocm.hpp
- * @brief HIP kernel sources для CaponProcessor (ROCm/hiprtc)
+ * @brief HIP kernel-source для CaponProcessor (компилируется через hiprtc).
  *
- * Содержит:
- *   add_regularization     — R[i,i] += mu (диагональная загрузка)
- *   compute_capon_relief   — z[m] = 1/Re(Σ_p conj(U[p,m]) * W[p,m])
+ * @note Тип B (technical header): R"HIP(...)HIP" source для GpuContext::CompileModule().
+ *       GEMM-операции (R=Y·Y^H, W=R^{-1}·U, Y_out=W^H·Y) — через rocBLAS, не здесь.
+ *       Здесь только custom kernel'ы, для которых rocBLAS неэффективен/невозможен.
  *
- * Компилируется через hiprtc в GpuContext::CompileModule().
- * GEMM-операции (R=Y*Y^H, W=R^{-1}*U, Y_out=W^H*Y) — через rocBLAS, не здесь.
+ * Кернел `compute_capon_relief`:
+ *   z[m] = 1 / Re(Σ_{p=0..P-1} conj(U[p,m]) · W[p,m])
+ *   - один thread = одно направление m
+ *   - launch: grid = (M+255)/256, block = 256
+ *   - column-major: [p, m] → m·P + p
+ *   - почему свой kernel, а не rocBLAS gemm + diag: gemm даёт U^H·W [M×M],
+ *     но нужна только диагональ — 99% работы выкидывается.
  *
  * Соглашения:
- *   - complex<float> хранится как float2 (x=re, y=im)
- *   - матрицы column-major (как в rocBLAS/LAPACK): [p, m] → m*P + p
+ *   - complex<float> представлен как float2 (x=re, y=im)
+ *   - все матрицы column-major (LAPACK/rocBLAS convention)
  *
- * @author Кодо (AI Assistant)
- * @date 2026-03-16
+ * История:
+ *   - Создан:  2026-03-16
+ *   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
  */
 
 #if ENABLE_ROCM
