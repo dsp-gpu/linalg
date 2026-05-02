@@ -1,5 +1,17 @@
 #pragma once
 
+// ============================================================================
+// test_capon_benchmark_rocm — runner бенчмарков CaponProcessor (ROCm)
+//
+// ЧТО:    ComputeRelief() и AdaptiveBeamform() → Results/Profiler/GPU_00_Capon_ROCm/.
+//         P=16, N=256, M=64, mu=0.01. Warmup=5, Runs=20.
+// ЗАЧЕМ:  Capon — самая тяжёлая операция linalg. Бенчмарк детектирует
+//         регрессии производительности rocBLAS/rocSOLVER paths.
+// ПОЧЕМУ: Нет AMD GPU → [SKIP]. ProfilingFacade для вывода.
+//
+// История: Создан: 2026-03-16
+// ============================================================================
+
 /**
  * @file test_capon_benchmark_rocm.hpp
  * @brief Test runner: CaponProcessor — ROCm benchmark (GpuBenchmarkBase)

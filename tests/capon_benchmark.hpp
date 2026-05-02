@@ -1,5 +1,18 @@
 #pragma once
 
+// ============================================================================
+// capon_benchmark — benchmark-классы CaponProcessor (GpuBenchmarkBase)
+//
+// ЧТО:    CaponReliefBenchmarkROCm (ComputeRelief) и
+//         CaponBeamformBenchmarkROCm (AdaptiveBeamform) — GpuBenchmarkBase.
+//         hipEvent-замер: длительность → ROCmProfilingData → ProfilingFacade.
+// ЗАЧЕМ:  Capon — вычислительно тяжёлая операция (инверсия матриц).
+//         Бенчмарк изолирует regression GPU kernels от test overhead.
+// ПОЧЕМУ: ENABLE_ROCM. Результаты → ProfilingFacade (не stdout).
+//
+// История: Создан: 2026-04-12
+// ============================================================================
+
 /**
  * @file capon_benchmark.hpp
  * @brief ROCm benchmark-классы для CaponProcessor (GpuBenchmarkBase)

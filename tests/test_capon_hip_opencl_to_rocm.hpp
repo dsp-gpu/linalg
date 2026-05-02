@@ -1,5 +1,17 @@
 #pragma once
 
+// ============================================================================
+// test_capon_hip_opencl_to_rocm — HIP alloc → OpenCL write → Capon ROCm
+//
+// ЧТО:    Тест interop: hipMalloc выделяет память, OpenCL cl_mem пишет данные,
+//         CaponProcessor считает на ROCm — без копирования через HSA/DMA-BUF.
+// ЗАЧЕМ:  Реальная DSP-система: данные уже в OpenCL (после FFT/фильтра).
+//         Тест верифицирует нулевое копирование без потери точности.
+// ПОЧЕМУ: Требует AMD GPU с HSA Probe / DMA-BUF / SVM. Legacy interop.
+//
+// История: Создан: 2026-04-12
+// ============================================================================
+
 /**
  * @file test_capon_hip_opencl_to_rocm.hpp
  * @brief HIP выделяет память → OpenCL пишет данные → Capon считает на ROCm

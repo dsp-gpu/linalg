@@ -1,4 +1,16 @@
 #pragma once
+
+// ============================================================================
+// test_cholesky_inverter_rocm — тесты CholeskyInverterROCm (Task_11 v2)
+//
+// ЧТО:    10 тестов (по 2 режима Roundtrip/GpuKernel): Identity, 341×341,
+//         void*, cl_mem (SKIP), batch CPU/GPU, sizes, access.
+// ЗАЧЕМ:  Cholesky inverter — ядро Capon pipeline. Ошибка = неверный Capon.
+// ПОЧЕМУ: ENABLE_ROCM. SymmetrizeMode параметр → оба пути одним fixture.
+//
+// История: Создан: 2026-02-26
+// ============================================================================
+
 #if ENABLE_ROCM
 
 /**

@@ -1,5 +1,18 @@
 #pragma once
 
+// ============================================================================
+// capon_test_helpers — общие утилиты тестов Capon
+//
+// ЧТО:    GetROCmBackend() (singleton), MakeSteeringMatrix() (ULA),
+//         MakeNoise() (LCG+Box-Muller), AddInterference() (CW-помеха),
+//         LoadRealVector/LoadSignalMatlab/MakePhysicalSteering.
+// ЗАЧЕМ:  Shared helpers исключают дублирование setup Capon-тестов.
+//         Физические координаты антенной решётки заказчика.
+// ПОЧЕМУ: kDataDir → Doc_Addition/Capon/. f0=3921150000 Hz, c=299792458 m/s.
+//
+// История: Создан: 2026-04-12
+// ============================================================================
+
 /**
  * @file capon_test_helpers.hpp
  * @brief Общие утилиты тестов модуля capon

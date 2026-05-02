@@ -1,4 +1,17 @@
 #pragma once
+
+// ============================================================================
+// test_cross_backend_conversion — cross-backend тесты 85×85 матрица (5.10)
+//
+// ЧТО:    Все пути данных: HIP↔OpenCL, void*↔cl_mem, GPU-to-GPU без копирования.
+//         Матрица 85×85 (малая — подходит для interop тестирования).
+// ЗАЧЕМ:  Верифицирует Zero Copy bridge между OpenCL и ROCm. Ошибки —
+//         silent bit corruption при передаче данных.
+// ПОЧЕМУ: ENABLE_ROCM. HSA Probe / DMA-BUF / SVM. Legacy migration тест.
+//
+// История: Создан: 2026-02-26
+// ============================================================================
+
 #if ENABLE_ROCM
 
 /**

@@ -1,59 +1,27 @@
 #pragma once
 
+// ============================================================================
+// TestCaponOpenCLToROCm — production pipeline: OpenCL → Zero Copy → Capon ROCm
+//
+// ЧТО:    Тестирует полный путь данных заказчика: загрузка MATLAB-файлов,
+//         запись на GPU через OpenCL (cl_mem), передача в ROCm через Zero Copy
+//         (HSA Probe / DMA-BUF / SVM) без копирования, расчёт Capon на ROCm.
+//         5 тестов: detect_interop, customer_data_pipeline, zerocopy_matches_direct,
+//         beamform_customer_data, svm_customer_data.
+// ЗАЧЕМ:  В реальной DSP-системе данные уже в OpenCL после предыдущего этапа
+//         (FFT, фильтрация). Верифицирует, что Zero Copy прозрачен: результат
+//         идентичен прямому пути (max |Δz| < 1e-4).
+// ПОЧЕМУ: #if ENABLE_ROCM; требует AMD GPU с HSA Probe / DMA-BUF / SVM;
+//         legacy migration (OpenCL → ROCm interop через ZeroCopyBridge).
+//         P=85 каналов, N=1000 отсчётов, f0=3 921 150 000 Гц.
+//
+// История: Создан: 2026-04-12
+// ============================================================================
+
 /**
- * @file test_capon_opencl_to_rocm.hpp
- * @brief Данные заказчика -> OpenCL -> Zero Copy -> Capon на ROCm
- *
- * ======================================================================
- * НАЗНАЧЕНИЕ
- * ======================================================================
- *
- * Демонстрация полного production pipeline с РЕАЛЬНЫМИ данными заказчика:
- *
- *   1. Загрузка данных заказчика (MATLAB сигнал, координаты антенн)
- *   2. Запись на GPU через OpenCL (cl_mem) — как в реальной DSP-системе
- *   3. Передача из OpenCL в ROCm (Zero Copy — без копирования!)
- *   4. Расчёт алгоритма Кейпона на ROCm (GPU pipeline)
- *
- * ======================================================================
- * ДАННЫЕ ЗАКАЗЧИКА
- * ======================================================================
- *
- * Файлы из Doc_Addition/Capon/capon_test/build/:
- *   - x_data.txt        — координаты x 340 антенных элементов
- *   - y_data.txt        — координаты y 340 антенных элементов
- *   - signal_matlab.txt — сигнал [341 строка x 1000 complex], формат MATLAB
- *   - z_values.txt      — эталонные значения рельефа (для верификации)
- *
- * Физические параметры:
- *   f0 = 3918 МГц + 3.15 МГц = 3 921 150 000 Гц
- *   c  = 299 792 458 м/с
- *   P  = 85 антенных каналов (подмассив из 340)
- *   N  = 1000 временных отсчётов
- *
- * ======================================================================
- * ТЕСТЫ
- * ======================================================================
- *
- *   01. detect_interop              — возможности Zero Copy на данном GPU
- *   02. customer_data_pipeline      — ПОЛНЫЙ PIPELINE с данными заказчика
- *   03. zerocopy_matches_direct     — доказать: ZeroCopy путь == прямой путь
- *   04. beamform_customer_data      — адаптивное ДО с данными заказчика
- *
- * ======================================================================
- * ЗАВИСИМОСТИ
- * ======================================================================
- *
- *   - OpenCLBackend  (DrvGPU/backends/opencl/)
- *   - ROCmBackend    (DrvGPU/backends/rocm/)
- *   - ZeroCopyBridge (DrvGPU/backends/rocm/zero_copy_bridge.hpp)
- *   - CaponProcessor (modules/capon/include/capon_processor.hpp)
- *
- * @note  ТОЛЬКО Linux + AMD GPU с HSA Probe, DMA-BUF или SVM.
- * @note  OpenCL и ROCm должны использовать одно физическое GPU (device 0).
- *
- * @author Кодо (AI Assistant)
- * @date   2026-03-24
+ * @class test_capon_opencl_to_rocm
+ * @brief Production pipeline: данные заказчика → OpenCL → Zero Copy → Capon ROCm.
+ * @note Не публичный API. Запускается через all_test.hpp.
  */
 
 #if ENABLE_ROCM
