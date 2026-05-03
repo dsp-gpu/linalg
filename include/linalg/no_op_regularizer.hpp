@@ -47,6 +47,10 @@ namespace vector_algebra {
  */
 class NoOpRegularizer : public IMatrixRegularizer {
 public:
+  /**
+   * @brief Null Object: ничего не делает (zero overhead, kernel не запускается).
+   *
+   */
   void Apply(void* /*d_matrix*/, int /*n*/, float /*mu*/,
              hipStream_t /*stream*/ = nullptr) override {}
 };

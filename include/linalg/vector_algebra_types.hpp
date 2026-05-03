@@ -45,16 +45,33 @@ struct CholeskyResult {
 
   // --- Доступ к данным ---
 
-  /// Download GPU → CPU vector
+  /**
+   * @brief Скачивает GPU-данные в плоский CPU vector через backend->Memcpy.
+   *
+   * @return Массив [batch_count × matrix_size × matrix_size] complex<float>.
+   *   @test_check result.size() == batch_count * matrix_size * matrix_size
+   */
   std::vector<std::complex<float>> AsVector() const;
 
-  /// Вернуть HIP device ptr (caller НЕ владеет — НЕ вызывать Free!)
+  /**
+   * @brief Возвращает HIP device pointer без передачи владения (caller НЕ вызывает Free).
+   */
   void* AsHipPtr() const { return d_data; }
 
-  /// Одна матрица как 2D vector [n][n] (для batch_count=1)
+  /**
+   * @brief Скачивает одну матрицу (batch_count==1) как 2D vector [n][n].
+   *
+   * @return Массив [matrix_size][matrix_size] complex<float>.
+   *   @test_check result.size() == matrix_size && result[0].size() == matrix_size
+   */
   std::vector<std::vector<std::complex<float>>> matrix() const;
 
-  /// Batch как 3D vector [batch][n][n]
+  /**
+   * @brief Скачивает все матрицы batch'а как 3D vector [batch][n][n].
+   *
+   * @return Массив [batch_count][matrix_size][matrix_size] complex<float>.
+   *   @test_check result.size() == batch_count && result[0].size() == matrix_size
+   */
   std::vector<std::vector<std::vector<std::complex<float>>>> matrices() const;
 
   // --- Владение памятью ---

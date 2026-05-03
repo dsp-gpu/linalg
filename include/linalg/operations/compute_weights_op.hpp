@@ -62,13 +62,21 @@ namespace capon {
  */
 class ComputeWeightsOp : public drv_gpu_lib::GpuKernelOp {
 public:
+  /**
+   * @brief Возвращает имя Op'а для логирования и профилирования.
+   *
+   * @return C-строка "ComputeWeights" (статический литерал).
+   *   @test_check std::string(result) == "ComputeWeights"
+   */
   const char* Name() const override { return "ComputeWeights"; }
 
   /**
    * @brief Вычислить W = R^{-1} * U  (MatrixOpsROCm::Multiply)
    * @param n_channels   P — число каналов
+   *   @test { range=[1..50000], value=128, unit="лучей/каналов" }
    * @param n_directions M — число направлений
    * @param R_inv_ptr    R^{-1} на GPU — из CholeskyResult::AsHipPtr()
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param mat          MatrixOpsROCm из CaponProcessor (stream привязан к ctx_)
    *
    * Читает: kSteering (U) [P × M]

@@ -92,9 +92,13 @@ public:
    * @brief Ковариационная матрица: R = (1/N) * Y * Y^H
    *
    * @param Y   [P × N] complex<float>, column-major
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param P   число строк (каналы)
+   *   @test { range=[1e-9..1e3], value=1.0, unit="matrix coefficient" }
    * @param N   число столбцов (отсчёты)
+   *   @test { range=[512..1300000], value=8192 }
    * @param R   [P × P] выход, complex<float>, column-major
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    *
    * rocBLAS: C[P×P] = alpha * Y[P×N] * Y^H[N×P]
    *   opA=None, opB=ConjTrans, alpha=1/N, beta=0
@@ -105,10 +109,14 @@ public:
    * @brief Матричное умножение: C = A * B  (NoTrans × NoTrans)
    *
    * @param A   [m × k] complex<float>, column-major
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param B   [k × n] complex<float>, column-major
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param C   [m × n] выход, complex<float>, column-major
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param m   строки A и C
    * @param n   столбцы B и C
+   *   @test { range=[512..1300000], value=8192 }
    * @param k   столбцы A = строки B
    *
    * Применения в capon:
@@ -123,10 +131,14 @@ public:
    * После ConjTrans: A^H = [m × k].
    *
    * @param A   [k × m] complex<float>, column-major (хранится транспонированным)
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param B   [k × n] complex<float>, column-major
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param C   [m × n] выход, complex<float>, column-major
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param m   строки C  (= столбцы A до транспонирования)
    * @param n   столбцы C (= столбцы B)
+   *   @test { range=[512..1300000], value=8192 }
    * @param k   строки A и B (= contraction dimension)
    *
    * Применения в capon:
@@ -147,14 +159,18 @@ public:
    * @param transB  rocblas_operation_none / rocblas_operation_conjugate_transpose
    * @param m       строки op(A) и C
    * @param n       столбцы op(B) и C
+   *   @test { range=[512..1300000], value=8192 }
    * @param k       столбцы op(A) = строки op(B)
    * @param alpha   скаляр alpha (complex<float>)
    * @param A       матрица A на GPU
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param lda     leading dimension A
    * @param B       матрица B на GPU
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param ldb     leading dimension B
    * @param beta    скаляр beta (complex<float>)
    * @param C       матрица C на GPU (вход/выход)
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param ldc     leading dimension C
    *
    * @throws std::runtime_error при ошибке rocBLAS
@@ -184,8 +200,20 @@ namespace vector_algebra {
 class MatrixOpsROCm {
 public:
   MatrixOpsROCm() = default;
+  /**
+   * @brief Stub для non-ROCm сборок: no-op (тестовые сборки без GPU).
+   *
+   */
   void CovarianceMatrix(const void*, int, int, void*) {}
+  /**
+   * @brief Stub для non-ROCm сборок: no-op (тестовые сборки без GPU).
+   *
+   */
   void Multiply(const void*, const void*, void*, int, int, int) {}
+  /**
+   * @brief Stub для non-ROCm сборок: no-op (тестовые сборки без GPU).
+   *
+   */
   void MultiplyConjTransA(const void*, const void*, void*, int, int, int) {}
 };
 }  // namespace vector_algebra

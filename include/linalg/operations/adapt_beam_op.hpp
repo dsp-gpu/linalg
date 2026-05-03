@@ -57,12 +57,20 @@ namespace capon {
  */
 class AdaptBeamformOp : public drv_gpu_lib::GpuKernelOp {
 public:
+  /**
+   * @brief Возвращает имя Op'а для логирования и профилирования.
+   *
+   * @return C-строка "AdaptBeamform" (статический литерал).
+   *   @test_check std::string(result) == "AdaptBeamform"
+   */
   const char* Name() const override { return "AdaptBeamform"; }
 
   /**
    * @brief Адаптивное ДО: Y_out = W^H * Y
    * @param n_channels   P — число каналов
+   *   @test { range=[1..50000], value=128, unit="лучей/каналов" }
    * @param n_samples    N — число отсчётов
+   *   @test { range=[100..1300000], value=6000 }
    * @param n_directions M — число направлений (лучей)
    * @param mat          MatrixOpsROCm из CaponProcessor (stream привязан к ctx_)
    *

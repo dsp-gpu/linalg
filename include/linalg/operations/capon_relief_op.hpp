@@ -65,17 +65,26 @@ namespace capon {
  */
 class CaponReliefOp : public drv_gpu_lib::GpuKernelOp {
 public:
+  /**
+   * @brief Возвращает имя Op'а для логирования и профилирования.
+   *
+   * @return C-строка "CaponRelief" (статический литерал).
+   *   @test_check std::string(result) == "CaponRelief"
+   */
   const char* Name() const override { return "CaponRelief"; }
 
   /**
    * @brief Вычислить рельеф Кейпона
    * @param n_channels   P — число каналов
+   *   @test { range=[1..50000], value=128, unit="лучей/каналов" }
    * @param n_directions M — число направлений
    *
    * Читает: kSteering (U) [P × M],  kWeight (W = R^{-1}*U) [P × M]
    * Пишет:  kOutput (float[M])
    *
    * Предусловие: ComputeWeightsOp::Execute() уже запущен и записал W в kWeight.
+   * @throws std::runtime_error при сбое hipModuleLaunchKernel("compute_capon_relief").
+   *   @test_check throws on hipModuleLaunchKernel != hipSuccess
    */
   void Execute(uint32_t n_channels, uint32_t n_directions) {
     uint32_t P = n_channels;

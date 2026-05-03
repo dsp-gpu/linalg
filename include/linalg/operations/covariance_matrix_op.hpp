@@ -62,12 +62,20 @@ namespace capon {
  */
 class CovarianceMatrixOp : public drv_gpu_lib::GpuKernelOp {
 public:
+  /**
+   * @brief Возвращает имя Op'а для логирования и профилирования.
+   *
+   * @return C-строка "CovarianceMatrix" (статический литерал).
+   *   @test_check std::string(result) == "CovarianceMatrix"
+   */
   const char* Name() const override { return "CovarianceMatrix"; }
 
   /**
    * @brief Вычислить R = (1/N) * Y * Y^H
    * @param n_channels P — число каналов
+   *   @test { range=[1..50000], value=128, unit="лучей/каналов" }
    * @param n_samples  N — число отсчётов
+   *   @test { range=[100..1300000], value=6000 }
    * @param mat        MatrixOpsROCm из CaponProcessor (stream привязан к ctx_)
    *
    * Читает: ctx_->GetShared(kSignal)  [P × N]

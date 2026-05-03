@@ -133,7 +133,9 @@ public:
    * @param signal    Y: матрица сигнала [n_channels × n_samples], column-major
    * @param steering  U: управляющие векторы [n_channels × n_directions], column-major
    * @param params    Параметры (n_channels, n_samples, n_directions, mu)
+   *   @test_ref CaponParams
    * @return CaponReliefResult — M вещественных значений пространственного спектра
+   *   @test_check result.relief.size() == params.n_directions
    */
   CaponReliefResult ComputeRelief(
       const std::vector<std::complex<float>>& signal,
@@ -145,7 +147,9 @@ public:
    * @param signal    Y: матрица сигнала [n_channels × n_samples], column-major
    * @param steering  U: управляющие векторы [n_channels × n_directions], column-major
    * @param params    Параметры
+   *   @test_ref CaponParams
    * @return CaponBeamResult — матрица [n_directions × n_samples]
+   *   @test_check result.output.size() == params.n_directions * params.n_samples
    */
   CaponBeamResult AdaptiveBeamform(
       const std::vector<std::complex<float>>& signal,
@@ -159,7 +163,13 @@ public:
   /**
    * @brief Рельеф Кейпона (GPU входы)
    * @param gpu_signal   Y на GPU: complex<float>[n_channels × n_samples], column-major
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    * @param gpu_steering U на GPU: complex<float>[n_channels × n_directions], column-major
+   * @param params Параметры (n_channels, n_samples, n_directions, mu).
+   *   @test_ref CaponParams
+   * @return CaponReliefResult — M вещественных значений пространственного спектра.
+   *   @test_check result.relief.size() == params.n_directions
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
    */
   CaponReliefResult ComputeRelief(
       void* gpu_signal,
@@ -168,6 +178,14 @@ public:
 
   /**
    * @brief Адаптивное ДО (GPU входы)
+   * @param gpu_signal Y на GPU: complex<float>[n_channels × n_samples], column-major.
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   * @param gpu_steering U на GPU: complex<float>[n_channels × n_directions], column-major.
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   * @param params Параметры (n_channels, n_samples, n_directions, mu).
+   *   @test_ref CaponParams
+   * @return CaponBeamResult — матрица [n_directions × n_samples].
+   *   @test_check result.output.size() == params.n_directions * params.n_samples
    */
   CaponBeamResult AdaptiveBeamform(
       void* gpu_signal,
@@ -264,17 +282,57 @@ public:
   CaponProcessor(CaponProcessor&&) noexcept = default;
   CaponProcessor& operator=(CaponProcessor&&) noexcept = default;
 
+  /**
+   * @brief Stub: бросает runtime_error — ComputeRelief доступен только в ROCm-сборке.
+   *
+   *
+   * @return Никогда не возвращает (всегда throw).
+   *   @test_check throws std::runtime_error
+   *
+   * @throws std::runtime_error всегда: "ROCm not enabled".
+   *   @test_check throws std::runtime_error
+   */
   CaponReliefResult ComputeRelief(const std::vector<std::complex<float>>&,
       const std::vector<std::complex<float>>&, const CaponParams&) {
     throw std::runtime_error("CaponProcessor: ROCm not enabled");
   }
+  /**
+   * @brief Stub: бросает runtime_error — AdaptiveBeamform доступен только в ROCm-сборке.
+   *
+   *
+   * @return Никогда не возвращает (всегда throw).
+   *   @test_check throws std::runtime_error
+   *
+   * @throws std::runtime_error всегда: "ROCm not enabled".
+   *   @test_check throws std::runtime_error
+   */
   CaponBeamResult AdaptiveBeamform(const std::vector<std::complex<float>>&,
       const std::vector<std::complex<float>>&, const CaponParams&) {
     throw std::runtime_error("CaponProcessor: ROCm not enabled");
   }
+  /**
+   * @brief Stub: бросает runtime_error — ComputeRelief (GPU) доступен только в ROCm-сборке.
+   *
+   *
+   * @return Никогда не возвращает (всегда throw).
+   *   @test_check throws std::runtime_error
+   *
+   * @throws std::runtime_error всегда: "ROCm not enabled".
+   *   @test_check throws std::runtime_error
+   */
   CaponReliefResult ComputeRelief(void*, void*, const CaponParams&) {
     throw std::runtime_error("CaponProcessor: ROCm not enabled");
   }
+  /**
+   * @brief Stub: бросает runtime_error — AdaptiveBeamform (GPU) доступен только в ROCm-сборке.
+   *
+   *
+   * @return Никогда не возвращает (всегда throw).
+   *   @test_check throws std::runtime_error
+   *
+   * @throws std::runtime_error всегда: "ROCm not enabled".
+   *   @test_check throws std::runtime_error
+   */
   CaponBeamResult AdaptiveBeamform(void*, void*, const CaponParams&) {
     throw std::runtime_error("CaponProcessor: ROCm not enabled");
   }
