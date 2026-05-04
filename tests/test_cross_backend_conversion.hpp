@@ -65,10 +65,12 @@ inline void TestConvert_VectorInput(drv_gpu_lib::IBackend* backend,
 
   auto A_inv = result.AsVector();
   double err = FrobeniusError(A, A_inv, n);
-  if (err >= 1e-3) {
+  auto v = gpu_test_utils::ScalarAbsError(err, 0.0, 1e-3, "convert_vector_input");
+  if (!v.passed) {
     throw std::runtime_error(
-        "TestConvert_VectorInput FAILED [" + std::string(ModeName(mode)) +
-        "]: error=" + std::to_string(err));
+        "TestConvert_VectorInput FAILED [" + std::string(ModeName(mode)) + "] " +
+        v.metric_name + " actual=" + std::to_string(v.actual_value) +
+        " threshold=" + std::to_string(v.threshold));
   }
 
   con.Print(0, "VecAlg", "TestConvert_VectorInput PASSED [" +
@@ -130,10 +132,12 @@ inline void TestConvert_HipInput(drv_gpu_lib::IBackend* backend,
   }
   diff = std::sqrt(diff);
 
-  if (diff >= 1e-3) {
+  auto v = gpu_test_utils::ScalarAbsError(diff, 0.0, 1e-3, "convert_hip_input");
+  if (!v.passed) {
     throw std::runtime_error(
-        "TestConvert_HipInput FAILED [" + std::string(ModeName(mode)) +
-        "]: diff vs reference=" + std::to_string(diff));
+        "TestConvert_HipInput FAILED [" + std::string(ModeName(mode)) + "] " +
+        v.metric_name + " actual=" + std::to_string(v.actual_value) +
+        " threshold=" + std::to_string(v.threshold));
   }
 
   con.Print(0, "VecAlg", "TestConvert_HipInput PASSED [" +
@@ -192,10 +196,12 @@ inline void TestConvert_OutputFormats(drv_gpu_lib::IBackend* backend,
   }
   diff = std::sqrt(diff);
 
-  if (diff >= 1e-7) {
+  auto v = gpu_test_utils::ScalarAbsError(diff, 0.0, 1e-7, "convert_output_formats");
+  if (!v.passed) {
     throw std::runtime_error(
-        "TestConvert_OutputFormats FAILED [" + std::string(ModeName(mode)) +
-        "]: AsVector vs AsHipPtr diff=" + std::to_string(diff));
+        "TestConvert_OutputFormats FAILED [" + std::string(ModeName(mode)) + "] " +
+        v.metric_name + " actual=" + std::to_string(v.actual_value) +
+        " threshold=" + std::to_string(v.threshold));
   }
 
   con.Print(0, "VecAlg", "TestConvert_OutputFormats PASSED [" +

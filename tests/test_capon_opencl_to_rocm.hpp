@@ -41,6 +41,8 @@
 #include <CL/cl.h>
 #include <hip/hip_runtime.h>
 
+#include "test_utils/validators/numeric.hpp"
+
 // -- Стандартные ---------------------------------------------------------
 #include <algorithm>
 #include <cassert>
@@ -481,24 +483,24 @@ inline void test_03_zerocopy_matches_direct() {
   assert(relief_ocl.relief.size() == M);
 
   // -- Сравнение: оба пути должны дать идентичный результат --
-  float max_diff    = 0.0f;
-  float max_reldiff = 0.0f;
-  for (uint32_t m = 0; m < M; ++m) {
-    float diff    = std::fabs(relief_ref.relief[m] - relief_ocl.relief[m]);
-    float reldiff = diff / (std::fabs(relief_ref.relief[m]) + 1e-30f);
-    if (diff    > max_diff)    max_diff    = diff;
-    if (reldiff > max_reldiff) max_reldiff = reldiff;
-  }
+  // v_abs — assert metric (max|Δ| < 1e-4)
+  // v_rel — телеметрия для TestPrint (tol=1.0 заведомо проходит, нас интересует actual_value)
+  auto v_abs = gpu_test_utils::AbsError(
+      relief_ref.relief.data(), relief_ocl.relief.data(),
+      static_cast<size_t>(M), /*tol=*/1e-4, "zerocopy_vs_direct");
+  auto v_rel = gpu_test_utils::MaxRelError(
+      relief_ref.relief.data(), relief_ocl.relief.data(),
+      static_cast<size_t>(M), /*tol=*/1.0, "zerocopy_vs_direct_rel");
 
   {
     char buf[256];
     std::snprintf(buf, sizeof(buf),
-        "  max |z_direct - z_zerocopy| = %.3e   max_rel = %.3e   (tolerance < 1e-4)",
-        max_diff, max_reldiff);
+        "  max |z_direct - z_zerocopy| = %.3e   max_rel = %.3e   (tolerance < %.0e)",
+        v_abs.actual_value, v_rel.actual_value, v_abs.threshold);
     TestPrint(buf);
   }
 
-  assert(max_diff < 1e-4f &&
+  assert(v_abs.passed &&
          "Zero Copy corrupted data: results don't match direct path");
   TestPrint("[03] PASS -- Zero Copy is transparent: results are identical");
 }
@@ -751,24 +753,23 @@ inline void test_05_svm_customer_data() {
     assert(relief_svm.relief.size() == M);
 
     // 5. Сравнение: SVM путь == прямой путь
-    float max_diff    = 0.0f;
-    float max_reldiff = 0.0f;
-    for (uint32_t m = 0; m < M; ++m) {
-      float diff    = std::fabs(relief_ref.relief[m] - relief_svm.relief[m]);
-      float reldiff = diff / (std::fabs(relief_ref.relief[m]) + 1e-30f);
-      if (diff    > max_diff)    max_diff    = diff;
-      if (reldiff > max_reldiff) max_reldiff = reldiff;
-    }
+    // v_abs — assert metric; v_rel — телеметрия для TestPrint (tol=1.0).
+    auto v_abs = gpu_test_utils::AbsError(
+        relief_ref.relief.data(), relief_svm.relief.data(),
+        static_cast<size_t>(M), /*tol=*/1e-4, "svm_vs_direct");
+    auto v_rel = gpu_test_utils::MaxRelError(
+        relief_ref.relief.data(), relief_svm.relief.data(),
+        static_cast<size_t>(M), /*tol=*/1.0, "svm_vs_direct_rel");
 
     {
       char buf[256];
       std::snprintf(buf, sizeof(buf),
-          "  |z_direct - z_svm| max=%.3e  max_rel=%.3e  (tolerance < 1e-4)",
-          max_diff, max_reldiff);
+          "  |z_direct - z_svm| max=%.3e  max_rel=%.3e  (tolerance < %.0e)",
+          v_abs.actual_value, v_rel.actual_value, v_abs.threshold);
       TestPrint(buf);
     }
 
-    assert(max_diff < 1e-4f && "SVM path data corruption: results don't match direct path");
+    assert(v_abs.passed && "SVM path data corruption: results don't match direct path");
 
     // Cleanup: мост уничтожается перед SVM
     bridge_Y.Release();

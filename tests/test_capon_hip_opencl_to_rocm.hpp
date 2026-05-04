@@ -122,6 +122,8 @@
 #include <linalg/capon_processor.hpp>
 #include "capon_test_helpers.hpp"
 
+#include "test_utils/validators/numeric.hpp"
+
 // Обёртки GPUWorkLib над OpenCL и ROCm backend'ами
 #include <core/backends/opencl/opencl_backend.hpp>
 #include <core/backends/rocm/rocm_backend.hpp>
@@ -766,28 +768,26 @@ inline void test_03_hip_opencl_matches_direct() {
   assert(relief_hip.relief.size() == M);
 
   // ── Сравнение результатов ─────────────────────────────────────────────
-  // Ищем максимальное абсолютное и относительное отклонение
-  float max_diff    = 0.0f;  // max|z_A[m] - z_B[m]|
-  float max_reldiff = 0.0f;  // max|z_A[m] - z_B[m]| / |z_A[m]|
-
-  for (uint32_t m = 0; m < M; ++m) {
-    float diff    = std::fabs(relief_ref.relief[m] - relief_hip.relief[m]);
-    float reldiff = diff / (std::fabs(relief_ref.relief[m]) + 1e-30f);  // +eps от деления на 0
-    if (diff    > max_diff)    max_diff    = diff;
-    if (reldiff > max_reldiff) max_reldiff = reldiff;
-  }
+  // v_abs — assert metric (max|Δ| < 1e-4)
+  // v_rel — телеметрия для TestPrint (tol=1.0 заведомо проходит)
+  auto v_abs = gpu_test_utils::AbsError(
+      relief_ref.relief.data(), relief_hip.relief.data(),
+      static_cast<size_t>(M), /*tol=*/1e-4, "hip_svm_vs_direct");
+  auto v_rel = gpu_test_utils::MaxRelError(
+      relief_ref.relief.data(), relief_hip.relief.data(),
+      static_cast<size_t>(M), /*tol=*/1.0, "hip_svm_vs_direct_rel");
 
   {
     char buf[256];
     std::snprintf(buf, sizeof(buf),
-        "  max |z_direct - z_hip_ocl| = %.3e   max_rel = %.3e   (tolerance < 1e-4)",
-        max_diff, max_reldiff);
+        "  max |z_direct - z_hip_ocl| = %.3e   max_rel = %.3e   (tolerance < %.0e)",
+        v_abs.actual_value, v_rel.actual_value, v_abs.threshold);
     TestPrint(buf);
   }
 
   // Допуск 1e-4: разница между float32 операциями на разных путях
   // (hipMemcpy vs clEnqueueSVMMemcpy) не должна влиять на результат Capon
-  assert(max_diff < 1e-4f &&
+  assert(v_abs.passed &&
          "hipMalloc→clSVMMemcpy path: data mismatch vs direct path");
   TestPrint("[03] PASS -- hipMalloc→clSVMMemcpy→Capon идентичен прямому пути");
 }
