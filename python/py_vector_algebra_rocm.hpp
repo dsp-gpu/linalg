@@ -154,8 +154,7 @@ inline void register_cholesky_inverter_rocm(py::module& m) {
       "  ctx = dsp_linalg.ROCmGPUContext(0)\n"
       "  inverter = dsp_linalg.CholeskyInverterROCm(ctx, dsp_linalg.SymmetrizeMode.GpuKernel)\n"
       "  A_inv = inverter.invert_cpu(A.flatten(), n=341)\n")
-      .def(py::init<ROCmGPUContext&, vector_algebra::SymmetrizeMode>(),
-           py::arg("ctx"),
+      .def(py::init<ROCmGPUContext&, vector_algebra::SymmetrizeMode>(), py::keep_alive<1, 2>(), py::arg("ctx"),
            py::arg("mode") = vector_algebra::SymmetrizeMode::GpuKernel,
            "Create CholeskyInverterROCm bound to ROCm GPU context")
 

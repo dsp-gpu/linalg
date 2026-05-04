@@ -151,8 +151,7 @@ inline void register_capon_processor(py::module& m) {
       "  ctx = dsp_linalg.ROCmGPUContext(0)\n"
       "  cap = dsp_linalg.CaponProcessor(ctx)\n"
       "  relief = cap.compute_relief(signal, steering, params)\n")
-      .def(py::init<ROCmGPUContext&>(),
-           py::arg("ctx"),
+      .def(py::init<ROCmGPUContext&>(), py::keep_alive<1, 2>(), py::arg("ctx"),
            py::keep_alive<1, 2>())  // processor держит ссылку на context
       .def("compute_relief",      &PyCaponProcessor::compute_relief,
            py::arg("signal"), py::arg("steering"), py::arg("params"))
