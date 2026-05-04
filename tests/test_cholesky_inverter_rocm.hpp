@@ -39,6 +39,8 @@
 #include <core/interface/input_data.hpp>
 #include <core/services/console_output.hpp>
 
+#include "test_utils/validators/numeric.hpp"
+
 namespace vector_algebra::tests {
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -145,10 +147,12 @@ inline void TestCpuIdentity(drv_gpu_lib::IBackend* backend,
 
   auto A_inv = result.AsVector();
   double err = FrobeniusError(identity, A_inv, n);
-  if (err >= 1e-5) {
+  auto v = gpu_test_utils::ScalarAbsError(err, 0.0, 1e-5, "frobenius_I_AAinv");
+  if (!v.passed) {
     throw std::runtime_error(
-        "TestCpuIdentity FAILED [" + std::string(ModeName(mode)) +
-        "]: error=" + std::to_string(err) + " >= 1e-5");
+        "TestCpuIdentity FAILED [" + std::string(ModeName(mode)) + "] " +
+        v.metric_name + " actual=" + std::to_string(v.actual_value) +
+        " threshold=" + std::to_string(v.threshold));
   }
 
   auto mat = result.matrix();
@@ -181,10 +185,12 @@ inline void TestCpu341(drv_gpu_lib::IBackend* backend, SymmetrizeMode mode) {
   auto A_inv = result.AsVector();
 
   double err = FrobeniusError(A, A_inv, n);
-  if (err >= 1e-2) {
+  auto v = gpu_test_utils::ScalarAbsError(err, 0.0, 1e-2, "frobenius_residual_341");
+  if (!v.passed) {
     throw std::runtime_error(
-        "TestCpu341 FAILED [" + std::string(ModeName(mode)) +
-        "]: error=" + std::to_string(err) + " >= 1e-2");
+        "TestCpu341 FAILED [" + std::string(ModeName(mode)) + "] " +
+        v.metric_name + " actual=" + std::to_string(v.actual_value) +
+        " threshold=" + std::to_string(v.threshold));
   }
 
   con.Print(0, "VecAlg", "TestCpu341 PASSED [" +
@@ -222,10 +228,12 @@ inline void TestGpuVoidPtr341(drv_gpu_lib::IBackend* backend,
   backend->Free(gpu_in);
 
   double err = FrobeniusError(A, A_inv, n);
-  if (err >= 1e-2) {
+  auto v = gpu_test_utils::ScalarAbsError(err, 0.0, 1e-2, "frobenius_residual_voidptr341");
+  if (!v.passed) {
     throw std::runtime_error(
-        "TestGpuVoidPtr341 FAILED [" + std::string(ModeName(mode)) +
-        "]: error=" + std::to_string(err));
+        "TestGpuVoidPtr341 FAILED [" + std::string(ModeName(mode)) + "] " +
+        v.metric_name + " actual=" + std::to_string(v.actual_value) +
+        " threshold=" + std::to_string(v.threshold));
   }
 
   con.Print(0, "VecAlg", "TestGpuVoidPtr341 PASSED [" +
@@ -285,11 +293,13 @@ inline void TestBatchCpu_4x64(drv_gpu_lib::IBackend* backend,
         flat_inv.begin() + static_cast<ptrdiff_t>(k + 1) * n * n);
 
     double err = FrobeniusError(matrices[k], A_inv_k, n);
-    if (err >= 1e-3) {
+    auto v = gpu_test_utils::ScalarAbsError(
+        err, 0.0, 1e-3, "batch_cpu_k=" + std::to_string(k));
+    if (!v.passed) {
       throw std::runtime_error(
-          "TestBatchCpu_4x64 FAILED [" + std::string(ModeName(mode)) +
-          "] matrix[" + std::to_string(k) +
-          "] error=" + std::to_string(err));
+          "TestBatchCpu_4x64 FAILED [" + std::string(ModeName(mode)) + "] " +
+          v.metric_name + " actual=" + std::to_string(v.actual_value) +
+          " threshold=" + std::to_string(v.threshold));
     }
   }
 
@@ -342,11 +352,13 @@ inline void TestBatchGpu_4x64(drv_gpu_lib::IBackend* backend,
         flat_inv.begin() + static_cast<ptrdiff_t>(k + 1) * n * n);
 
     double err = FrobeniusError(matrices[k], A_inv_k, n);
-    if (err >= 1e-3) {
+    auto v = gpu_test_utils::ScalarAbsError(
+        err, 0.0, 1e-3, "batch_gpu_k=" + std::to_string(k));
+    if (!v.passed) {
       throw std::runtime_error(
-          "TestBatchGpu_4x64 FAILED [" + std::string(ModeName(mode)) +
-          "] matrix[" + std::to_string(k) +
-          "] error=" + std::to_string(err));
+          "TestBatchGpu_4x64 FAILED [" + std::string(ModeName(mode)) + "] " +
+          v.metric_name + " actual=" + std::to_string(v.actual_value) +
+          " threshold=" + std::to_string(v.threshold));
     }
   }
 
@@ -430,11 +442,15 @@ inline void TestMatrixSizes(drv_gpu_lib::IBackend* backend,
           flat_inv.begin() + static_cast<ptrdiff_t>(k + 1) * n * n);
 
       double err = FrobeniusError(matrices[k], A_inv_k, n);
-      if (err >= 1e-2) {
+      auto v = gpu_test_utils::ScalarAbsError(
+          err, 0.0, 1e-2,
+          "matrix_sizes_n=" + std::to_string(n) +
+          "_k=" + std::to_string(k));
+      if (!v.passed) {
         throw std::runtime_error(
-            "TestMatrixSizes FAILED [" + std::string(ModeName(mode)) +
-            "] n=" + std::to_string(n) + " matrix[" + std::to_string(k) +
-            "] error=" + std::to_string(err));
+            "TestMatrixSizes FAILED [" + std::string(ModeName(mode)) + "] " +
+            v.metric_name + " actual=" + std::to_string(v.actual_value) +
+            " threshold=" + std::to_string(v.threshold));
       }
     }
 
