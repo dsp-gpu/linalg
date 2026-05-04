@@ -65,7 +65,7 @@ namespace vector_algebra {
  * @note Не копируемый и не перемещаемый — owns rocBLAS handle, hipModule,
  *       d_info_, GpuContext.
  * @note Требует #if ENABLE_ROCM. На non-ROCm — stub бросает runtime_error.
- * @note Lifecycle: ctor(backend, mode) → Invert*/InvertBatch* → dtor.
+ * @note Lifecycle: ctor(backend, mode) → Invert* / InvertBatch* → dtor.
  * @note Не thread-safe (один экземпляр = одна последовательность операций).
  * @see CholeskyResult — RAII-владелец GPU-памяти результата
  * @see SymmetrizeMode — выбор GpuKernel vs Roundtrip
