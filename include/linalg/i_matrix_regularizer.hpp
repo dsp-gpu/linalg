@@ -67,10 +67,10 @@ public:
    * @brief Применить регуляризацию к матрице (GPU, in-place).
    *
    * @param d_matrix  GPU-указатель на квадратную матрицу n×n
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    *                  (complex<float>, column-major)
    * @param n         Размер матрицы (строки = столбцы = n)
-   *   @test { range=[512..1300000], value=8192 }
+   *   @test { range=[512..1300000], value=8192, error_values=[-1, 3000000, 3.14] }
    * @param mu        Коэффициент регуляризации (семантика — в реализации)
    * @param stream    HIP stream для запуска kernel (nullptr → использовать
    *                  внутренний stream регуляризатора из backend).

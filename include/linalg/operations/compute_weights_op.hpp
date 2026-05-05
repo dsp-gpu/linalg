@@ -73,10 +73,10 @@ public:
   /**
    * @brief Вычислить W = R^{-1} * U  (MatrixOpsROCm::Multiply)
    * @param n_channels   P — число каналов
-   *   @test { range=[1..50000], value=128, unit="лучей/каналов" }
+   *   @test { range=[1..50000], value=128, unit="лучей/каналов", error_values=[-1, 100000, 3.14] }
    * @param n_directions M — число направлений
    * @param R_inv_ptr    R^{-1} на GPU — из CholeskyResult::AsHipPtr()
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param mat          MatrixOpsROCm из CaponProcessor (stream привязан к ctx_)
    *
    * Читает: kSteering (U) [P × M]

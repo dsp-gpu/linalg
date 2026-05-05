@@ -76,7 +76,7 @@ public:
   /**
    * @brief Вычислить рельеф Кейпона
    * @param n_channels   P — число каналов
-   *   @test { range=[1..50000], value=128, unit="лучей/каналов" }
+   *   @test { range=[1..50000], value=128, unit="лучей/каналов", error_values=[-1, 100000, 3.14] }
    * @param n_directions M — число направлений
    *
    * Читает: kSteering (U) [P × M],  kWeight (W = R^{-1}*U) [P × M]

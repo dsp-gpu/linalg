@@ -73,9 +73,9 @@ public:
   /**
    * @brief Вычислить R = (1/N) * Y * Y^H
    * @param n_channels P — число каналов
-   *   @test { range=[1..50000], value=128, unit="лучей/каналов" }
+   *   @test { range=[1..50000], value=128, unit="лучей/каналов", error_values=[-1, 100000, 3.14] }
    * @param n_samples  N — число отсчётов
-   *   @test { range=[100..1300000], value=6000 }
+   *   @test { range=[100..1300000], value=6000, error_values=[-1, 3000000, 3.14] }
    * @param mat        MatrixOpsROCm из CaponProcessor (stream привязан к ctx_)
    *
    * Читает: ctx_->GetShared(kSignal)  [P × N]

@@ -92,13 +92,13 @@ public:
    * @brief Ковариационная матрица: R = (1/N) * Y * Y^H
    *
    * @param Y   [P × N] complex<float>, column-major
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param P   число строк (каналы)
-   *   @test { range=[1e-9..1e3], value=1.0, unit="matrix coefficient" }
+   *   @test { range=[1e-9..1e3], value=1.0, unit="matrix coefficient", error_values=[0.0, 2000.0, null] }
    * @param N   число столбцов (отсчёты)
-   *   @test { range=[512..1300000], value=8192 }
+   *   @test { range=[512..1300000], value=8192, error_values=[-1, 3000000, 3.14] }
    * @param R   [P × P] выход, complex<float>, column-major
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    *
    * rocBLAS: C[P×P] = alpha * Y[P×N] * Y^H[N×P]
    *   opA=None, opB=ConjTrans, alpha=1/N, beta=0
@@ -109,14 +109,14 @@ public:
    * @brief Матричное умножение: C = A * B  (NoTrans × NoTrans)
    *
    * @param A   [m × k] complex<float>, column-major
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param B   [k × n] complex<float>, column-major
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param C   [m × n] выход, complex<float>, column-major
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param m   строки A и C
    * @param n   столбцы B и C
-   *   @test { range=[512..1300000], value=8192 }
+   *   @test { range=[512..1300000], value=8192, error_values=[-1, 3000000, 3.14] }
    * @param k   столбцы A = строки B
    *
    * Применения в capon:
@@ -131,14 +131,14 @@ public:
    * После ConjTrans: A^H = [m × k].
    *
    * @param A   [k × m] complex<float>, column-major (хранится транспонированным)
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param B   [k × n] complex<float>, column-major
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param C   [m × n] выход, complex<float>, column-major
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param m   строки C  (= столбцы A до транспонирования)
    * @param n   столбцы C (= столбцы B)
-   *   @test { range=[512..1300000], value=8192 }
+   *   @test { range=[512..1300000], value=8192, error_values=[-1, 3000000, 3.14] }
    * @param k   строки A и B (= contraction dimension)
    *
    * Применения в capon:
@@ -159,18 +159,18 @@ public:
    * @param transB  rocblas_operation_none / rocblas_operation_conjugate_transpose
    * @param m       строки op(A) и C
    * @param n       столбцы op(B) и C
-   *   @test { range=[512..1300000], value=8192 }
+   *   @test { range=[512..1300000], value=8192, error_values=[-1, 3000000, 3.14] }
    * @param k       столбцы op(A) = строки op(B)
    * @param alpha   скаляр alpha (complex<float>)
    * @param A       матрица A на GPU
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param lda     leading dimension A
    * @param B       матрица B на GPU
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param ldb     leading dimension B
    * @param beta    скаляр beta (complex<float>)
    * @param C       матрица C на GPU (вход/выход)
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param ldc     leading dimension C
    *
    * @throws std::runtime_error при ошибке rocBLAS

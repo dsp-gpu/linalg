@@ -84,9 +84,9 @@ public:
   /**
    * @brief Обратить матрицу R → R^{-1} через CholeskyInverterROCm
    * @param gpu_R      Указатель на R на GPU (complex<float>[P × P], column-major)
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param n_channels P — размер матрицы
-   *   @test { range=[1..50000], value=128, unit="лучей/каналов" }
+   *   @test { range=[1..50000], value=128, unit="лучей/каналов", error_values=[-1, 100000, 3.14] }
    * @return CholeskyResult — владеет GPU-памятью R^{-1}
    *         (caller должен хранить result пока R^{-1} нужен)
    *   @test_check result.matrix_size == n_channels && result.batch_count == 1 && result.d_data != nullptr

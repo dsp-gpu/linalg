@@ -87,9 +87,9 @@ public:
   /**
    * @brief Применить диагональную загрузку: A[i,i] += mu (in-place на GPU).
    * @param d_matrix  GPU-указатель на матрицу n×n (complex<float>, column-major)
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param n         Размер матрицы
-   *   @test { range=[512..1300000], value=8192 }
+   *   @test { range=[512..1300000], value=8192, error_values=[-1, 3000000, 3.14] }
    * @param mu        Коэффициент регуляризации (mu > 0 рекомендуется)
    * @param stream    HIP stream (nullptr → использовать stream_ из backend).
    *                  Передавайте ctx.stream() для гарантии порядка исполнения

@@ -163,13 +163,13 @@ public:
   /**
    * @brief Рельеф Кейпона (GPU входы)
    * @param gpu_signal   Y на GPU: complex<float>[n_channels × n_samples], column-major
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param gpu_steering U на GPU: complex<float>[n_channels × n_directions], column-major
    * @param params Параметры (n_channels, n_samples, n_directions, mu).
    *   @test_ref CaponParams
    * @return CaponReliefResult — M вещественных значений пространственного спектра.
    *   @test_check result.relief.size() == params.n_directions
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    */
   CaponReliefResult ComputeRelief(
       void* gpu_signal,
@@ -179,9 +179,9 @@ public:
   /**
    * @brief Адаптивное ДО (GPU входы)
    * @param gpu_signal Y на GPU: complex<float>[n_channels × n_samples], column-major.
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param gpu_steering U на GPU: complex<float>[n_channels × n_directions], column-major.
-   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr] }
+   *   @test { pattern=gpu_pointer, values=["valid_alloc", nullptr], error_values=[0xDEADBEEF, null] }
    * @param params Параметры (n_channels, n_samples, n_directions, mu).
    *   @test_ref CaponParams
    * @return CaponBeamResult — матрица [n_directions × n_samples].
