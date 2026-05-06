@@ -371,4 +371,3 @@ _Источник биндинга_: `linalg/python/py_capon_rocm.hpp`
 | `adaptive_beamform` | `PyCaponProcessor::adaptive_beamform` | — |
 | `compute_relief_gpu` | `PyCaponProcessor::compute_relief_gpu` | — |
 | `adaptive_beamform_gpu` | `PyCaponProcessor::adaptive_beamform_gpu` | — |
-
