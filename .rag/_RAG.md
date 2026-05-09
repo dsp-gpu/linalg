@@ -140,7 +140,14 @@ used_by: []                              # TODO: AI-fill из других _RAG.
 python_modules:                          # TODO: auto from pybind_bindings
   - TODO
 
-tags: []                                 # TODO: AI-fill
+tags:                                    # auto-inferred (RAG_CLAUDE_C4)
+  - "#layer:compute"
+  - "#repo:linalg"
+  - "#namespace:vector_algebra"
+  - "#namespace:capon"
+  - "#namespace:drv_gpu_lib"
+  - "#pattern:Pipeline:CaponProcessor"
+  - "#pattern:Pipeline:PyCaponProcessor"
 
 notes: []                                # TODO: AI-fill из ai_summary
 
