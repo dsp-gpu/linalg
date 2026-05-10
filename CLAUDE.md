@@ -55,9 +55,8 @@ linalg/
 
 ## 🏷️ RAG теги
 
-`#layer:compute` `#repo:linalg` `#namespace:vector_algebra` `#namespace:capon` `#namespace:drv_gpu_lib` `#pattern:Pipeline:CaponProcessor` `#pattern:Pipeline:PyCaponProcessor`
 
-<!-- END: RAG_CLAUDE_C4 (auto) -->
+`#layer:compute` `#repo:linalg` `#namespace:vector_algebra` `#namespace:capon` `#namespace:drv_gpu_lib` `#pattern:Pipeline:CaponProcessor` `#pattern:Pipeline:PyCaponProcessor` `#pattern:Facade:CaponProcessor` `#pattern:Facade:MatrixOpsROCm` `#pattern:Strategy:IMatrixRegularizer` `#pattern:Operation:AdaptBeamformOp` `#pattern:Operation:CaponInvertOp` `#pattern:Operation:CaponReliefOp` `#pattern:Operation:ComputeWeightsOp` `#pattern:Operation:CovarianceMatrixOp`
 
 ## 🔗 Правила (path-scoped автоматически)
 
