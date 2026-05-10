@@ -151,7 +151,6 @@ tags:                                    # auto-inferred (RAG_CLAUDE_C4)
   - "#namespace:capon"
   - "#namespace:drv_gpu_lib"
   - "#pattern:Pipeline:CaponProcessor"
-  - "#pattern:Pipeline:PyCaponProcessor"
   - "#pattern:Facade:CaponProcessor"
   - "#pattern:Facade:MatrixOpsROCm"
   - "#pattern:Strategy:IMatrixRegularizer"
@@ -160,6 +159,7 @@ tags:                                    # auto-inferred (RAG_CLAUDE_C4)
   - "#pattern:Operation:CaponReliefOp"
   - "#pattern:Operation:ComputeWeightsOp"
   - "#pattern:Operation:CovarianceMatrixOp"
+  - "#pattern:Adapter:PyCaponProcessor"
 
 notes: []                                # TODO: AI-fill из ai_summary
 

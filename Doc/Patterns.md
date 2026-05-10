@@ -23,8 +23,14 @@
 
 - **`capon::CaponProcessor`** — `linalg/include/linalg/capon_processor.hpp:66`
   - Facade полного MVDR (Capon) pipeline: Cov → diagonal-load → Invert (Cholesky) → ComputeWeights → AdaptiveBeamform / Relief. Использует rocBLAS CGEMM + rocSOLVER. Регуляризация ковариационной матрицы перед обращением.
+
+## Adapter
+
+> Тонкая pybind-обёртка над C++ Facade: адаптирует API под Python (numpy↔GPU, GIL release).
+
+
 - **`PyCaponProcessor`** — `linalg/python/py_capon_rocm.hpp:33`
-  - CaponProcessor владеет GPU ресурсами (ctx_, rocblas handle, CholeskyResult). В Python передаём ROCmGPUContext& (py_gpu_context.hpp) — backend берётся из ctx.backend(). Единый паттерн для всех модулей DSP-GPU.
+  - Pybind-Adapter над `capon::CaponProcessor`: numpy↔GPU, GIL-release в `Compute*`. Принимает `ROCmGPUContext&` (`py_gpu_context.hpp`), backend берётся из `ctx.backend()` — единый паттерн для всех модулей DSP-GPU.
 
 ## Strategy
 
