@@ -1,7 +1,7 @@
----
+﻿---
 schema_version: 1
 repo: linalg
-class_fqn: capon::CaponProcessor
+class_fqn: dsp::linalg::CaponProcessor
 file: E:/DSP-GPU/linalg/include/linalg/capon_processor.hpp
 line: 66
 brief: "Реализует алгоритм Capon (MVDR) для формирования луча и вычисления рельефа на GPU с использованием ROCm/hip."
@@ -15,7 +15,7 @@ synonyms_en: ['CaponBeamformer', 'MVDRProcessor', 'RadarFilter', 'GPUSignalProce
 tags: ['ROCm', 'hip', 'Capon', 'beamforming', 'GPU']
 ---
 
-# `capon::CaponProcessor` — карточка класса
+# `dsp::linalg::CaponProcessor` — карточка класса
 
 > **Этот файл генерируется автоматически** командой `dsp-asst rag cards build --repo linalg --class CaponProcessor`.
 > Не править руками — правки потеряются при следующем refresh.
@@ -35,8 +35,8 @@ tags: ['ROCm', 'hip', 'Capon', 'beamforming', 'GPU']
 
 **Пример**:
 ```cpp
-#include <linalg/capon_processor.hpp>
-using namespace capon;
+#include <dsp/linalg/capon_processor.hpp>
+using namespace dsp::linalg;
 
 CaponProcessor proc(backend);
 CaponParams params = {8, 128, 32, 0.01f};
@@ -53,7 +53,7 @@ CaponBeamResult result = proc.AdaptiveBeamform(gpu_signal, gpu_steering, params)
 ## Связанные секции из Doc/
 
 - `linalg__dsp__capon_beamforming_005__v1` (capon_beamforming): ```c // grid=(M+255)/256, block=256, каждый thread m → одно направление extern "C" __global__ void compute_capon_relief(     const float2* U, const float2* W, float* z, unsigned int P, unsigned int M)…
-- `linalg__quick__capon_beamforming_002__v1` (capon_beamforming): ``` Y [P×N],  U [P×M]   1. R = Y·Y^H/N + μI       ← rocBLAS CGEMM + HIP kernel add_regularization   2. R⁻¹                    ← vector_algebra::CholeskyInverterROCm (POTRF+POTRI)   3a. Relief: z[m] = …
+- `linalg__quick__capon_beamforming_002__v1` (capon_beamforming): ``` Y [P×N],  U [P×M]   1. R = Y·Y^H/N + μI       ← rocBLAS CGEMM + HIP kernel add_regularization   2. R⁻¹                    ← dsp::linalg::CholeskyInverterROCm (POTRF+POTRI)   3a. Relief: z[m] = …
 - `linalg__meta__claude_card__v1` (meta_claude): <!-- type:meta_claude repo:linalg source:linalg/CLAUDE.md -->  # linalg — Repository Card  _Источник: `linalg/CLAUDE.md`_  # 🤖 CLAUDE — `linalg`  > Линейная алгебра на GPU: matrix ops, SVD, eig, Capon…
 - `linalg__api__capon_beamforming_002__v1` (capon_beamforming): // Не копируемый, перемещаемый // NOTE: move assignment не переприсваивает inv_op_ (CholeskyInverterROCm не перемещаемый) ```  ---  #### Op-классы (Layer 5)  ##### CovarianceMatrixOp (`operations/cova…
 - `linalg__api__capon_beamforming_001__v1` (capon_beamforming): ## Компонент: Capon Beamforming  **Namespace**: `capon` | **Backend**: ROCm only (`ENABLE_ROCM=1`)  ---  #### Типы (`capon_types.hpp`)  ```cpp struct CaponParams {   uint32_t n_channels;    // P — чис…

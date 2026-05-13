@@ -1,4 +1,4 @@
-# Linalg — API (объединённый: Vector Algebra + Capon)
+﻿# Linalg — API (объединённый: Vector Algebra + Capon)
 
 > Репо `linalg` объединяет два компонента из DSP-GPU: **vector_algebra** (линейная алгебра, Cholesky-обращение) и **capon** (Capon beamforming на основе ковариации).
 
@@ -30,7 +30,7 @@
 
 ```cpp
 // linalg/include/vector_algebra_types.hpp
-namespace vector_algebra {
+namespace dsp::linalg {
 
 enum class SymmetrizeMode {
   Roundtrip,  // Download GPU → CPU sym → Upload (fallback)
@@ -51,7 +51,7 @@ enum class SymmetrizeMode {
 
 ```cpp
 // linalg/include/vector_algebra_types.hpp
-namespace vector_algebra {
+namespace dsp::linalg {
 
 struct CholeskyResult {
   void*  d_data     = nullptr;  // HIP device ptr (владеет памятью!)
@@ -94,7 +94,7 @@ struct CholeskyResult {
 
 ```cpp
 // linalg/include/cholesky_inverter_rocm.hpp
-namespace vector_algebra {
+namespace dsp::linalg {
 
 class CholeskyInverterROCm {
 public:
@@ -230,9 +230,9 @@ class CholeskyInverterROCm:
 ##### C++ — одна матрица (CPU данные)
 
 ```cpp
-#include <linalg/cholesky_inverter_rocm.hpp>
-#include <linalg/vector_algebra_types.hpp>
-using namespace vector_algebra;
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>
+#include <dsp/linalg/vector_algebra_types.hpp>
+using namespace dsp::linalg;
 
 // 1. Context
 auto ctx = drv_gpu_lib::core::Create(/*...*/);
@@ -484,10 +484,10 @@ void Execute(uint32_t n_channels, uint32_t n_samples, float mu);
 ##### CaponInvertOp (`operations/capon_invert_op.hpp`)
 
 ```cpp
-// НЕ наследует GpuKernelOp — обёртка над vector_algebra::CholeskyInverterROCm
+// НЕ наследует GpuKernelOp — обёртка над dsp::linalg::CholeskyInverterROCm
 explicit CaponInvertOp(drv_gpu_lib::IBackend* backend);
 
-vector_algebra::CholeskyResult Execute(void* gpu_R, uint32_t n_channels);
+dsp::linalg::CholeskyResult Execute(void* gpu_R, uint32_t n_channels);
 // kCovMatrix → CholeskyResult (владеет GPU ptr R⁻¹)
 // POTRF + POTRI + symmetrize (vector_algebra)
 

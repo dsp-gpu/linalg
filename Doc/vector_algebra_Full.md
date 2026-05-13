@@ -1,4 +1,4 @@
-# vector_algebra — Полная документация
+﻿# vector_algebra — Полная документация
 
 > Инверсия эрмитовых положительно определённых матриц на GPU (ROCm, Cholesky)
 
@@ -154,7 +154,7 @@ if (col > row) {
 #include "cholesky_inverter_rocm.hpp"
 #include "vector_algebra_types.hpp"  // CholeskyResult, SymmetrizeMode
 
-using namespace vector_algebra;
+using namespace dsp::linalg;
 
 // ── Конструктор ──────────────────────────────────────────────────────────────
 CholeskyInverterROCm inverter(backend);                            // GpuKernel (default)
@@ -369,7 +369,7 @@ CholeskyInverterROCm (Facade)
 ### C4 — Code (ключевые классы)
 
 ```
-namespace vector_algebra {
+namespace dsp::linalg {
 
 enum class SymmetrizeMode { Roundtrip, GpuKernel };
 

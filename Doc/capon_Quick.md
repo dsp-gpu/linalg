@@ -1,4 +1,4 @@
-# Capon (MVDR) — Краткий справочник
+﻿# Capon (MVDR) — Краткий справочник
 
 > MVDR beamformer: пространственный спектр + адаптивное подавление помех на GPU (ROCm only)
 
@@ -47,7 +47,7 @@
 ```
 Y [P×N],  U [P×M]
   1. R = Y·Y^H/N + μI       ← rocBLAS CGEMM + HIP kernel add_regularization
-  2. R⁻¹                    ← vector_algebra::CholeskyInverterROCm (POTRF+POTRI)
+  2. R⁻¹                    ← dsp::linalg::CholeskyInverterROCm (POTRF+POTRI)
   3a. Relief: z[m] = 1/Re(u^H·R⁻¹·u)     ← CGEMM W=R⁻¹·U + HIP compute_capon_relief
   3b. Beamform: Y_out = (R⁻¹·U)^H·Y      ← CGEMM × 2
 ```
@@ -61,9 +61,9 @@ Y [P×N],  U [P×M]
 ```cpp
 #include "capon_processor.hpp"
 
-capon::CaponProcessor proc(backend);  // ROCm backend
+dsp::linalg::CaponProcessor proc(backend);  // ROCm backend
 
-capon::CaponParams params;
+dsp::linalg::CaponParams params;
 params.n_channels   = 8;     // P — каналов
 params.n_samples    = 128;   // N — отсчётов (N >= P рекомендуется)
 params.n_directions = 32;    // M — направлений

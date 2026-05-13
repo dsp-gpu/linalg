@@ -1,4 +1,4 @@
-# vector_algebra — API Reference
+﻿# vector_algebra — API Reference
 
 > Инверсия эрмитовых положительно определённых матриц на GPU (ROCm, Cholesky)
 
@@ -23,7 +23,7 @@
 
 ```cpp
 // modules/vector_algebra/include/vector_algebra_types.hpp
-namespace vector_algebra {
+namespace dsp::linalg {
 
 enum class SymmetrizeMode {
   Roundtrip,  // Download GPU → CPU sym → Upload (fallback)
@@ -44,7 +44,7 @@ enum class SymmetrizeMode {
 
 ```cpp
 // modules/vector_algebra/include/vector_algebra_types.hpp
-namespace vector_algebra {
+namespace dsp::linalg {
 
 struct CholeskyResult {
   void*  d_data     = nullptr;  // HIP device ptr (владеет памятью!)
@@ -87,7 +87,7 @@ struct CholeskyResult {
 
 ```cpp
 // modules/vector_algebra/include/cholesky_inverter_rocm.hpp
-namespace vector_algebra {
+namespace dsp::linalg {
 
 class CholeskyInverterROCm {
 public:
@@ -225,7 +225,7 @@ class CholeskyInverterROCm:
 ```cpp
 #include "cholesky_inverter_rocm.hpp"
 #include "vector_algebra_types.hpp"
-using namespace vector_algebra;
+using namespace dsp::linalg;
 
 // 1. Context
 auto ctx = drv_gpu_lib::DrvGPU::Create(/*...*/);

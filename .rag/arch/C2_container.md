@@ -1,4 +1,4 @@
----
+﻿---
 schema_version: 1
 repo: linalg
 arch_level: c2
@@ -6,9 +6,9 @@ tags:
   - "#level:c2"
   - "#repo:linalg"
   - "#layer:compute"
-  - "#namespace:capon"
-  - "#namespace:vector_algebra"
-  - "#namespace:vector_algebra::tests"
+  - "#namespace:dsp_linalg"
+  - "#namespace:dsp_linalg"
+  - "#namespace:dsp::linalg::tests"
 description: "C2 Container — namespace tree и зависимости репо linalg."
 ---
 
@@ -18,7 +18,7 @@ description: "C2 Container — namespace tree и зависимости репо
 
 - `capon`
 - `vector_algebra`
-- `vector_algebra::tests`
+- `dsp::linalg::tests`
 - `drv_gpu_lib`
 - `test_capon_rocm_bench`
 

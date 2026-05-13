@@ -1,4 +1,4 @@
-# Capon (MVDR) — API-справочник
+﻿# Capon (MVDR) — API-справочник
 
 **Namespace**: `capon` | **Backend**: ROCm only (`ENABLE_ROCM=1`)
 
@@ -79,10 +79,10 @@ void Execute(uint32_t n_channels, uint32_t n_samples, float mu);
 ### CaponInvertOp (`operations/capon_invert_op.hpp`)
 
 ```cpp
-// НЕ наследует GpuKernelOp — обёртка над vector_algebra::CholeskyInverterROCm
+// НЕ наследует GpuKernelOp — обёртка над dsp::linalg::CholeskyInverterROCm
 explicit CaponInvertOp(drv_gpu_lib::IBackend* backend);
 
-vector_algebra::CholeskyResult Execute(void* gpu_R, uint32_t n_channels);
+dsp::linalg::CholeskyResult Execute(void* gpu_R, uint32_t n_channels);
 // kCovMatrix → CholeskyResult (владеет GPU ptr R⁻¹)
 // POTRF + POTRI + symmetrize (vector_algebra)
 

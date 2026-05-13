@@ -1,4 +1,4 @@
-# vector_algebra — Краткий справочник
+﻿# vector_algebra — Краткий справочник
 
 > Инверсия HPD матриц методом Холецкого на GPU (ROCm)
 
@@ -61,7 +61,7 @@ A (HPD n×n)  →  POTRF: A = U^H·U  →  POTRI: A^{-1} из U  →  Symmetrize
 
 ```cpp
 #include "cholesky_inverter_rocm.hpp"
-using namespace vector_algebra;
+using namespace dsp::linalg;
 
 CholeskyInverterROCm inverter(backend);  // GpuKernel mode (default)
 

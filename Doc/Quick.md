@@ -1,4 +1,4 @@
-# Linalg — Quick (объединённый: Vector Algebra + Capon)
+﻿# Linalg — Quick (объединённый: Vector Algebra + Capon)
 
 > Репо `linalg` объединяет два компонента из DSP-GPU: **vector_algebra** (линейная алгебра, Cholesky-обращение) и **capon** (Capon beamforming на основе ковариации).
 
@@ -67,8 +67,8 @@ A (HPD n×n)  →  POTRF: A = U^H·U  →  POTRI: A^{-1} из U  →  Symmetrize
 ##### C++
 
 ```cpp
-#include <linalg/cholesky_inverter_rocm.hpp>
-using namespace vector_algebra;
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>
+using namespace dsp::linalg;
 
 CholeskyInverterROCm inverter(backend);  // GpuKernel mode (default)
 
@@ -194,7 +194,7 @@ inv.set_symmetrize_mode(dsp_linalg.SymmetrizeMode.GpuKernel)
 ```
 Y [P×N],  U [P×M]
   1. R = Y·Y^H/N + μI       ← rocBLAS CGEMM + HIP kernel add_regularization
-  2. R⁻¹                    ← vector_algebra::CholeskyInverterROCm (POTRF+POTRI)
+  2. R⁻¹                    ← dsp::linalg::CholeskyInverterROCm (POTRF+POTRI)
   3a. Relief: z[m] = 1/Re(u^H·R⁻¹·u)     ← CGEMM W=R⁻¹·U + HIP compute_capon_relief
   3b. Beamform: Y_out = (R⁻¹·U)^H·Y      ← CGEMM × 2
 ```
@@ -206,11 +206,11 @@ Y [P×N],  U [P×M]
 ##### C++
 
 ```cpp
-#include <linalg/capon_processor.hpp>
+#include <dsp/linalg/capon_processor.hpp>
 
-capon::CaponProcessor proc(backend);  // ROCm backend
+dsp::linalg::CaponProcessor proc(backend);  // ROCm backend
 
-capon::CaponParams params;
+dsp::linalg::CaponParams params;
 params.n_channels   = 8;     // P — каналов
 params.n_samples    = 128;   // N — отсчётов (N >= P рекомендуется)
 params.n_directions = 32;    // M — направлений

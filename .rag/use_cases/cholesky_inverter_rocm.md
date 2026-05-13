@@ -1,4 +1,4 @@
----
+﻿---
 schema_version: 1
 kind: use_case
 id: cholesky_inverter_rocm
@@ -23,7 +23,7 @@ synonyms:
     - "GPU matrix inverter"
     - "ROCm Cholesky inversion"
     - "inverse matrix for antenna"
-primary_class: vector_algebra::CholeskyInverterROCm
+primary_class: dsp::linalg::CholeskyInverterROCm
 primary_method: CholeskyInverterROCm
 related_classes:
 related_use_cases:
@@ -47,7 +47,7 @@ updated_at: 2026-05-06
 
 ## Решение
 
-Класс — `vector_algebra::CholeskyInverterROCm`, метод `CholeskyInverterROCm`.
+Класс — `dsp::linalg::CholeskyInverterROCm`, метод `CholeskyInverterROCm`.
 
 _Пример кода не найден в `tests/` или `examples/`._
 

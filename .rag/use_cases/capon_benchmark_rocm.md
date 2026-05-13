@@ -1,4 +1,4 @@
----
+﻿---
 schema_version: 1
 kind: use_case
 id: capon_benchmark_rocm
@@ -65,7 +65,7 @@ updated_at: 2026-05-06
     auto* backend = &capon_test_helpers::GetROCmBackend();
 
     // ── Параметры Кейпона ─────────────────────────────────────────────────
-    capon::CaponParams params;
+    dsp::linalg::CaponParams params;
     params.n_channels   = 16;   // P — число антенных каналов
     params.n_samples    = 256;  // N — число временных отсчётов
     params.n_directions = 64;   // M — число направлений сканирования

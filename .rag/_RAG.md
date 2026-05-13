@@ -1,4 +1,4 @@
----
+﻿---
 schema_version: 1
 repo: linalg
 version: 0.1.0
@@ -15,72 +15,72 @@ modules:
     - vector_algebra
 
 key_classes:                            # auto: top по test_params
-  - fqn: vector_algebra::MatrixOpsROCm
+  - fqn: dsp::linalg::MatrixOpsROCm
     brief: "rocBLAS CGEMM операции, привязанные к GpuContext (stream + handle)."
     maturity: alpha
     methods: 13
     test_params_rows: 29
-    test_params: test_params/vector_algebra_MatrixOpsROCm.md
-  - fqn: capon::CaponProcessor
+    test_params: test_params/dsp_linalg_MatrixOpsROCm.md
+  - fqn: dsp::linalg::CaponProcessor
     brief: "@ingroup grp_capon"
     maturity: alpha
     methods: 28
     test_params_rows: 10
-    test_params: test_params/capon_CaponProcessor.md
-  - fqn: vector_algebra::CholeskyInverterROCm
+    test_params: test_params/dsp_linalg_CaponProcessor.md
+  - fqn: dsp::linalg::CholeskyInverterROCm
     brief: "Инверсия эрмитовой положительно определённой матрицы (POTRF + POTRI)."
     maturity: alpha
     methods: 39
     test_params_rows: 4
-    test_params: test_params/vector_algebra_CholeskyInverterROCm.md
+    test_params: test_params/dsp_linalg_CholeskyInverterROCm.md
   - fqn: drv_gpu_lib::GpuContext
     brief: "TODO: AI-fill"
     maturity: alpha
     methods: 14
     test_params_rows: 4
     test_params: test_params/drv_gpu_lib_GpuContext.md
-  - fqn: vector_algebra::DiagonalLoadRegularizer
+  - fqn: dsp::linalg::DiagonalLoadRegularizer
     brief: "Диагональная загрузка: A += mu * I (GPU, compiled via GpuContext)."
     maturity: alpha
     methods: 8
     test_params_rows: 4
-    test_params: test_params/vector_algebra_DiagonalLoadRegularizer.md
-  - fqn: capon::AdaptBeamformOp
+    test_params: test_params/dsp_linalg_DiagonalLoadRegularizer.md
+  - fqn: dsp::linalg::AdaptBeamformOp
     brief: "TODO: AI-fill"
     maturity: alpha
     methods: 2
     test_params_rows: 4
-    test_params: test_params/capon_AdaptBeamformOp.md
-  - fqn: capon::ComputeWeightsOp
+    test_params: test_params/dsp_linalg_AdaptBeamformOp.md
+  - fqn: dsp::linalg::ComputeWeightsOp
     brief: "TODO: AI-fill"
     maturity: alpha
     methods: 2
     test_params_rows: 4
-    test_params: test_params/capon_ComputeWeightsOp.md
-  - fqn: capon::CovarianceMatrixOp
+    test_params: test_params/dsp_linalg_ComputeWeightsOp.md
+  - fqn: dsp::linalg::CovarianceMatrixOp
     brief: "TODO: AI-fill"
     maturity: alpha
     methods: 2
     test_params_rows: 3
-    test_params: test_params/capon_CovarianceMatrixOp.md
-  - fqn: capon::CaponInvertOp
+    test_params: test_params/dsp_linalg_CovarianceMatrixOp.md
+  - fqn: dsp::linalg::CaponInvertOp
     brief: "Обёртка инверсии ковариационной матрицы."
     maturity: alpha
     methods: 6
     test_params_rows: 2
-    test_params: test_params/capon_CaponInvertOp.md
-  - fqn: capon::CaponReliefOp
+    test_params: test_params/dsp_linalg_CaponInvertOp.md
+  - fqn: dsp::linalg::CaponReliefOp
     brief: "TODO: AI-fill"
     maturity: alpha
     methods: 2
     test_params_rows: 2
-    test_params: test_params/capon_CaponReliefOp.md
-  - fqn: vector_algebra::CholeskyResult
+    test_params: test_params/dsp_linalg_CaponReliefOp.md
+  - fqn: dsp::linalg::CholeskyResult
     brief: "Результат инверсии матрицы — владеет GPU памятью."
     maturity: alpha
     methods: 13
     test_params_rows: 0
-    test_params: test_params/vector_algebra_CholeskyResult.md
+    test_params: test_params/dsp_linalg_CholeskyResult.md
   - fqn: PyCaponProcessor
     brief: "TODO: AI-fill"
     maturity: alpha
@@ -105,18 +105,18 @@ key_classes:                            # auto: top по test_params
     methods: 3
     test_params_rows: 0
     test_params: test_params/test_capon_rocm_bench_CaponReliefBenchmarkROCm.md
-  - fqn: vector_algebra::IMatrixRegularizer
+  - fqn: dsp::linalg::IMatrixRegularizer
     brief: "Применить регуляризацию к квадратной комплексной матрице на GPU."
     maturity: alpha
     methods: 1
     test_params_rows: 0
-    test_params: test_params/vector_algebra_IMatrixRegularizer.md
-  - fqn: vector_algebra::NoOpRegularizer
+    test_params: test_params/dsp_linalg_IMatrixRegularizer.md
+  - fqn: dsp::linalg::NoOpRegularizer
     brief: "Ничего не делает. Безопасный заменитель nullptr (Null Object)."
     maturity: alpha
     methods: 1
     test_params_rows: 0
-    test_params: test_params/vector_algebra_NoOpRegularizer.md
+    test_params: test_params/dsp_linalg_NoOpRegularizer.md
 
 test_params_summary:
   classes_with_params: 9
@@ -147,8 +147,8 @@ architecture_files:                       # auto: arch_files generator
 tags:                                    # auto-inferred (RAG_CLAUDE_C4)
   - "#layer:compute"
   - "#repo:linalg"
-  - "#namespace:vector_algebra"
-  - "#namespace:capon"
+  - "#namespace:dsp_linalg"
+  - "#namespace:dsp_linalg"
   - "#namespace:drv_gpu_lib"
   - "#pattern:Pipeline:CaponProcessor"
   - "#pattern:Facade:CaponProcessor"
