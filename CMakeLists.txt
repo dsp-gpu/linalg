@@ -29,17 +29,17 @@ set_target_properties(DspLinalg PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_sources(DspLinalg PRIVATE
   # vector_algebra
-  src/vector_algebra/src/matrix_ops_rocm.cpp
-  src/vector_algebra/src/cholesky_inverter_rocm.cpp
-  src/vector_algebra/src/diagonal_load_regularizer.cpp
-  src/vector_algebra/src/symmetrize_gpu_rocm.cpp
+  src/vector_algebra/matrix_ops_rocm.cpp
+  src/vector_algebra/cholesky_inverter_rocm.cpp
+  src/vector_algebra/diagonal_load_regularizer.cpp
+  src/vector_algebra/symmetrize_gpu_rocm.cpp
   # capon
-  src/capon/src/capon_processor.cpp
+  src/capon/capon_processor.cpp
 )
 
 target_include_directories(DspLinalg
   PUBLIC
-    # Стандарт AMD: #include <linalg/operations/...>
+    # Стандарт DSP-GPU: #include <dsp/linalg/operations/...>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
     $<INSTALL_INTERFACE:include>
