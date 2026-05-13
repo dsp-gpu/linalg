@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #if ENABLE_ROCM
 
 // ============================================================================
@@ -52,11 +52,11 @@
 #include <vector>
 #include <core/interface/i_backend.hpp>
 #include <core/interface/input_data.hpp>
-#include <linalg/vector_algebra_types.hpp>
+#include <dsp/linalg/vector_algebra_types.hpp>
 
 namespace drv_gpu_lib { class GpuContext; }
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 /**
  * @class CholeskyInverterROCm
@@ -204,7 +204,7 @@ private:
   static void SymmetrizeUpperToFull(std::complex<float>* data, int n);
 };
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #else  // !ENABLE_ROCM — Windows stub
 
@@ -213,9 +213,9 @@ private:
 #include <stdexcept>
 #include <core/interface/i_backend.hpp>
 #include <core/interface/input_data.hpp>
-#include <linalg/vector_algebra_types.hpp>
+#include <dsp/linalg/vector_algebra_types.hpp>
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 class CholeskyInverterROCm {
 public:
@@ -244,6 +244,6 @@ public:
   }
 };
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

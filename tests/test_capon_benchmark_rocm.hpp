@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // test_capon_benchmark_rocm — runner бенчмарков CaponProcessor (ROCm)
@@ -65,7 +65,7 @@ inline void run() {
     auto* backend = &capon_test_helpers::GetROCmBackend();
 
     // ── Параметры Кейпона ─────────────────────────────────────────────────
-    capon::CaponParams params;
+    dsp::linalg::CaponParams params;
     params.n_channels   = 16;   // P — число антенных каналов
     params.n_samples    = 256;  // N — число временных отсчётов
     params.n_directions = 64;   // M — число направлений сканирования
@@ -80,7 +80,7 @@ inline void run() {
          static_cast<float>(M_PI) / 3.0f);
 
     // ── Создать процессор (компилирует HIP kernels один раз) ──────────────
-    capon::CaponProcessor proc(backend);
+    dsp::linalg::CaponProcessor proc(backend);
 
     // ── Benchmark 1: ComputeRelief() ──────────────────────────────────────
     TestPrint("--- Benchmark 1: CaponProcessor::ComputeRelief() ---");

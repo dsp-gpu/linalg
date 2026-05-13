@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // CaponReliefOp — рельеф Кейпона z[m] = 1/Re(u_m^H·W[:,m]) (Layer 5 Ref03)
@@ -44,13 +44,13 @@
 
 #include <core/services/gpu_kernel_op.hpp>
 #include <core/interface/gpu_context.hpp>
-#include <linalg/capon_types.hpp>
+#include <dsp/linalg/capon_types.hpp>
 
 #include <hip/hip_runtime.h>
 #include <stdexcept>
 #include <string>
 
-namespace capon {
+namespace dsp::linalg {
 
 /**
  * @class CaponReliefOp
@@ -61,7 +61,7 @@ namespace capon {
  * @note Предусловие: ComputeWeightsOp::Execute() уже записал W в kWeight.
  * @see ComputeWeightsOp — поставщик kWeight
  * @see AdaptBeamformOp — параллельный финальный Op (для ДО вместо рельефа)
- * @see capon::kernels::GetCaponKernelSource
+ * @see dsp::linalg::kernels::GetCaponKernelSource
  */
 class CaponReliefOp : public drv_gpu_lib::GpuKernelOp {
 public:
@@ -114,6 +114,6 @@ protected:
   void OnRelease() override {}  // нет приватных GPU буферов
 };
 
-}  // namespace capon
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

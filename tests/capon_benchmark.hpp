@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // capon_benchmark — benchmark-классы CaponProcessor (GpuBenchmarkBase)
@@ -27,7 +27,7 @@
  *
  * Использование:
  * @code
- *   capon::CaponProcessor proc(backend);
+ *   dsp::linalg::CaponProcessor proc(backend);
  *   test_capon_rocm_bench::CaponReliefBenchmarkROCm bench(backend, proc, signal, steering, params);
  *   bench.Run();
  *   bench.Report();
@@ -40,7 +40,7 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/capon_processor.hpp>
+#include <dsp/linalg/capon_processor.hpp>
 #include <core/services/gpu_benchmark_base.hpp>
 #include <core/services/scoped_hip_event.hpp>
 #include <core/services/profiling/profiling_facade.hpp>
@@ -78,10 +78,10 @@ class CaponReliefBenchmarkROCm : public drv_gpu_lib::GpuBenchmarkBase {
 public:
   CaponReliefBenchmarkROCm(
       drv_gpu_lib::IBackend* backend,
-      capon::CaponProcessor& proc,
+      dsp::linalg::CaponProcessor& proc,
       const std::vector<std::complex<float>>& signal,
       const std::vector<std::complex<float>>& steering,
-      const capon::CaponParams& params,
+      const dsp::linalg::CaponParams& params,
       GpuBenchmarkBase::Config cfg = {
           .n_warmup   = 5,
           .n_runs     = 20,
@@ -112,10 +112,10 @@ protected:
   }
 
 private:
-  capon::CaponProcessor&                   proc_;
+  dsp::linalg::CaponProcessor&                   proc_;
   std::vector<std::complex<float>>         signal_;
   std::vector<std::complex<float>>         steering_;
-  capon::CaponParams                       params_;
+  dsp::linalg::CaponParams                       params_;
 };
 
 // ─── Benchmark 2: CaponProcessor::AdaptiveBeamform() ─────────────────────
@@ -124,10 +124,10 @@ class CaponBeamformBenchmarkROCm : public drv_gpu_lib::GpuBenchmarkBase {
 public:
   CaponBeamformBenchmarkROCm(
       drv_gpu_lib::IBackend* backend,
-      capon::CaponProcessor& proc,
+      dsp::linalg::CaponProcessor& proc,
       const std::vector<std::complex<float>>& signal,
       const std::vector<std::complex<float>>& steering,
-      const capon::CaponParams& params,
+      const dsp::linalg::CaponParams& params,
       GpuBenchmarkBase::Config cfg = {
           .n_warmup   = 5,
           .n_runs     = 20,
@@ -158,10 +158,10 @@ protected:
   }
 
 private:
-  capon::CaponProcessor&                   proc_;
+  dsp::linalg::CaponProcessor&                   proc_;
   std::vector<std::complex<float>>         signal_;
   std::vector<std::complex<float>>         steering_;
-  capon::CaponParams                       params_;
+  dsp::linalg::CaponParams                       params_;
 };
 
 }  // namespace test_capon_rocm_bench

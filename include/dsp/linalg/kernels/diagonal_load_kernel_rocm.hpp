@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #if ENABLE_ROCM
 
 /**
@@ -19,7 +19,7 @@
  *   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
  */
 
-namespace vector_algebra {
+namespace dsp::linalg {
 namespace kernels {
 
 inline const char* GetDiagonalLoadKernelSource() {
@@ -55,6 +55,6 @@ extern "C" __global__ void diagonal_load(
 }
 
 }  // namespace kernels
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

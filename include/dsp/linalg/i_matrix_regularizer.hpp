@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // IMatrixRegularizer — интерфейс матричной регуляризации (Strategy GoF)
@@ -46,7 +46,7 @@
 using hipStream_t = void*;  ///< Stub для non-ROCm платформ (NoOpRegularizer)
 #endif
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 /**
  * @class IMatrixRegularizer
@@ -82,4 +82,4 @@ public:
                      hipStream_t stream = nullptr) = 0;
 };
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg

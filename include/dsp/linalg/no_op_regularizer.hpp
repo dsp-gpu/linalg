@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // NoOpRegularizer — регуляризатор-заглушка (Null Object Pattern, GoF)
@@ -32,9 +32,9 @@
 //   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
 // ============================================================================
 
-#include <linalg/i_matrix_regularizer.hpp>
+#include <dsp/linalg/i_matrix_regularizer.hpp>
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 /**
  * @class NoOpRegularizer
@@ -55,4 +55,4 @@ public:
              hipStream_t /*stream*/ = nullptr) override {}
 };
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg

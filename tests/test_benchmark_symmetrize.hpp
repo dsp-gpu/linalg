@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // test_benchmark_symmetrize — бенчмарк симметризации матриц (ROCm)
@@ -48,7 +48,7 @@
 #include <unistd.h>        // gethostname
 #include <sys/utsname.h>   // uname
 
-#include <linalg/cholesky_inverter_rocm.hpp>
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>
 #include <core/interface/i_backend.hpp>
 #include <core/interface/input_data.hpp>
 #include <core/services/console_output.hpp>
@@ -57,7 +57,7 @@
 
 #include "test_cholesky_inverter_rocm.hpp"
 
-namespace vector_algebra::tests {
+namespace dsp::linalg::tests {
 
 constexpr int kWarmupRuns = 3;
 constexpr int kBenchmarkRuns = 20;
@@ -553,6 +553,6 @@ inline void TestProfilerIntegration(drv_gpu_lib::IBackend* backend) {
   con.Print(0, "VecAlg", "TestProfilerIntegration PASSED");
 }
 
-}  // namespace vector_algebra::tests
+}  // namespace dsp::linalg::tests
 
 #endif  // ENABLE_ROCM

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // test_stage_profiling — stage-level profiling Cholesky pipeline (ROCm)
@@ -38,14 +38,14 @@
 #include <rocblas/rocblas.h>
 #include <rocsolver/rocsolver.h>
 
-#include <linalg/cholesky_inverter_rocm.hpp>
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>
 #include <core/interface/i_backend.hpp>
 #include <core/services/console_output.hpp>
 #include <core/services/scoped_hip_event.hpp>
 
 #include "test_cholesky_inverter_rocm.hpp"
 
-namespace vector_algebra::tests {
+namespace dsp::linalg::tests {
 
 // ════════════════════════════════════════════════════════════════════════════
 // StageTiming
@@ -399,6 +399,6 @@ inline void TestStageProfiling(drv_gpu_lib::IBackend* backend) {
   con.Print(0, "VecAlg", "TestStageProfiling PASSED");
 }
 
-}  // namespace vector_algebra::tests
+}  // namespace dsp::linalg::tests
 
 #endif  // ENABLE_ROCM

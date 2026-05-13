@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // linalg_all_test — агрегатор тестов модуля linalg
@@ -67,8 +67,8 @@ namespace vector_algebra_all_test {
 
 inline void run() {
 #if ENABLE_ROCM
-  using namespace vector_algebra;
-  using namespace vector_algebra::tests;
+  using namespace dsp::linalg;
+  using namespace dsp::linalg::tests;
 
   auto& con = drv_gpu_lib::ConsoleOutput::GetInstance();
 

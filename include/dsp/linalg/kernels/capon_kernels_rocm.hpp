@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /**
  * @brief HIP kernel-source для CaponProcessor (компилируется через hiprtc).
@@ -26,7 +26,7 @@
 
 #if ENABLE_ROCM
 
-namespace capon {
+namespace dsp::linalg {
 namespace kernels {
 
 inline const char* GetCaponKernelSource() {
@@ -76,6 +76,6 @@ extern "C" __global__ void compute_capon_relief(
 }
 
 }  // namespace kernels
-}  // namespace capon
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

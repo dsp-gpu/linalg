@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // TestCaponOpenCLToROCm — production pipeline: OpenCL → Zero Copy → Capon ROCm
@@ -27,7 +27,7 @@
 #if ENABLE_ROCM
 
 // -- Алгоритм Кейпона ---------------------------------------------------
-#include <linalg/capon_processor.hpp>
+#include <dsp/linalg/capon_processor.hpp>
 #include "capon_test_helpers.hpp"
 
 // -- GPU инфраструктура --------------------------------------------------
@@ -338,14 +338,14 @@ inline void test_02_customer_data_pipeline() {
     TestPrint("  ---[ ЭТАП 4: РАСЧЁТ КЕЙПОНА НА ROCm ]---");
 
     // 4.1. Параметры алгоритма
-    capon::CaponParams params;
+    dsp::linalg::CaponParams params;
     params.n_channels   = P;      // 85 антенных каналов
     params.n_samples    = N;      // 1000 временных отсчётов
     params.n_directions = M;      // ~37 направлений сканирования
     params.mu           = 1.0f;   // регуляризация (GPU: R = Y*Y^H/N + mu*I)
 
     // 4.2. Запуск GPU pipeline с HIP-указателями от Zero Copy
-    capon::CaponProcessor processor(&rocm);
+    dsp::linalg::CaponProcessor processor(&rocm);
     auto result = processor.ComputeRelief(
         bridge_Y.GetHipPtr(),   // void* -- сигнал Y в VRAM (от Zero Copy!)
         bridge_U.GetHipPtr(),   // void* -- steering U в VRAM (от Zero Copy!)
@@ -445,14 +445,14 @@ inline void test_03_zerocopy_matches_direct() {
   const size_t bytes_Y = signal.size()   * sizeof(cx);
   const size_t bytes_U = steering.size() * sizeof(cx);
 
-  capon::CaponParams params{P, N, M, 1.0f};
+  dsp::linalg::CaponParams params{P, N, M, 1.0f};
 
   // -- Путь A: ПРЯМОЙ (CPU vector -> CaponProcessor) --
-  capon::CaponProcessor proc_ref(&rocm);
+  dsp::linalg::CaponProcessor proc_ref(&rocm);
   auto relief_ref = proc_ref.ComputeRelief(signal, steering, params);
 
   // -- Путь B: через OpenCL cl_mem -> Zero Copy -> CaponProcessor --
-  capon::CaponReliefResult relief_ocl;
+  dsp::linalg::CaponReliefResult relief_ocl;
   bool ok = false;
 
   try {
@@ -466,7 +466,7 @@ inline void test_03_zerocopy_matches_direct() {
     bridge_Y.ImportFromOpenCl(static_cast<cl_mem>(cl_Y), bytes_Y, cl_device);
     bridge_U.ImportFromOpenCl(static_cast<cl_mem>(cl_U), bytes_U, cl_device);
 
-    capon::CaponProcessor proc_ocl(&rocm);
+    dsp::linalg::CaponProcessor proc_ocl(&rocm);
     relief_ocl = proc_ocl.ComputeRelief(
         bridge_Y.GetHipPtr(),
         bridge_U.GetHipPtr(),
@@ -575,8 +575,8 @@ inline void test_04_beamform_customer_data() {
     bridge_U.ImportFromOpenCl(static_cast<cl_mem>(cl_U), bytes_U, cl_device);
 
     // ЭТАП 4: Расчёт AdaptiveBeamform
-    capon::CaponParams params{P, N, M, 1.0f};
-    capon::CaponProcessor processor(&rocm);
+    dsp::linalg::CaponParams params{P, N, M, 1.0f};
+    dsp::linalg::CaponProcessor processor(&rocm);
 
     auto result = processor.AdaptiveBeamform(
         bridge_Y.GetHipPtr(),
@@ -680,10 +680,10 @@ inline void test_05_svm_customer_data() {
   const size_t bytes_Y = signal.size()   * sizeof(cx);
   const size_t bytes_U = steering.size() * sizeof(cx);
 
-  capon::CaponParams params{P, N, M, 1.0f};
+  dsp::linalg::CaponParams params{P, N, M, 1.0f};
 
   // ── Путь A: Прямой (CPU → CaponProcessor, без SVM) ────────────────────
-  capon::CaponProcessor proc_ref(&rocm);
+  dsp::linalg::CaponProcessor proc_ref(&rocm);
   auto relief_ref = proc_ref.ComputeRelief(signal, steering, params);
 
   // ── Путь B: Через SVM ──────────────────────────────────────────────────
@@ -744,7 +744,7 @@ inline void test_05_svm_customer_data() {
     TestPrint("  ---[ ЭТАП 4: Capon на ROCm через SVM pointers ]---");
 
     // 4. Capon на ROCm
-    capon::CaponProcessor proc_svm(&rocm);
+    dsp::linalg::CaponProcessor proc_svm(&rocm);
     auto relief_svm = proc_svm.ComputeRelief(
         bridge_Y.GetHipPtr(),
         bridge_U.GetHipPtr(),

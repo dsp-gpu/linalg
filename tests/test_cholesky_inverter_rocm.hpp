@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // test_cholesky_inverter_rocm — тесты CholeskyInverterROCm (Task_11 v2)
@@ -34,14 +34,14 @@
 
 #include <hip/hip_runtime.h>
 
-#include <linalg/cholesky_inverter_rocm.hpp>
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>
 #include <core/interface/i_backend.hpp>
 #include <core/interface/input_data.hpp>
 #include <core/services/console_output.hpp>
 
 #include "test_utils/validators/numeric.hpp"
 
-namespace vector_algebra::tests {
+namespace dsp::linalg::tests {
 
 // ════════════════════════════════════════════════════════════════════════════
 // Helpers
@@ -521,6 +521,6 @@ inline void TestResultAccess(drv_gpu_lib::IBackend* backend,
             std::string(ModeName(mode)) + "]");
 }
 
-}  // namespace vector_algebra::tests
+}  // namespace dsp::linalg::tests
 
 #endif  // ENABLE_ROCM

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // AdaptBeamformOp — адаптивное диаграммообразование Y_out = W^H·Y (Layer 5 Ref03)
@@ -37,12 +37,12 @@
 
 #include <core/services/gpu_kernel_op.hpp>
 #include <core/interface/gpu_context.hpp>
-#include <linalg/capon_types.hpp>
-#include <linalg/matrix_ops_rocm.hpp>
+#include <dsp/linalg/capon_types.hpp>
+#include <dsp/linalg/matrix_ops_rocm.hpp>
 
 #include <rocblas/rocblas.h>
 
-namespace capon {
+namespace dsp::linalg {
 
 /**
  * @class AdaptBeamformOp
@@ -53,7 +53,7 @@ namespace capon {
  * @note Предусловие: ComputeWeightsOp::Execute() уже записал W в kWeight.
  * @see ComputeWeightsOp — поставщик kWeight
  * @see CaponReliefOp — параллельный финальный Op (для рельефа вместо ДО)
- * @see vector_algebra::MatrixOpsROCm
+ * @see dsp::linalg::MatrixOpsROCm
  */
 class AdaptBeamformOp : public drv_gpu_lib::GpuKernelOp {
 public:
@@ -80,7 +80,7 @@ public:
    * Предусловие: ComputeWeightsOp::Execute() уже запущен и записал W в kWeight.
    */
   void Execute(uint32_t n_channels, uint32_t n_samples, uint32_t n_directions,
-               vector_algebra::MatrixOpsROCm& mat) {
+               dsp::linalg::MatrixOpsROCm& mat) {
     const int P = static_cast<int>(n_channels);
     const int N = static_cast<int>(n_samples);
     const int M = static_cast<int>(n_directions);
@@ -98,6 +98,6 @@ protected:
   void OnRelease() override {}  // нет приватных GPU буферов
 };
 
-}  // namespace capon
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

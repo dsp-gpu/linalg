@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #if ENABLE_ROCM
 
 /**
@@ -20,7 +20,7 @@
 #include <vector>
 #include <core/interface/i_backend.hpp>
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 /// Режим симметризации после POTRI
 enum class SymmetrizeMode {
@@ -83,11 +83,11 @@ struct CholeskyResult {
   CholeskyResult& operator=(const CholeskyResult&) = delete;
 };
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #else  // !ENABLE_ROCM — minimal stub types for Windows compilation
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 enum class SymmetrizeMode { Roundtrip, GpuKernel };
 
@@ -103,6 +103,6 @@ struct CholeskyResult {
   CholeskyResult& operator=(const CholeskyResult&) = delete;
 };
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

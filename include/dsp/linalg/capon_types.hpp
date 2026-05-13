@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /**
  * @brief Типы данных модуля Capon — параметры, результаты, индексы shared-буферов.
@@ -26,7 +26,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace capon {
+namespace dsp::linalg {
 
 // ============================================================================
 // Параметры алгоритма
@@ -67,4 +67,4 @@ namespace shared_buf {
 }  // namespace shared_buf
 #endif  // ENABLE_ROCM
 
-}  // namespace capon
+} // namespace dsp::linalg

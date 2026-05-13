@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file capon_processor.cpp
  * @brief CaponProcessor — реализация тонкого фасада (Ref03)
  *
@@ -13,7 +13,7 @@
  *   Upload(Y, U) → CovarianceMatrixOp → регуляризация → CaponInvertOp
  *                → ComputeWeightsOp → AdaptBeamformOp → ReadBeam
  *
- * Инверсия матрицы делегируется в vector_algebra::CholeskyInverterROCm
+ * Инверсия матрицы делегируется в dsp::linalg::CholeskyInverterROCm
  * через CaponInvertOp — повторное использование готового модуля.
  *
  * ComputeWeightsOp вычисляет W = R^{-1}*U единожды на шаг и записывает
@@ -25,8 +25,8 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/capon_processor.hpp>
-#include <linalg/kernels/capon_kernels_rocm.hpp>
+#include <dsp/linalg/capon_processor.hpp>
+#include <dsp/linalg/kernels/capon_kernels_rocm.hpp>
 #include <core/services/console_output.hpp>
 #include <core/services/cache_dir_resolver.hpp>   // v2: exe-relative cache
 
@@ -35,11 +35,11 @@
 #include <cstring>
 #include <complex>
 
-namespace capon {
+namespace dsp::linalg {
 
 // Kernel-имена, компилируемые через hiprtc (только Capon-специфичные)
 // GEMM-операции выполняются через rocBLAS (не hiprtc)
-// Регуляризация (diagonal_load) — через vector_algebra::DiagonalLoadRegularizer
+// Регуляризация (diagonal_load) — через dsp::linalg::DiagonalLoadRegularizer
 static const std::vector<std::string> kKernelNames = {
   "compute_capon_relief",  // z[m] = 1 / Re(Σ conj(U[p,m]) * W[p,m])
 };
@@ -57,7 +57,7 @@ CaponProcessor::CaponProcessor(drv_gpu_lib::IBackend* backend)
     , ctx_(backend, "Capon", drv_gpu_lib::ResolveCacheDir("capon"))
     , inv_op_(std::make_unique<CaponInvertOp>(backend))
     , mat_ops_(&ctx_)
-    , regularizer_(std::make_unique<vector_algebra::DiagonalLoadRegularizer>(backend)) {
+    , regularizer_(std::make_unique<dsp::linalg::DiagonalLoadRegularizer>(backend)) {
 }
 
 CaponProcessor::~CaponProcessor() {
@@ -193,7 +193,7 @@ void CaponProcessor::RunCovAndInvert(const CaponParams& params) {
   regularizer_->Apply(R_gpu, static_cast<int>(params.n_channels), params.mu,
                       ctx_.stream());
 
-  // Шаг 3: R^{-1} через vector_algebra::CholeskyInverterROCm
+  // Шаг 3: R^{-1} через dsp::linalg::CholeskyInverterROCm
   last_inv_ = inv_op_->Execute(R_gpu, params.n_channels);
   // last_inv_.AsHipPtr() — указатель R^{-1} на GPU (valid до следующего вызова)
 }
@@ -358,6 +358,6 @@ CaponBeamResult CaponProcessor::AdaptiveBeamform(
   return ReadBeamResult(params.n_directions, params.n_samples);
 }
 
-}  // namespace capon
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

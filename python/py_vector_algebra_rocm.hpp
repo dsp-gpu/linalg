@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /**
  * @file py_vector_algebra_rocm.hpp
@@ -17,7 +17,7 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/cholesky_inverter_rocm.hpp>
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>
 
 // ════════════════════════════════════════════════════════════════════════════
 // PyCholeskyInverterROCm — Python wrapper
@@ -34,9 +34,9 @@
 class PyCholeskyInverterROCm {
 public:
   PyCholeskyInverterROCm(ROCmGPUContext& ctx,
-                          vector_algebra::SymmetrizeMode mode)
+                          dsp::linalg::SymmetrizeMode mode)
       : ctx_(ctx),
-        inverter_(std::make_unique<vector_algebra::CholeskyInverterROCm>(
+        inverter_(std::make_unique<dsp::linalg::CholeskyInverterROCm>(
             ctx.backend(), mode)) {}
 
   /// Инверсия одной матрицы n×n (CPU → GPU → CPU)
@@ -57,7 +57,7 @@ public:
     auto* ptr = static_cast<std::complex<float>*>(buf.ptr);
     input.data.assign(ptr, ptr + expected);
 
-    vector_algebra::CholeskyResult result;
+    dsp::linalg::CholeskyResult result;
     {
       py::gil_scoped_release release;
       result = inverter_->Invert(input, n);
@@ -89,7 +89,7 @@ public:
     auto* ptr = static_cast<std::complex<float>*>(buf.ptr);
     input.data.assign(ptr, ptr + expected);
 
-    vector_algebra::CholeskyResult result;
+    dsp::linalg::CholeskyResult result;
     {
       py::gil_scoped_release release;
       result = inverter_->InvertBatch(input, n);
@@ -117,17 +117,17 @@ public:
                                              out_vec->data(), capsule);
   }
 
-  void set_symmetrize_mode(vector_algebra::SymmetrizeMode mode) {
+  void set_symmetrize_mode(dsp::linalg::SymmetrizeMode mode) {
     inverter_->SetSymmetrizeMode(mode);
   }
 
-  vector_algebra::SymmetrizeMode get_symmetrize_mode() const {
+  dsp::linalg::SymmetrizeMode get_symmetrize_mode() const {
     return inverter_->GetSymmetrizeMode();
   }
 
 private:
   ROCmGPUContext& ctx_;
-  std::unique_ptr<vector_algebra::CholeskyInverterROCm> inverter_;
+  std::unique_ptr<dsp::linalg::CholeskyInverterROCm> inverter_;
 };
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -136,13 +136,13 @@ private:
 
 inline void register_cholesky_inverter_rocm(py::module& m) {
   // SymmetrizeMode enum
-  py::enum_<vector_algebra::SymmetrizeMode>(m, "SymmetrizeMode",
+  py::enum_<dsp::linalg::SymmetrizeMode>(m, "SymmetrizeMode",
       "Режим симметризации после Cholesky POTRI.\n\n"
       "  Roundtrip — Download GPU → CPU sym → Upload\n"
       "  GpuKernel — HIP kernel in-place на GPU")
-      .value("Roundtrip", vector_algebra::SymmetrizeMode::Roundtrip,
+      .value("Roundtrip", dsp::linalg::SymmetrizeMode::Roundtrip,
              "CPU symmetrize (Download → CPU → Upload)")
-      .value("GpuKernel", vector_algebra::SymmetrizeMode::GpuKernel,
+      .value("GpuKernel", dsp::linalg::SymmetrizeMode::GpuKernel,
              "GPU kernel in-place (hiprtc)");
 
   // CholeskyInverterROCm class
@@ -154,8 +154,8 @@ inline void register_cholesky_inverter_rocm(py::module& m) {
       "  ctx = dsp_linalg.ROCmGPUContext(0)\n"
       "  inverter = dsp_linalg.CholeskyInverterROCm(ctx, dsp_linalg.SymmetrizeMode.GpuKernel)\n"
       "  A_inv = inverter.invert_cpu(A.flatten(), n=341)\n")
-      .def(py::init<ROCmGPUContext&, vector_algebra::SymmetrizeMode>(), py::keep_alive<1, 2>(), py::arg("ctx"),
-           py::arg("mode") = vector_algebra::SymmetrizeMode::GpuKernel,
+      .def(py::init<ROCmGPUContext&, dsp::linalg::SymmetrizeMode>(), py::keep_alive<1, 2>(), py::arg("ctx"),
+           py::arg("mode") = dsp::linalg::SymmetrizeMode::GpuKernel,
            "Create CholeskyInverterROCm bound to ROCm GPU context")
 
       .def("invert_cpu",
@@ -189,7 +189,7 @@ inline void register_cholesky_inverter_rocm(py::module& m) {
 
       .def("__repr__", [](const PyCholeskyInverterROCm& self) {
         auto mode = self.get_symmetrize_mode();
-        std::string mode_str = mode == vector_algebra::SymmetrizeMode::Roundtrip
+        std::string mode_str = mode == dsp::linalg::SymmetrizeMode::Roundtrip
                                    ? "Roundtrip"
                                    : "GpuKernel";
         return "<CholeskyInverterROCm (ROCm, POTRF+POTRI, " + mode_str + ")>";

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // ComputeWeightsOp — весовая матрица W = R^{-1}·U (Layer 5 Ref03)
@@ -42,12 +42,12 @@
 
 #include <core/services/gpu_kernel_op.hpp>
 #include <core/interface/gpu_context.hpp>
-#include <linalg/capon_types.hpp>
-#include <linalg/matrix_ops_rocm.hpp>
+#include <dsp/linalg/capon_types.hpp>
+#include <dsp/linalg/matrix_ops_rocm.hpp>
 
 #include <rocblas/rocblas.h>
 
-namespace capon {
+namespace dsp::linalg {
 
 /**
  * @class ComputeWeightsOp
@@ -83,7 +83,7 @@ public:
    * Пишет:  kWeight   (W) [P × M]  (аллоцирует при необходимости)
    */
   void Execute(uint32_t n_channels, uint32_t n_directions, void* R_inv_ptr,
-               vector_algebra::MatrixOpsROCm& mat) {
+               dsp::linalg::MatrixOpsROCm& mat) {
     const int P = static_cast<int>(n_channels);
     const int M = static_cast<int>(n_directions);
 
@@ -100,6 +100,6 @@ protected:
   void OnRelease() override {}  // нет приватных GPU буферов
 };
 
-}  // namespace capon
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

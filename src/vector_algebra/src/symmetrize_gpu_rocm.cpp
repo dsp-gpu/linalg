@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file symmetrize_gpu_rocm.cpp
  * @brief CompileKernels + SymmetrizeGpuKernel via GpuContext (v2 disk cache)
  *
@@ -14,8 +14,8 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/cholesky_inverter_rocm.hpp>
-#include <linalg/kernels/symmetrize_kernel_sources_rocm.hpp>
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>
+#include <dsp/linalg/kernels/symmetrize_kernel_sources_rocm.hpp>
 
 #include <cstdint>
 #include <stdexcept>
@@ -26,7 +26,7 @@
 #include <core/interface/gpu_context.hpp>
 #include <core/services/console_output.hpp>
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 // ════════════════════════════════════════════════════════════════════════════
 // CompileKernels — via GpuContext (idempotent, disk-cached v2)
@@ -95,6 +95,6 @@ void CholeskyInverterROCm::SymmetrizeGpuKernelBatched(void* d_contiguous,
   }
 }
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file matrix_ops_rocm.cpp
  * @brief MatrixOpsROCm — реализация rocBLAS CGEMM операций
  *
@@ -14,9 +14,9 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/matrix_ops_rocm.hpp>
+#include <dsp/linalg/matrix_ops_rocm.hpp>
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 // ============================================================================
 // Internal helper
@@ -127,6 +127,6 @@ void MatrixOpsROCm::CGEMM(rocblas_operation transA, rocblas_operation transB,
     "MatrixOpsROCm::CGEMM");
 }
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

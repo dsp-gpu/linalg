@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // MatrixOpsROCm — фасад rocBLAS CGEMM для complex<float> матриц (Layer 6 Ref03)
@@ -47,7 +47,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 /**
  * @class MatrixOpsROCm
@@ -192,11 +192,11 @@ private:
   }
 };
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #else  // !ENABLE_ROCM — Windows stub
 
-namespace vector_algebra {
+namespace dsp::linalg {
 class MatrixOpsROCm {
 public:
   MatrixOpsROCm() = default;
@@ -216,6 +216,6 @@ public:
    */
   void MultiplyConjTransA(const void*, const void*, void*, int, int, int) {}
 };
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

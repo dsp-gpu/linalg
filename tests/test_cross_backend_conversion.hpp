@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // test_cross_backend_conversion — cross-backend тесты 85×85 матрица (5.10)
@@ -29,7 +29,7 @@
 
 #include <hip/hip_runtime.h>
 
-#include <linalg/cholesky_inverter_rocm.hpp>
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>
 #include <core/interface/i_backend.hpp>
 #include <core/interface/input_data.hpp>
 #include <core/services/console_output.hpp>
@@ -40,7 +40,7 @@
 // Helpers из основных тестов
 #include "test_cholesky_inverter_rocm.hpp"
 
-namespace vector_algebra::tests {
+namespace dsp::linalg::tests {
 
 // ════════════════════════════════════════════════════════════════════════════
 // 5.10.1: TestConvert_VectorInput — эталон
@@ -208,6 +208,6 @@ inline void TestConvert_OutputFormats(drv_gpu_lib::IBackend* backend,
             std::string(ModeName(mode)) + "] diff=" + std::to_string(diff));
 }
 
-}  // namespace vector_algebra::tests
+}  // namespace dsp::linalg::tests
 
 #endif  // ENABLE_ROCM

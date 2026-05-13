@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // test_capon_rocm — тесты CaponProcessor (ROCm, 5 сценариев)
@@ -33,7 +33,7 @@
 #if ENABLE_ROCM
 
 #include "capon_test_helpers.hpp"
-#include <linalg/capon_processor.hpp>
+#include <dsp/linalg/capon_processor.hpp>
 #include <core/services/console_output.hpp>
 
 #include <hip/hip_runtime.h>
@@ -77,13 +77,13 @@ inline void test_01_relief_noise_only() {
   auto steering = MakeSteeringMatrix(P, M, -static_cast<float>(M_PI)/3.0f,
                                           static_cast<float>(M_PI)/3.0f);
 
-  capon::CaponParams params;
+  dsp::linalg::CaponParams params;
   params.n_channels   = P;
   params.n_samples    = N;
   params.n_directions = M;
   params.mu           = 0.01f;
 
-  capon::CaponProcessor processor(backend);
+  dsp::linalg::CaponProcessor processor(backend);
   auto result = processor.ComputeRelief(signal, steering, params);
 
   assert(result.relief.size() == M);
@@ -126,9 +126,9 @@ inline void test_02_relief_with_interference() {
 
   auto steering = MakeSteeringMatrix(P, M, theta_min, theta_max);
 
-  capon::CaponParams params{P, N, M, 0.001f};
+  dsp::linalg::CaponParams params{P, N, M, 0.001f};
 
-  capon::CaponProcessor processor(backend);
+  dsp::linalg::CaponProcessor processor(backend);
   auto result = processor.ComputeRelief(signal, steering, params);
 
   assert(result.relief.size() == M);
@@ -175,9 +175,9 @@ inline void test_03_adaptive_beamform_dims() {
   auto steering = MakeSteeringMatrix(P, M, -static_cast<float>(M_PI)/6.0f,
                                           static_cast<float>(M_PI)/6.0f);
 
-  capon::CaponParams params{P, N, M, 0.01f};
+  dsp::linalg::CaponParams params{P, N, M, 0.01f};
 
-  capon::CaponProcessor processor(backend);
+  dsp::linalg::CaponProcessor processor(backend);
   auto result = processor.AdaptiveBeamform(signal, steering, params);
 
   assert(result.n_directions == M);
@@ -210,9 +210,9 @@ inline void test_04_regularization() {
                                           static_cast<float>(M_PI)/4.0f);
 
   // С регуляризацией должно работать без ошибок
-  capon::CaponParams params{P, N, M, 0.1f};
+  dsp::linalg::CaponParams params{P, N, M, 0.1f};
 
-  capon::CaponProcessor processor(backend);
+  dsp::linalg::CaponProcessor processor(backend);
   auto result = processor.ComputeRelief(signal, steering, params);
 
   assert(result.relief.size() == M);
@@ -260,8 +260,8 @@ inline void test_05_gpu_to_gpu() {
   assert(err == hipSuccess && "hipMemcpy steering failed");
 
   // Вычислить рельеф через void* GPU API
-  capon::CaponParams params{P, N, M, 0.01f};
-  capon::CaponProcessor processor(backend);
+  dsp::linalg::CaponParams params{P, N, M, 0.01f};
+  dsp::linalg::CaponProcessor processor(backend);
   auto result = processor.ComputeRelief(gpu_Y, gpu_U, params);
 
   assert(result.relief.size() == M);

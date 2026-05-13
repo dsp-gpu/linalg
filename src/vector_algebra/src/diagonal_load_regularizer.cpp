@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file diagonal_load_regularizer.cpp
  * @brief DiagonalLoadRegularizer — реализация через GpuContext (v2 disk cache)
  *
@@ -10,8 +10,8 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/diagonal_load_regularizer.hpp>
-#include <linalg/kernels/diagonal_load_kernel_rocm.hpp>
+#include <dsp/linalg/diagonal_load_regularizer.hpp>
+#include <dsp/linalg/kernels/diagonal_load_kernel_rocm.hpp>
 #include <core/interface/gpu_context.hpp>
 #include <core/services/cache_dir_resolver.hpp>
 
@@ -19,7 +19,7 @@
 #include <string>
 #include <utility>
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 // ════════════════════════════════════════════════════════════════════════════
 // Constructor / Destructor / Move
@@ -94,6 +94,6 @@ void DiagonalLoadRegularizer::Apply(void* d_matrix, int n, float mu,
   }
 }
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

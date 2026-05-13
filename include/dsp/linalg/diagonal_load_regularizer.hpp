@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #if ENABLE_ROCM
 
 // ============================================================================
@@ -45,7 +45,7 @@
 //   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
 // ============================================================================
 
-#include <linalg/i_matrix_regularizer.hpp>
+#include <dsp/linalg/i_matrix_regularizer.hpp>
 #include <core/interface/i_backend.hpp>
 
 #include <hip/hip_runtime.h>
@@ -53,7 +53,7 @@
 
 namespace drv_gpu_lib { class GpuContext; }
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 /**
  * @class DiagonalLoadRegularizer
@@ -106,6 +106,6 @@ private:
   void*                                    function_ = nullptr; ///< hipFunction_t (non-owning, из ctx_->GetKernel)
 };
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

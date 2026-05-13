@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // CovarianceMatrixOp — ковариация R = (1/N)·Y·Y^H (Layer 5 Ref03)
@@ -42,12 +42,12 @@
 
 #include <core/services/gpu_kernel_op.hpp>
 #include <core/interface/gpu_context.hpp>
-#include <linalg/capon_types.hpp>
-#include <linalg/matrix_ops_rocm.hpp>
+#include <dsp/linalg/capon_types.hpp>
+#include <dsp/linalg/matrix_ops_rocm.hpp>
 
 #include <rocblas/rocblas.h>
 
-namespace capon {
+namespace dsp::linalg {
 
 /**
  * @class CovarianceMatrixOp
@@ -56,8 +56,8 @@ namespace capon {
  * @note Stateless (нет приватных буферов). kCovMatrix — в shared ctx_.
  * @note Требует #if ENABLE_ROCM. Зависит от rocBLAS (через MatrixOpsROCm).
  * @note Регуляризация (R += μ·I) — НЕ здесь, в IMatrixRegularizer (Strategy).
- * @see vector_algebra::MatrixOpsROCm::CovarianceMatrix
- * @see vector_algebra::IMatrixRegularizer — Strategy для μ·I
+ * @see dsp::linalg::MatrixOpsROCm::CovarianceMatrix
+ * @see dsp::linalg::IMatrixRegularizer — Strategy для μ·I
  * @see CaponInvertOp — следующий шаг pipeline
  */
 class CovarianceMatrixOp : public drv_gpu_lib::GpuKernelOp {
@@ -82,7 +82,7 @@ public:
    * Пишет:  ctx_->RequireShared(kCovMatrix, P*P*sizeof(complex<float>))  [P × P]
    */
   void Execute(uint32_t n_channels, uint32_t n_samples,
-               vector_algebra::MatrixOpsROCm& mat) {
+               dsp::linalg::MatrixOpsROCm& mat) {
     const int P = static_cast<int>(n_channels);
     const int N = static_cast<int>(n_samples);
 
@@ -98,6 +98,6 @@ protected:
   void OnRelease() override {}  // нет приватных GPU буферов
 };
 
-}  // namespace capon
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // test_capon_reference_data — тесты CaponProcessor на реальных данных
@@ -43,7 +43,7 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/capon_processor.hpp>
+#include <dsp/linalg/capon_processor.hpp>
 #include "capon_test_helpers.hpp"
 #include <core/services/console_output.hpp>
 
@@ -258,10 +258,10 @@ inline void test_02_physical_relief_properties() {
 
   const float mu_gpu = 1.0f;
 
-  capon::CaponParams params{P, N, M, mu_gpu};
+  dsp::linalg::CaponParams params{P, N, M, mu_gpu};
 
   auto* backend = GetTestBackend();
-  capon::CaponProcessor processor(backend);
+  dsp::linalg::CaponProcessor processor(backend);
   auto result = processor.ComputeRelief(signal, steering, params);
 
   if (result.relief.size() != M) {
@@ -340,9 +340,9 @@ inline void test_03_cpu_vs_gpu_small_p() {
 
   const float mu = 100.0f;
 
-  capon::CaponParams params{P, N, M, mu};
+  dsp::linalg::CaponParams params{P, N, M, mu};
   auto* backend = GetTestBackend();
-  capon::CaponProcessor processor(backend);
+  dsp::linalg::CaponProcessor processor(backend);
   auto gpu_result = processor.ComputeRelief(signal, steering, params);
 
   if (gpu_result.relief.size() != M) {

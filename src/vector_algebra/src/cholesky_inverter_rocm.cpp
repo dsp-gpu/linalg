@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file cholesky_inverter_rocm.cpp
  * @brief CholeskyInverterROCm: Core (POTRF+POTRI) + Roundtrip + CholeskyResult
  *
@@ -10,7 +10,7 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/cholesky_inverter_rocm.hpp>
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>
 
 #include <cmath>
 #include <cstring>
@@ -32,7 +32,7 @@
 #include <core/backends/hybrid/zero_copy_bridge.hpp>
 #endif
 
-namespace vector_algebra {
+namespace dsp::linalg {
 
 // ════════════════════════════════════════════════════════════════════════════
 // CholeskyResult — реализация методов
@@ -551,6 +551,6 @@ CholeskyResult CholeskyInverterROCm::InvertBatch(
 }
 #endif  // CL_VERSION_1_0
 
-}  // namespace vector_algebra
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

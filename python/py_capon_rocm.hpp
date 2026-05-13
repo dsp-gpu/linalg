@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /**
  * @file py_capon_rocm.hpp
@@ -19,8 +19,8 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/capon_processor.hpp>
-#include <linalg/capon_types.hpp>
+#include <dsp/linalg/capon_processor.hpp>
+#include <dsp/linalg/capon_types.hpp>
 #include <core/interface/i_backend.hpp>
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -42,7 +42,7 @@ public:
   py::array_t<float> compute_relief(
       py::array_t<std::complex<float>, py::array::c_style | py::array::forcecast> signal_flat,
       py::array_t<std::complex<float>, py::array::c_style | py::array::forcecast> steering_flat,
-      const capon::CaponParams& params) {
+      const dsp::linalg::CaponParams& params) {
     auto sig_buf = signal_flat.request();
     auto st_buf  = steering_flat.request();
 
@@ -53,7 +53,7 @@ public:
         static_cast<std::complex<float>*>(st_buf.ptr),
         static_cast<std::complex<float>*>(st_buf.ptr) + st_buf.size);
 
-    capon::CaponReliefResult result;
+    dsp::linalg::CaponReliefResult result;
     {
       py::gil_scoped_release release;
       result = processor_.ComputeRelief(signal, steering, params);
@@ -64,7 +64,7 @@ public:
   py::array_t<std::complex<float>> adaptive_beamform(
       py::array_t<std::complex<float>, py::array::c_style | py::array::forcecast> signal_flat,
       py::array_t<std::complex<float>, py::array::c_style | py::array::forcecast> steering_flat,
-      const capon::CaponParams& params) {
+      const dsp::linalg::CaponParams& params) {
     auto sig_buf = signal_flat.request();
     auto st_buf  = steering_flat.request();
 
@@ -75,7 +75,7 @@ public:
         static_cast<std::complex<float>*>(st_buf.ptr),
         static_cast<std::complex<float>*>(st_buf.ptr) + st_buf.size);
 
-    capon::CaponBeamResult result;
+    dsp::linalg::CaponBeamResult result;
     {
       py::gil_scoped_release release;
       result = processor_.AdaptiveBeamform(signal, steering, params);
@@ -91,8 +91,8 @@ public:
   // как void* на GPU memory. Используется для real-time pipeline (сопровождение цели).
   py::array_t<float> compute_relief_gpu(
       uintptr_t signal_ptr, uintptr_t steering_ptr,
-      const capon::CaponParams& params) {
-    capon::CaponReliefResult result;
+      const dsp::linalg::CaponParams& params) {
+    dsp::linalg::CaponReliefResult result;
     {
       py::gil_scoped_release release;
       result = processor_.ComputeRelief(
@@ -105,8 +105,8 @@ public:
 
   py::array_t<std::complex<float>> adaptive_beamform_gpu(
       uintptr_t signal_ptr, uintptr_t steering_ptr,
-      const capon::CaponParams& params) {
-    capon::CaponBeamResult result;
+      const dsp::linalg::CaponParams& params) {
+    dsp::linalg::CaponBeamResult result;
     {
       py::gil_scoped_release release;
       result = processor_.AdaptiveBeamform(
@@ -121,7 +121,7 @@ public:
   }
 
 private:
-  capon::CaponProcessor processor_;
+  dsp::linalg::CaponProcessor processor_;
 };
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -130,19 +130,19 @@ private:
 
 inline void register_capon_processor(py::module& m) {
   // CaponParams — POD struct
-  py::class_<capon::CaponParams>(m, "CaponParams")
+  py::class_<dsp::linalg::CaponParams>(m, "CaponParams")
       .def(py::init<>())
       .def(py::init([](uint32_t p, uint32_t n, uint32_t dir, float mu) {
-             capon::CaponParams x;
+             dsp::linalg::CaponParams x;
              x.n_channels = p; x.n_samples = n; x.n_directions = dir; x.mu = mu;
              return x;
            }),
            py::arg("n_channels"), py::arg("n_samples"),
            py::arg("n_directions"), py::arg("mu") = 0.0f)
-      .def_readwrite("n_channels",   &capon::CaponParams::n_channels)
-      .def_readwrite("n_samples",    &capon::CaponParams::n_samples)
-      .def_readwrite("n_directions", &capon::CaponParams::n_directions)
-      .def_readwrite("mu",           &capon::CaponParams::mu);
+      .def_readwrite("n_channels",   &dsp::linalg::CaponParams::n_channels)
+      .def_readwrite("n_samples",    &dsp::linalg::CaponParams::n_samples)
+      .def_readwrite("n_directions", &dsp::linalg::CaponParams::n_directions)
+      .def_readwrite("mu",           &dsp::linalg::CaponParams::mu);
 
   // CaponProcessor wrapper
   py::class_<PyCaponProcessor>(m, "CaponProcessor",

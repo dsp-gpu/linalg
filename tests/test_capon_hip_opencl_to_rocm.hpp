@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // test_capon_hip_opencl_to_rocm — HIP alloc → OpenCL write → Capon ROCm
@@ -119,7 +119,7 @@
 // ──────────────────────────────────────────────────────────────────────
 
 // Алгоритм Кейпона и вспомогательные утилиты для загрузки данных
-#include <linalg/capon_processor.hpp>
+#include <dsp/linalg/capon_processor.hpp>
 #include "capon_test_helpers.hpp"
 
 #include "test_utils/validators/numeric.hpp"
@@ -573,13 +573,13 @@ inline void test_02_hip_opencl_capon_pipeline() {
 
     TestPrint("  ---[ ЭТАП 4: РАСЧЁТ КЕЙПОНА НА ROCm (без ZeroCopyBridge!) ]---");
 
-    capon::CaponParams params;
+    dsp::linalg::CaponParams params;
     params.n_channels   = P;    // размер антенного подмассива
     params.n_samples    = N;    // длина временного ряда
     params.n_directions = M;    // число направлений сканирования
     params.mu           = 1.0f; // коэффициент регуляризации (стабилизирует инверсию)
 
-    capon::CaponProcessor processor(&rocm);
+    dsp::linalg::CaponProcessor processor(&rocm);
     // Передаём НАПРЯМУЮ d_hip_Y и d_hip_U — указатели от hipMalloc
     auto result = processor.ComputeRelief(d_hip_Y, d_hip_U, params);
 
@@ -702,16 +702,16 @@ inline void test_03_hip_opencl_matches_direct() {
   const size_t bytes_Y = signal.size()   * sizeof(cx);
   const size_t bytes_U = steering.size() * sizeof(cx);
 
-  capon::CaponParams params{P, N, M, 1.0f};
+  dsp::linalg::CaponParams params{P, N, M, 1.0f};
 
   // ── Путь A: ПРЯМОЙ (референс) ─────────────────────────────────────────
   // ComputeRelief(vector, vector, params) — перегрузка с CPU-данными.
   // Внутри Capon сам делает hipMemcpy с CPU в VRAM.
-  capon::CaponProcessor proc_ref(&rocm);
+  dsp::linalg::CaponProcessor proc_ref(&rocm);
   auto relief_ref = proc_ref.ComputeRelief(signal, steering, params);
 
   // ── Путь B: hipMalloc → clEnqueueSVMMemcpy → Capon ───────────────────
-  capon::CaponReliefResult relief_hip;  // результат нового пути
+  dsp::linalg::CaponReliefResult relief_hip;  // результат нового пути
   bool  ok      = false;
   void* d_hip_Y = nullptr;
   void* d_hip_U = nullptr;
@@ -752,7 +752,7 @@ inline void test_03_hip_opencl_matches_direct() {
     hipHostFree(pinned_U);
 
     // Capon с HIP-указателями напрямую
-    capon::CaponProcessor proc_hip(&rocm);
+    dsp::linalg::CaponProcessor proc_hip(&rocm);
     relief_hip = proc_hip.ComputeRelief(d_hip_Y, d_hip_U, params);
 
     ok = true;

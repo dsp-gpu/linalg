@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // CaponProcessor — фасад алгоритма Кейпона (MVDR) на GPU (Layer 6 Ref03)
@@ -43,8 +43,8 @@
 //           внутри MatrixOpsROCm.
 //
 // Использование:
-//   capon::CaponProcessor proc(rocm_backend);
-//   capon::CaponParams params{
+//   dsp::linalg::CaponProcessor proc(rocm_backend);
+//   dsp::linalg::CaponParams params{
 //       .n_channels   = 16,    // P — антенны
 //       .n_samples    = 1024,  // N — снимки
 //       .n_directions = 181,   // M — углы θ ∈ [-90°, +90°]
@@ -60,25 +60,25 @@
 
 #if ENABLE_ROCM
 
-#include <linalg/capon_types.hpp>
+#include <dsp/linalg/capon_types.hpp>
 #include <core/interface/gpu_context.hpp>
 
 // Op классы (Layer 5)
-#include <linalg/operations/covariance_matrix_op.hpp>
-#include <linalg/operations/capon_invert_op.hpp>      // обёртка над CholeskyInverterROCm
-#include <linalg/operations/compute_weights_op.hpp>   // W = R^{-1}*U  (единый, без дублирования)
-#include <linalg/operations/capon_relief_op.hpp>
-#include <linalg/operations/adapt_beam_op.hpp>
+#include <dsp/linalg/operations/covariance_matrix_op.hpp>
+#include <dsp/linalg/operations/capon_invert_op.hpp>      // обёртка над CholeskyInverterROCm
+#include <dsp/linalg/operations/compute_weights_op.hpp>   // W = R^{-1}*U  (единый, без дублирования)
+#include <dsp/linalg/operations/capon_relief_op.hpp>
+#include <dsp/linalg/operations/adapt_beam_op.hpp>
 
 // Тип результата инверсии из vector_algebra
-#include <linalg/vector_algebra_types.hpp>
+#include <dsp/linalg/vector_algebra_types.hpp>
 
 // Регуляризация через Strategy (DIP — зависим от интерфейсе)
-#include <linalg/i_matrix_regularizer.hpp>
-#include <linalg/diagonal_load_regularizer.hpp>
+#include <dsp/linalg/i_matrix_regularizer.hpp>
+#include <dsp/linalg/diagonal_load_regularizer.hpp>
 
 // GEMM операции через vector_algebra (единый фасад для rocBLAS)
-#include <linalg/matrix_ops_rocm.hpp>
+#include <dsp/linalg/matrix_ops_rocm.hpp>
 
 #include <core/interface/i_backend.hpp>
 
@@ -87,7 +87,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace capon {
+namespace dsp::linalg {
 
 /**
  * @class CaponProcessor
@@ -98,8 +98,8 @@ namespace capon {
  * @note Требует #if ENABLE_ROCM. Без ROCm — stub с runtime_error.
  * @note Lifecycle: ctor(backend) → ComputeRelief / AdaptiveBeamform → dtor.
  * @see CovarianceMatrixOp, CaponInvertOp, ComputeWeightsOp, CaponReliefOp, AdaptBeamformOp
- * @see vector_algebra::CholeskyInverterROCm — реальная инверсия R^{-1}
- * @see vector_algebra::IMatrixRegularizer — Strategy для регуляризации
+ * @see dsp::linalg::CholeskyInverterROCm — реальная инверсия R^{-1}
+ * @see dsp::linalg::IMatrixRegularizer — Strategy для регуляризации
  * @ingroup grp_capon
  */
 class CaponProcessor {
@@ -245,32 +245,32 @@ private:
   CaponReliefOp       relief_op_;  ///< z[m] = 1/Re(u^H * W[m])
   AdaptBeamformOp     beam_op_;    ///< Y_out = W^H * Y
 
-  /// GEMM операции через vector_algebra::MatrixOpsROCm.
+  /// GEMM операции через dsp::linalg::MatrixOpsROCm.
   /// Инициализируется с &ctx_ — handle привязан к ctx_.stream() (lazy init).
-  vector_algebra::MatrixOpsROCm mat_ops_;
+  dsp::linalg::MatrixOpsROCm mat_ops_;
 
   /// Регуляризатор — Strategy (GoF): DiagonalLoadRegularizer по умолчанию.
   /// DIP: зависим от IMatrixRegularizer, не от конкретной реализации.
-  std::unique_ptr<vector_algebra::IMatrixRegularizer> regularizer_;
+  std::unique_ptr<dsp::linalg::IMatrixRegularizer> regularizer_;
 
   /// Результат инверсии — хранит R^{-1} на GPU между шагами пайплайна.
   /// Обновляется каждый раз в RunCovAndInvert().
-  vector_algebra::CholeskyResult last_inv_;
+  dsp::linalg::CholeskyResult last_inv_;
 
   bool compiled_ = false;
 };
 
-}  // namespace capon
+} // namespace dsp::linalg
 
 #else  // !ENABLE_ROCM — Windows stub
 
-#include <linalg/capon_types.hpp>
+#include <dsp/linalg/capon_types.hpp>
 #include <core/interface/i_backend.hpp>
 #include <stdexcept>
 #include <complex>
 #include <vector>
 
-namespace capon {
+namespace dsp::linalg {
 
 class CaponProcessor {
 public:
@@ -338,6 +338,6 @@ public:
   }
 };
 
-}  // namespace capon
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM

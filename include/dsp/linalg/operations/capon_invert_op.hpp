@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 
 // ============================================================================
 // CaponInvertOp — обёртка над CholeskyInverterROCm: R → R^{-1} (Layer 5 Ref03)
 //
 // ЧТО:    Тонкий adapter-Op для шага инверсии в Capon-pipeline. Делегирует
-//         реальную работу в vector_algebra::CholeskyInverterROCm:
+//         реальную работу в dsp::linalg::CholeskyInverterROCm:
 //           - rocSOLVER cpotrf  → нижний треугольный множитель Холецкого L
 //           - rocSOLVER cpotri  → инверсия из L через L^{-T}·L^{-1}
 //           - симметризация     → заполнение верхнего треугольника (HIP kernel)
@@ -30,7 +30,7 @@
 //           (CPU-вариант = D2H + симметризация + H2D, ×100 медленнее).
 //
 // Использование:
-//   capon::CaponInvertOp inv_op(rocm_backend);
+//   dsp::linalg::CaponInvertOp inv_op(rocm_backend);
 //   inv_op.CompileKernels();                // warmup hiprtc (опционально)
 //   void* R_gpu = ctx.GetShared(shared_buf::kCovMatrix);
 //   auto result = inv_op.Execute(R_gpu, P);  // result owns GPU R^{-1}
@@ -46,15 +46,15 @@
 #include <core/services/gpu_kernel_op.hpp>
 #include <core/interface/gpu_context.hpp>
 #include <core/interface/input_data.hpp>
-#include <linalg/capon_types.hpp>
+#include <dsp/linalg/capon_types.hpp>
 
-#include <linalg/cholesky_inverter_rocm.hpp>   // vector_algebra::CholeskyInverterROCm
-#include <linalg/vector_algebra_types.hpp>     // vector_algebra::CholeskyResult
+#include <dsp/linalg/cholesky_inverter_rocm.hpp>   // dsp::linalg::CholeskyInverterROCm
+#include <dsp/linalg/vector_algebra_types.hpp>     // dsp::linalg::CholeskyResult
 
 #include <hip/hip_runtime.h>
 #include <stdexcept>
 
-namespace capon {
+namespace dsp::linalg {
 
 /**
  * @class CaponInvertOp
@@ -64,7 +64,7 @@ namespace capon {
  * @note НЕ наследник GpuKernelOp — у inverter'а собственный backend и kernels.
  * @note Требует #if ENABLE_ROCM. Зависит от rocSOLVER.
  * @note Возвращает CholeskyResult (RAII) — caller хранит, пока R^{-1} нужен.
- * @see vector_algebra::CholeskyInverterROCm — реальная реализация
+ * @see dsp::linalg::CholeskyInverterROCm — реальная реализация
  * @see CaponProcessor::last_inv_ — место хранения CholeskyResult
  */
 class CaponInvertOp {
@@ -73,7 +73,7 @@ public:
    * @param backend IBackend (ROCm). Должен жить дольше объекта.
    */
   explicit CaponInvertOp(drv_gpu_lib::IBackend* backend)
-      : inverter_(backend, vector_algebra::SymmetrizeMode::GpuKernel) {}
+      : inverter_(backend, dsp::linalg::SymmetrizeMode::GpuKernel) {}
 
   ~CaponInvertOp() = default;
 
@@ -91,7 +91,7 @@ public:
    *         (caller должен хранить result пока R^{-1} нужен)
    *   @test_check result.matrix_size == n_channels && result.batch_count == 1 && result.d_data != nullptr
    */
-  vector_algebra::CholeskyResult Execute(void* gpu_R, uint32_t n_channels) {
+  dsp::linalg::CholeskyResult Execute(void* gpu_R, uint32_t n_channels) {
     drv_gpu_lib::InputData<void*> input;
     input.data = gpu_R;
 
@@ -107,9 +107,9 @@ public:
   void CompileKernels() { inverter_.CompileKernels(); }
 
 private:
-  vector_algebra::CholeskyInverterROCm inverter_;
+  dsp::linalg::CholeskyInverterROCm inverter_;
 };
 
-}  // namespace capon
+} // namespace dsp::linalg
 
 #endif  // ENABLE_ROCM
