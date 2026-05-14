@@ -3,47 +3,33 @@ schema_version: 1
 kind: use_case
 id: capon_reference_data
 repo: linalg
-title: "Вычисление спектра направленности антенн на GPU"
+title: "Capon Reference Data"
 synonyms:
   ru:
-    - "расчет направленности антенн"
-    - "fft для антенных массивов"
-    - "обработка сигналов на GPU"
-    - "алгоритм Капона для массивов"
-    - "вычисление спектра направленности"
-    - "ускорение обработки сигналов"
-    - "аналитика антенных массивов"
-    - "параллельная обработка сигналов"
+    - []
   en:
-    - "capon algorithm implementation"
-    - "beamforming on gpu"
-    - "fft for antenna arrays"
-    - "signal processing acceleration"
-    - "directed reception calculation"
-    - "parallel signal analysis"
-    - "antenna array optimization"
-    - "gpu-based spectral analysis"
+    - []
 primary_class: (unknown)
 primary_method: (unknown)
 related_classes:
 related_use_cases:
-  - linalg__capon_hip_opencl_to_rocm__usecase__v1
-  - linalg__capon_opencl_to_rocm__usecase__v1
   - linalg__capon_benchmark_rocm__usecase__v1
+  - linalg__capon_opencl_to_rocm__usecase__v1
+  - linalg__capon_hip_opencl_to_rocm__usecase__v1
 maturity: stable
 language: cpp
-tags: [linalg, rocm, fft, antenna, beamforming, gpu, batch, parallel_processing, signal_processing, directed_reception]
-ai_generated: true
+tags: []
+ai_generated: false
 human_verified: false
-operator: ai
-updated_at: 2026-05-06
+operator: alex
+updated_at: 2026-05-13
 ---
 
-# Use-case: Вычисление спектра направленности антенн на GPU
+# Use-case: Capon Reference Data
 
 ## Когда применять
 
-Когда требуется ускорить обработку сигналов антенных массивов с использованием алгоритма Капона на GPU для больших объемов данных.
+_LLM-fallback: см. описание класса._
 
 ## Решение
 
@@ -63,10 +49,10 @@ _Не определены (нет `@throws` в Doxygen primary_method)._
 
 ## Что делать дальше
 
-- См. [linalg__capon_hip_opencl_to_rocm__usecase__v1](./capon_hip_opencl_to_rocm.md)
-- См. [linalg__capon_opencl_to_rocm__usecase__v1](./capon_opencl_to_rocm.md)
 - См. [linalg__capon_benchmark_rocm__usecase__v1](./capon_benchmark_rocm.md)
+- См. [linalg__capon_opencl_to_rocm__usecase__v1](./capon_opencl_to_rocm.md)
+- См. [linalg__capon_hip_opencl_to_rocm__usecase__v1](./capon_hip_opencl_to_rocm.md)
 
 ## Ссылки
 
-- Источник кода: `E:/DSP-GPU/linalg/tests/test_capon_reference_data.hpp:1`
+- Источник кода: `/home/alex/DSP-GPU/linalg/tests/test_capon_reference_data.hpp:1`

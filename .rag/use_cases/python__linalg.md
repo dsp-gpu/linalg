@@ -9,8 +9,8 @@ uses_external: ['numpy']
 has_test_runner: false
 is_opencl: false
 line_count: 214
-title: Тесты биндингов linalg ROCm
-tags: ['linalg', 'rocm', 'gpu', 'python', 'signal_processing', 'matrix_ops', 'cross_repo']
+title: Linalg
+tags: ['linalg', 'python_test']
 uses_pybind:
   - dsp_linalg.ROCmGPUContext
   - dsp_linalg.SymmetrizeMode.Roundtrip
@@ -24,36 +24,24 @@ top_functions:
   - make_hpd_matrix
   - make_steering_ula
   - make_noise
-synonyms_ru:
-  - тесты биндингов
-  - проверка linalg
-  - ROCm тесты
-  - Python биндинги
-  - dsp_gpu тесты
-synonyms_en:
-  - linalg tests
-  - ROCm bindings
-  - Python bindings
-  - dsp_gpu tests
-  - python_test suite
 inherits_block_id: linalg__symmetrize_mode__class_overview__v1
 block_refs:
   - linalg__symmetrize_mode__class_overview__v1
-ai_generated: false
+ai_generated: true
 human_verified: false
 ---
 
 <!-- rag-block: id=dsp__linalg_linalg__python_test_usecase__v1 -->
 
-# Python use-case: Тесты биндингов linalg ROCm
+# Python use-case: Linalg
 
 ## Цель
 
-Проверка корректности Python-биндингов linalg на ROCm
+Standalone test for dsp_linalg Python bindings (ROCm).
 
 ## Когда применять
 
-Запускать после изменений в linalg или ROCmGPUContext
+Standalone test for dsp_linalg Python bindings (ROCm).
 
 ## Используемые pybind-классы
 

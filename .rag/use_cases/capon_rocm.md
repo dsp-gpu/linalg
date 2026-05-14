@@ -3,26 +3,12 @@ schema_version: 1
 kind: use_case
 id: capon_rocm
 repo: linalg
-title: "Адаптивное формирование луча на GPU с методом Capon"
+title: "Capon Rocm"
 synonyms:
   ru:
-    - "адаптивное формирование луча на GPU"
-    - "метод Capon для антенн"
-    - "обработка сигналов с помехами на ROCm"
-    - "Capon батчем на GPU"
-    - "адаптация луча с регуляризацией"
-    - "GPU обработка антенн"
-    - "Capon для радиолокации"
-    - "адаптивная обработка сигналов ROCm"
+    - []
   en:
-    - "adaptive beamforming with Capon on GPU"
-    - "Capon method for antenna arrays"
-    - "GPU signal processing with Capon"
-    - "batch Capon on ROCm"
-    - "regularized beamforming GPU"
-    - "antenna array processing ROCm"
-    - "Capon for radar applications"
-    - "GPU adaptive filtering"
+    - []
 primary_class: (unknown)
 primary_method: (unknown)
 related_classes:
@@ -32,18 +18,18 @@ related_use_cases:
   - linalg__capon_hip_opencl_to_rocm__usecase__v1
 maturity: stable
 language: cpp
-tags: [linalg, capon, rocm, beamforming, gpu, antenna, regularization, signal_processing, adaptive, batch]
-ai_generated: true
+tags: []
+ai_generated: false
 human_verified: false
-operator: ai
-updated_at: 2026-05-06
+operator: alex
+updated_at: 2026-05-13
 ---
 
-# Use-case: Адаптивное формирование луча на GPU с методом Capon
+# Use-case: Capon Rocm
 
 ## Когда применять
 
-Когда требуется обработка сигналов с антенной решеткой на GPU с регуляризацией и передачей данных между устройствами
+_LLM-fallback: см. описание класса._
 
 ## Решение
 
@@ -72,4 +58,4 @@ _Не определены (нет `@throws` в Doxygen primary_method)._
 
 ## Ссылки
 
-- Источник кода: `E:/DSP-GPU/linalg/tests/test_capon_rocm.hpp:1`
+- Источник кода: `/home/alex/DSP-GPU/linalg/tests/test_capon_rocm.hpp:1`

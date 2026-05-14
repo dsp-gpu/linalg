@@ -1,49 +1,35 @@
-﻿---
+---
 schema_version: 1
 kind: use_case
 id: capon_benchmark_rocm
 repo: linalg
-title: "Как выполнить алгоритм Кейпона на GPU с использованием ROCm"
+title: "Capon Benchmark Rocm"
 synonyms:
   ru:
-    - "алгоритм кейпона gpu"
-    - "обработка сигналов антенный массив"
-    - "rocм бенчмарк кейпона"
-    - "кейпон на amd gpu"
-    - "оптимизация кейпона roc"
-    - "hip kernels кейпон"
-    - "бенчмарк антенный массив"
-    - "gpu обработка сигналов кейпон"
+    - []
   en:
-    - "capon algorithm gpu"
-    - "antenna array signal processing"
-    - "rocml benchmark capon"
-    - "capon on amd gpu"
-    - "optimize capon roc"
-    - "hip kernels capon"
-    - "antenna array benchmark"
-    - "gpu signal processing capon"
+    - []
 primary_class: (unknown)
 primary_method: (unknown)
 related_classes:
 related_use_cases:
-  - heterodyne__heterodyne_benchmark_rocm__usecase__v1
-  - spectrum__lch_farrow_rocm__usecase__v1
-  - spectrum__lch_farrow_benchmark_rocm__usecase__v1
+  - spectrum__filters_benchmark_rocm__usecase__v1
+  - stats__statistics_rocm__usecase__v1
+  - spectrum__moving_average_rocm__usecase__v1
 maturity: stable
 language: cpp
-tags: [linalg, capon, roc, gpu, hip, antenna_array, batch_processing, signal_processing, optimization, benchmark]
-ai_generated: true
+tags: []
+ai_generated: false
 human_verified: false
-operator: ai
-updated_at: 2026-05-06
+operator: alex
+updated_at: 2026-05-13
 ---
 
-# Use-case: Как выполнить алгоритм Кейпона на GPU с использованием ROCm
+# Use-case: Capon Benchmark Rocm
 
 ## Когда применять
 
-Когда требуется оптимизация обработки сигналов антенных массивов на AMD GPU с использованием ROCm и HIP kernels
+_LLM-fallback: см. описание класса._
 
 ## Решение
 
@@ -89,10 +75,10 @@ _Не определены (нет `@throws` в Doxygen primary_method)._
 
 ## Что делать дальше
 
-- См. [heterodyne__heterodyne_benchmark_rocm__usecase__v1](./heterodyne_benchmark_rocm.md)
-- См. [spectrum__lch_farrow_rocm__usecase__v1](./lch_farrow_rocm.md)
-- См. [spectrum__lch_farrow_benchmark_rocm__usecase__v1](./lch_farrow_benchmark_rocm.md)
+- См. [spectrum__filters_benchmark_rocm__usecase__v1](./filters_benchmark_rocm.md)
+- См. [stats__statistics_rocm__usecase__v1](./statistics_rocm.md)
+- См. [spectrum__moving_average_rocm__usecase__v1](./moving_average_rocm.md)
 
 ## Ссылки
 
-- Источник кода: `E:/DSP-GPU/linalg/tests/test_capon_benchmark_rocm.hpp:1`
+- Источник кода: `/home/alex/DSP-GPU/linalg/tests/test_capon_benchmark_rocm.hpp:1`

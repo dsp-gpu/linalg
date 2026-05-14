@@ -39,11 +39,11 @@ target_link_libraries(DspLinalg PUBLIC
 
 ```cmake
 target_sources(DspLinalg PRIVATE
-  src/vector_algebra/src/matrix_ops_rocm.cpp
-  src/vector_algebra/src/cholesky_inverter_rocm.cpp
-  src/vector_algebra/src/diagonal_load_regularizer.cpp
-  src/vector_algebra/src/symmetrize_gpu_rocm.cpp
-  src/capon/src/capon_processor.cpp
+  src/vector_algebra/matrix_ops_rocm.cpp
+  src/vector_algebra/cholesky_inverter_rocm.cpp
+  src/vector_algebra/diagonal_load_regularizer.cpp
+  src/vector_algebra/symmetrize_gpu_rocm.cpp
+  src/capon/capon_processor.cpp
 )
 ```
 
@@ -59,11 +59,11 @@ find_package(hiprtc   REQUIRED)
 find_package(rocblas  REQUIRED)
 find_package(rocsolver REQUIRED)
 message(STATUS "[<TARGET>] hiprtc: ${HIPRTC_LIB}")
-src/capon/src/capon_processor.cpp
-src/vector_algebra/src/cholesky_inverter_rocm.cpp
-src/vector_algebra/src/diagonal_load_regularizer.cpp
-src/vector_algebra/src/matrix_ops_rocm.cpp
-src/vector_algebra/src/symmetrize_gpu_rocm.cpp
+src/capon/capon_processor.cpp
+src/vector_algebra/cholesky_inverter_rocm.cpp
+src/vector_algebra/diagonal_load_regularizer.cpp
+src/vector_algebra/matrix_ops_rocm.cpp
+src/vector_algebra/symmetrize_gpu_rocm.cpp
 target_compile_definitions(<TARGET> PUBLIC ENABLE_ROCBLAS=1)
 target_compile_definitions(<TARGET> PUBLIC ENABLE_ROCM=1 ENABLE_ROCBLAS=1)
 target_link_libraries(<TARGET>

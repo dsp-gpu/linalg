@@ -51,6 +51,20 @@ linalg/
 
 `linalg/tests/` — **эталонный набор** для остальных модулей (стиль test_*.hpp, GRASP, GoF).
 
+<!-- BEGIN: RAG_CLAUDE_C4 (auto) -->
+## 🏗️ Архитектура (C4 — компактно)
+
+- **C1 System Context:** репо `linalg` (layer=compute). Полный C4 → `MemoryBank/.architecture/DSP-GPU_Design_C4_Full.md` §`linalg`
+- **C2 Container:** namespace из top key_classes (см. `.rag/_RAG.md`)
+- **C3 Component:** `key_classes` в `.rag/_RAG.md` (top по test_params)
+- **C4 Code:** MatrixOpsROCm · CaponProcessor · CholeskyInverterROCm · GpuContext
+
+## 🏷️ RAG теги
+
+
+
+`#layer:compute` `#repo:linalg` `#namespace:vector_algebra` `#namespace:capon` `#namespace:drv_gpu_lib` `#pattern:Pipeline:CaponProcessor` `#pattern:Facade:CaponProcessor` `#pattern:Facade:MatrixOpsROCm` `#pattern:Strategy:IMatrixRegularizer` `#pattern:Operation:AdaptBeamformOp` `#pattern:Operation:CaponInvertOp` `#pattern:Operation:CaponReliefOp` `#pattern:Operation:ComputeWeightsOp` `#pattern:Operation:CovarianceMatrixOp` `#pattern:Adapter:PyCaponProcessor`
+
 ## 🔗 Правила (path-scoped автоматически)
 
 - `09-rocm-only.md` — rocBLAS / rocSOLVER
