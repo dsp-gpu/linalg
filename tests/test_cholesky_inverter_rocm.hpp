@@ -11,7 +11,6 @@
 // История: Создан: 2026-02-26
 // ============================================================================
 
-#if ENABLE_ROCM
 
 /**
  * @file test_cholesky_inverter_rocm.hpp
@@ -523,4 +522,3 @@ inline void TestResultAccess(drv_gpu_lib::IBackend* backend,
 
 }  // namespace dsp::linalg::tests
 
-#endif  // ENABLE_ROCM

@@ -15,7 +15,6 @@
  * @date 2026-02-26
  */
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/cholesky_inverter_rocm.hpp>
 
@@ -196,4 +195,3 @@ inline void register_cholesky_inverter_rocm(py::module& m) {
       });
 }
 
-#endif  // ENABLE_ROCM

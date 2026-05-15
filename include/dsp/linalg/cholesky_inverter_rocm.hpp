@@ -1,5 +1,4 @@
 ﻿#pragma once
-#if ENABLE_ROCM
 
 // ============================================================================
 // CholeskyInverterROCm — инверсия эрмитовой HPD-матрицы (POTRF + POTRI)
@@ -206,44 +205,3 @@ private:
 
 } // namespace dsp::linalg
 
-#else  // !ENABLE_ROCM — Windows stub
-
-#include <complex>
-#include <vector>
-#include <stdexcept>
-#include <core/interface/i_backend.hpp>
-#include <core/interface/input_data.hpp>
-#include <dsp/linalg/vector_algebra_types.hpp>
-
-namespace dsp::linalg {
-
-class CholeskyInverterROCm {
-public:
-  explicit CholeskyInverterROCm(drv_gpu_lib::IBackend*, SymmetrizeMode = SymmetrizeMode::GpuKernel) {}
-  ~CholeskyInverterROCm() = default;
-
-  CholeskyInverterROCm(const CholeskyInverterROCm&) = delete;
-  CholeskyInverterROCm& operator=(const CholeskyInverterROCm&) = delete;
-
-  void SetSymmetrizeMode(SymmetrizeMode) {}
-  SymmetrizeMode GetSymmetrizeMode() const { return SymmetrizeMode::GpuKernel; }
-  void CompileKernels() {}
-  void SetCheckInfo(bool) {}
-
-  CholeskyResult Invert(const drv_gpu_lib::InputData<std::vector<std::complex<float>>>&, int = 0) {
-    throw std::runtime_error("CholeskyInverterROCm: ROCm not enabled");
-  }
-  CholeskyResult Invert(const drv_gpu_lib::InputData<void*>&, int = 0) {
-    throw std::runtime_error("CholeskyInverterROCm: ROCm not enabled");
-  }
-  CholeskyResult InvertBatch(const drv_gpu_lib::InputData<std::vector<std::complex<float>>>&, int) {
-    throw std::runtime_error("CholeskyInverterROCm: ROCm not enabled");
-  }
-  CholeskyResult InvertBatch(const drv_gpu_lib::InputData<void*>&, int) {
-    throw std::runtime_error("CholeskyInverterROCm: ROCm not enabled");
-  }
-};
-
-} // namespace dsp::linalg
-
-#endif  // ENABLE_ROCM

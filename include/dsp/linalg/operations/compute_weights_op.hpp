@@ -38,7 +38,6 @@
 //   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
 // ============================================================================
 
-#if ENABLE_ROCM
 
 #include <core/services/gpu_kernel_op.hpp>
 #include <core/interface/gpu_context.hpp>
@@ -102,4 +101,3 @@ protected:
 
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM

@@ -12,7 +12,6 @@
 // История: Создан: 2026-02-26
 // ============================================================================
 
-#if ENABLE_ROCM
 
 /**
  * @file test_cross_backend_conversion.hpp
@@ -210,4 +209,3 @@ inline void TestConvert_OutputFormats(drv_gpu_lib::IBackend* backend,
 
 }  // namespace dsp::linalg::tests
 
-#endif  // ENABLE_ROCM

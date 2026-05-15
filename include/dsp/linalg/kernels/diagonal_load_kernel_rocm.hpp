@@ -1,5 +1,4 @@
 ﻿#pragma once
-#if ENABLE_ROCM
 
 /**
  * @file diagonal_load_kernel_rocm.hpp
@@ -57,4 +56,3 @@ extern "C" __global__ void diagonal_load(
 }  // namespace kernels
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM

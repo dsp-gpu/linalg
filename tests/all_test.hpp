@@ -25,7 +25,6 @@
  * @date 2026-04-15
  */
 
-#if ENABLE_ROCM
 // ─── Capon tests ───────────────────────────────────────────────────────────
 #include "test_capon_rocm.hpp"
 #include "test_capon_reference_data.hpp"
@@ -44,20 +43,17 @@
 #include <core/backends/rocm/rocm_core.hpp>
 #include <core/backends/rocm/rocm_backend.hpp>
 #include <core/services/console_output.hpp>
-#endif
 
 // ─── Capon suite (существовал ранее в этом же файле) ───────────────────────
 namespace capon_all_test {
 
 inline void run() {
-#if ENABLE_ROCM
   test_capon_rocm::run();
   test_capon_reference_data::run();
   test_capon_opencl_to_rocm::run();         // OpenCL cl_mem → ZeroCopy → ROCm Capon
   test_capon_hip_opencl_to_rocm::run();     // hipMalloc → OpenCL writes → ROCm Capon
   // Benchmark (запускается только при is_prof=true в configGPU.json):
   // test_capon_benchmark_rocm::run();
-#endif
 }
 
 }  // namespace capon_all_test
@@ -66,7 +62,6 @@ inline void run() {
 namespace vector_algebra_all_test {
 
 inline void run() {
-#if ENABLE_ROCM
   using namespace dsp::linalg;
   using namespace dsp::linalg::tests;
 
@@ -139,7 +134,6 @@ inline void run() {
   con.Print(0, "VecAlg", "════════════════════════════════════════════════════════");
   con.Print(0, "VecAlg", "  vector_algebra: ALL TESTS PASSED");
   con.Print(0, "VecAlg", "════════════════════════════════════════════════════════");
-#endif  // ENABLE_ROCM
 }
 
 }  // namespace vector_algebra_all_test
@@ -148,12 +142,10 @@ inline void run() {
 namespace linalg_all_test {
 
 inline void run() {
-#if ENABLE_ROCM
   // 1. Capon suite
   capon_all_test::run();
   // 2. vector_algebra suite (создаёт свой ROCmBackend)
   vector_algebra_all_test::run();
-#endif
 }
 
 }  // namespace linalg_all_test

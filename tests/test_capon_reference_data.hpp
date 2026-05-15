@@ -41,7 +41,6 @@
  * @date 2026-03-23
  */
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/capon_processor.hpp>
 #include "capon_test_helpers.hpp"
@@ -405,4 +404,3 @@ inline void run() {
 
 }  // namespace test_capon_reference_data
 
-#endif  // ENABLE_ROCM

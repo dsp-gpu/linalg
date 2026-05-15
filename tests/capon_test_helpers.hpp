@@ -35,7 +35,6 @@
  * @date 2026-03-23
  */
 
-#if ENABLE_ROCM
 
 #include <core/backends/rocm/rocm_backend.hpp>
 
@@ -340,4 +339,3 @@ inline std::vector<float> MakeScanGrid1D(double angle_deg = 3.25,
 
 }  // namespace capon_test_helpers
 
-#endif  // ENABLE_ROCM

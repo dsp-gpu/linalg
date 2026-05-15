@@ -1,5 +1,4 @@
 ﻿#pragma once
-#if ENABLE_ROCM
 
 /**
  * @file symmetrize_kernel_sources_rocm.hpp
@@ -59,4 +58,3 @@ extern "C" __global__ void symmetrize_upper_to_full(
 }  // namespace kernels
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM

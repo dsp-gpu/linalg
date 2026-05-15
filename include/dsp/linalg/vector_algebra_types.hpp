@@ -1,5 +1,4 @@
 ﻿#pragma once
-#if ENABLE_ROCM
 
 /**
  * @file vector_algebra_types.hpp
@@ -85,24 +84,3 @@ struct CholeskyResult {
 
 } // namespace dsp::linalg
 
-#else  // !ENABLE_ROCM — minimal stub types for Windows compilation
-
-namespace dsp::linalg {
-
-enum class SymmetrizeMode { Roundtrip, GpuKernel };
-
-struct CholeskyResult {
-  void* d_data = nullptr;
-  int matrix_size = 0;
-  int batch_count = 0;
-  ~CholeskyResult() = default;
-  CholeskyResult() = default;
-  CholeskyResult(CholeskyResult&&) noexcept = default;
-  CholeskyResult& operator=(CholeskyResult&&) noexcept = default;
-  CholeskyResult(const CholeskyResult&) = delete;
-  CholeskyResult& operator=(const CholeskyResult&) = delete;
-};
-
-} // namespace dsp::linalg
-
-#endif  // ENABLE_ROCM

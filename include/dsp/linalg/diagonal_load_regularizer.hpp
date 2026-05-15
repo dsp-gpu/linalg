@@ -1,5 +1,4 @@
 ﻿#pragma once
-#if ENABLE_ROCM
 
 // ============================================================================
 // DiagonalLoadRegularizer — A += mu·I на GPU (Concrete Strategy GoF)
@@ -108,4 +107,3 @@ private:
 
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM

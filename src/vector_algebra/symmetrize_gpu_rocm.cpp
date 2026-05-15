@@ -12,7 +12,6 @@
  * @date 2026-02-26  (migrated 2026-04-22 to GpuContext)
  */
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/cholesky_inverter_rocm.hpp>
 #include <dsp/linalg/kernels/symmetrize_kernel_sources_rocm.hpp>
@@ -97,4 +96,3 @@ void CholeskyInverterROCm::SymmetrizeGpuKernelBatched(void* d_contiguous,
 
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM

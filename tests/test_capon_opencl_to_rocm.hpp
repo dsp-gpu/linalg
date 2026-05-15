@@ -24,7 +24,6 @@
  * @note Не публичный API. Запускается через all_test.hpp.
  */
 
-#if ENABLE_ROCM
 
 // -- Алгоритм Кейпона ---------------------------------------------------
 #include <dsp/linalg/capon_processor.hpp>
@@ -812,10 +811,3 @@ inline void run() {
 // Заглушка для не-ROCm сборки (Windows / ENABLE_ROCM=OFF)
 // ========================================================================
 
-#else  // !ENABLE_ROCM
-
-namespace test_capon_opencl_to_rocm {
-inline void run() { /* SKIPPED: ENABLE_ROCM not defined */ }
-}  // namespace test_capon_opencl_to_rocm
-
-#endif  // ENABLE_ROCM

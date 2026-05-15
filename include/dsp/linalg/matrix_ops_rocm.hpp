@@ -38,7 +38,6 @@
 //   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
 // ============================================================================
 
-#if ENABLE_ROCM
 
 #include <core/interface/gpu_context.hpp>
 
@@ -194,28 +193,3 @@ private:
 
 } // namespace dsp::linalg
 
-#else  // !ENABLE_ROCM — Windows stub
-
-namespace dsp::linalg {
-class MatrixOpsROCm {
-public:
-  MatrixOpsROCm() = default;
-  /**
-   * @brief Stub для non-ROCm сборок: no-op (тестовые сборки без GPU).
-   *
-   */
-  void CovarianceMatrix(const void*, int, int, void*) {}
-  /**
-   * @brief Stub для non-ROCm сборок: no-op (тестовые сборки без GPU).
-   *
-   */
-  void Multiply(const void*, const void*, void*, int, int, int) {}
-  /**
-   * @brief Stub для non-ROCm сборок: no-op (тестовые сборки без GPU).
-   *
-   */
-  void MultiplyConjTransA(const void*, const void*, void*, int, int, int) {}
-};
-} // namespace dsp::linalg
-
-#endif  // ENABLE_ROCM

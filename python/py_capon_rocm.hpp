@@ -17,7 +17,6 @@
  * @date 2026-04-15
  */
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/capon_processor.hpp>
 #include <dsp/linalg/capon_types.hpp>
@@ -163,4 +162,3 @@ inline void register_capon_processor(py::module& m) {
            py::arg("signal_ptr"), py::arg("steering_ptr"), py::arg("params"));
 }
 
-#endif  // ENABLE_ROCM

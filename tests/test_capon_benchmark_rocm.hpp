@@ -30,7 +30,6 @@
  * @see capon_benchmark.hpp
  */
 
-#if ENABLE_ROCM
 
 #include "capon_benchmark.hpp"
 #include "capon_test_helpers.hpp"
@@ -117,4 +116,3 @@ inline void run() {
 
 }  // namespace test_capon_benchmark_rocm
 
-#endif  // ENABLE_ROCM

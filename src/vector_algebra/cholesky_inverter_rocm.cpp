@@ -8,7 +8,6 @@
  * @date 2026-02-26
  */
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/cholesky_inverter_rocm.hpp>
 
@@ -553,4 +552,3 @@ CholeskyResult CholeskyInverterROCm::InvertBatch(
 
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM

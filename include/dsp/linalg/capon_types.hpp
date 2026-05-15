@@ -56,7 +56,6 @@ struct CaponBeamResult {
 };
 
 // Индексы разделяемых буферов (GpuContext shared buffers) — только ROCm
-#if ENABLE_ROCM
 namespace shared_buf {
   static constexpr size_t kSignal    = 0;
   static constexpr size_t kSteering  = 1;
@@ -65,6 +64,5 @@ namespace shared_buf {
   static constexpr size_t kOutput    = 4;
   static constexpr size_t kCount     = 5;
 }  // namespace shared_buf
-#endif  // ENABLE_ROCM
 
 } // namespace dsp::linalg

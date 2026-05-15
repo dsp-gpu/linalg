@@ -8,7 +8,6 @@
  * @date 2026-03-16  (migrated 2026-04-22 to GpuContext)
  */
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/diagonal_load_regularizer.hpp>
 #include <dsp/linalg/kernels/diagonal_load_kernel_rocm.hpp>
@@ -96,4 +95,3 @@ void DiagonalLoadRegularizer::Apply(void* d_matrix, int n, float mu,
 
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM

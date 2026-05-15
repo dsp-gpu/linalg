@@ -13,7 +13,6 @@
 // История: Создан: 2026-02-26
 // ============================================================================
 
-#if ENABLE_ROCM
 
 /**
  * @file test_stage_profiling.hpp
@@ -401,4 +400,3 @@ inline void TestStageProfiling(drv_gpu_lib::IBackend* backend) {
 
 }  // namespace dsp::linalg::tests
 
-#endif  // ENABLE_ROCM

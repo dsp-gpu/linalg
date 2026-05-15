@@ -58,7 +58,6 @@
 //   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
 // ============================================================================
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/capon_types.hpp>
 #include <core/interface/gpu_context.hpp>
@@ -262,82 +261,3 @@ private:
 
 } // namespace dsp::linalg
 
-#else  // !ENABLE_ROCM — Windows stub
-
-#include <dsp/linalg/capon_types.hpp>
-#include <core/interface/i_backend.hpp>
-#include <stdexcept>
-#include <complex>
-#include <vector>
-
-namespace dsp::linalg {
-
-class CaponProcessor {
-public:
-  explicit CaponProcessor(drv_gpu_lib::IBackend*) {}
-  ~CaponProcessor() = default;
-
-  CaponProcessor(const CaponProcessor&) = delete;
-  CaponProcessor& operator=(const CaponProcessor&) = delete;
-  CaponProcessor(CaponProcessor&&) noexcept = default;
-  CaponProcessor& operator=(CaponProcessor&&) noexcept = default;
-
-  /**
-   * @brief Stub: бросает runtime_error — ComputeRelief доступен только в ROCm-сборке.
-   *
-   *
-   * @return Никогда не возвращает (всегда throw).
-   *   @test_check throws std::runtime_error
-   *
-   * @throws std::runtime_error всегда: "ROCm not enabled".
-   *   @test_check throws std::runtime_error
-   */
-  CaponReliefResult ComputeRelief(const std::vector<std::complex<float>>&,
-      const std::vector<std::complex<float>>&, const CaponParams&) {
-    throw std::runtime_error("CaponProcessor: ROCm not enabled");
-  }
-  /**
-   * @brief Stub: бросает runtime_error — AdaptiveBeamform доступен только в ROCm-сборке.
-   *
-   *
-   * @return Никогда не возвращает (всегда throw).
-   *   @test_check throws std::runtime_error
-   *
-   * @throws std::runtime_error всегда: "ROCm not enabled".
-   *   @test_check throws std::runtime_error
-   */
-  CaponBeamResult AdaptiveBeamform(const std::vector<std::complex<float>>&,
-      const std::vector<std::complex<float>>&, const CaponParams&) {
-    throw std::runtime_error("CaponProcessor: ROCm not enabled");
-  }
-  /**
-   * @brief Stub: бросает runtime_error — ComputeRelief (GPU) доступен только в ROCm-сборке.
-   *
-   *
-   * @return Никогда не возвращает (всегда throw).
-   *   @test_check throws std::runtime_error
-   *
-   * @throws std::runtime_error всегда: "ROCm not enabled".
-   *   @test_check throws std::runtime_error
-   */
-  CaponReliefResult ComputeRelief(void*, void*, const CaponParams&) {
-    throw std::runtime_error("CaponProcessor: ROCm not enabled");
-  }
-  /**
-   * @brief Stub: бросает runtime_error — AdaptiveBeamform (GPU) доступен только в ROCm-сборке.
-   *
-   *
-   * @return Никогда не возвращает (всегда throw).
-   *   @test_check throws std::runtime_error
-   *
-   * @throws std::runtime_error всегда: "ROCm not enabled".
-   *   @test_check throws std::runtime_error
-   */
-  CaponBeamResult AdaptiveBeamform(void*, void*, const CaponParams&) {
-    throw std::runtime_error("CaponProcessor: ROCm not enabled");
-  }
-};
-
-} // namespace dsp::linalg
-
-#endif  // ENABLE_ROCM

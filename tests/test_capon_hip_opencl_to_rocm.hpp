@@ -112,7 +112,6 @@
  * @date   2026-03-26
  */
 
-#if ENABLE_ROCM
 
 // ──────────────────────────────────────────────────────────────────────
 // Инклюды
@@ -816,4 +815,3 @@ inline void run() {
 
 }  // namespace test_capon_hip_opencl_to_rocm
 
-#endif  // ENABLE_ROCM

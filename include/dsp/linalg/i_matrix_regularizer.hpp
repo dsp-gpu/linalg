@@ -40,11 +40,7 @@
 //   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
 // ============================================================================
 
-#if ENABLE_ROCM
 #include <hip/hip_runtime.h>
-#else
-using hipStream_t = void*;  ///< Stub для non-ROCm платформ (NoOpRegularizer)
-#endif
 
 namespace dsp::linalg {
 

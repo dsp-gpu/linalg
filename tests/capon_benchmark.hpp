@@ -38,7 +38,6 @@
  * @see GpuBenchmarkBase, heterodyne_benchmark_rocm.hpp
  */
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/capon_processor.hpp>
 #include <core/services/gpu_benchmark_base.hpp>
@@ -166,4 +165,3 @@ private:
 
 }  // namespace test_capon_rocm_bench
 
-#endif  // ENABLE_ROCM

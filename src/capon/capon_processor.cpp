@@ -23,7 +23,6 @@
  * @date 2026-03-16
  */
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/capon_processor.hpp>
 #include <dsp/linalg/kernels/capon_kernels_rocm.hpp>
@@ -360,4 +359,3 @@ CaponBeamResult CaponProcessor::AdaptiveBeamform(
 
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM

@@ -24,7 +24,6 @@
  *   - Изменён: 2026-05-01 (унификация формата шапки под dsp-asst RAG-индексер)
  */
 
-#if ENABLE_ROCM
 
 namespace dsp::linalg {
 namespace kernels {
@@ -78,4 +77,3 @@ extern "C" __global__ void compute_capon_relief(
 }  // namespace kernels
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM

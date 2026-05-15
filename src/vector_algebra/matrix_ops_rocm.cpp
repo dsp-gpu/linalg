@@ -12,7 +12,6 @@
  * @date 2026-03-16
  */
 
-#if ENABLE_ROCM
 
 #include <dsp/linalg/matrix_ops_rocm.hpp>
 
@@ -129,4 +128,3 @@ void MatrixOpsROCm::CGEMM(rocblas_operation transA, rocblas_operation transB,
 
 } // namespace dsp::linalg
 
-#endif  // ENABLE_ROCM
