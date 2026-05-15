@@ -53,7 +53,6 @@ namespace dsp::linalg {
  * @brief Layer 5 Ref03 Op: R = (1/N)·Y·Y^H через rocBLAS, результат в kCovMatrix.
  *
  * @note Stateless (нет приватных буферов). kCovMatrix — в shared ctx_.
- * @note Требует #if ENABLE_ROCM. Зависит от rocBLAS (через MatrixOpsROCm).
  * @note Регуляризация (R += μ·I) — НЕ здесь, в IMatrixRegularizer (Strategy).
  * @see dsp::linalg::MatrixOpsROCm::CovarianceMatrix
  * @see dsp::linalg::IMatrixRegularizer — Strategy для μ·I

@@ -4,7 +4,7 @@
 // linalg_all_test — агрегатор тестов модуля linalg
 //
 // ЧТО:    Единая точка подключения всех test_*.hpp: capon, vector_algebra,
-//         cholesky, cross-backend, profiling. Все тесты под #if ENABLE_ROCM.
+//         cholesky, cross-backend, profiling. Все тесты ROCm-only.
 // ЗАЧЕМ:  main.cpp вызывает только linalg_all_test::run() — не тесты напрямую.
 //         Закомментированный include = выключенный тест без правки main.cpp.
 // ПОЧЕМУ: Паттерн all_test.hpp (правило 15-cpp-testing.md).
@@ -19,7 +19,7 @@
  * main.cpp вызывает linalg_all_test::run() — НЕ отдельные тесты напрямую.
  * Включать/выключать тесты здесь.
  *
- * NOTE: linalg — ROCm-only модуль. Все тесты под #if ENABLE_ROCM.
+ * NOTE: linalg — ROCm-only модуль. Все тесты ROCm-only.
  *
  * @author Кодо (AI Assistant)
  * @date 2026-04-15

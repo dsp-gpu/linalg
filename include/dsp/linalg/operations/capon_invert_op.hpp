@@ -61,7 +61,6 @@ namespace dsp::linalg {
  *
  * @note Non-copyable (CholeskyInverterROCm не копируется).
  * @note НЕ наследник GpuKernelOp — у inverter'а собственный backend и kernels.
- * @note Требует #if ENABLE_ROCM. Зависит от rocSOLVER.
  * @note Возвращает CholeskyResult (RAII) — caller хранит, пока R^{-1} нужен.
  * @see dsp::linalg::CholeskyInverterROCm — реальная реализация
  * @see CaponProcessor::last_inv_ — место хранения CholeskyResult

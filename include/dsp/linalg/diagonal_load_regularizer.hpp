@@ -59,7 +59,6 @@ namespace dsp::linalg {
  * @brief Concrete Strategy: A += mu·I через скомпилированный HIP kernel.
  *
  * @note Move-only. Owns GpuContext (hipModule + disk cache v2).
- * @note Требует #if ENABLE_ROCM. На non-ROCm — класс не компилируется.
  * @note Не thread-safe (один kernel handle = один владелец).
  * @note mu == 0 → no-op (kernel не запускается).
  * @see IMatrixRegularizer (родительский интерфейс)

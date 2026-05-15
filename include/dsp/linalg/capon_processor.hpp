@@ -94,7 +94,6 @@ namespace dsp::linalg {
  *
  * @note Move-only (copy запрещён) — owns GPU buffers через GpuContext.
  * @note Не thread-safe per-instance. Параллельные вызовы — на разных экземплярах.
- * @note Требует #if ENABLE_ROCM. Без ROCm — stub с runtime_error.
  * @note Lifecycle: ctor(backend) → ComputeRelief / AdaptiveBeamform → dtor.
  * @see CovarianceMatrixOp, CaponInvertOp, ComputeWeightsOp, CaponReliefOp, AdaptBeamformOp
  * @see dsp::linalg::CholeskyInverterROCm — реальная инверсия R^{-1}

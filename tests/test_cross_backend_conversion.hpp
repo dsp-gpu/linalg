@@ -7,7 +7,7 @@
 //         Матрица 85×85 (малая — подходит для interop тестирования).
 // ЗАЧЕМ:  Верифицирует Zero Copy bridge между OpenCL и ROCm. Ошибки —
 //         silent bit corruption при передаче данных.
-// ПОЧЕМУ: ENABLE_ROCM. HSA Probe / DMA-BUF / SVM. Legacy migration тест.
+// ПОЧЕМУ: HSA Probe / DMA-BUF / SVM. Legacy migration тест.
 //
 // История: Создан: 2026-02-26
 // ============================================================================

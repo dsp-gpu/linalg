@@ -8,7 +8,7 @@
 //         hipEvent-замер: длительность → ROCmProfilingData → ProfilingFacade.
 // ЗАЧЕМ:  Capon — вычислительно тяжёлая операция (инверсия матриц).
 //         Бенчмарк изолирует regression GPU kernels от test overhead.
-// ПОЧЕМУ: ENABLE_ROCM. Результаты → ProfilingFacade (не stdout).
+// ПОЧЕМУ: Результаты → ProfilingFacade (не stdout).
 //
 // История: Создан: 2026-04-12
 // ============================================================================
@@ -23,7 +23,7 @@
  * Замер через hipEvent: hipEventRecord до/после вызова → длительность в ms
  * → ROCmProfilingData (start_ns/end_ns) → RecordROCmEvent → GPUProfiler.
  *
- * Компилируется только при ENABLE_ROCM=1 (Linux + AMD GPU).
+ * ROCm-only. (Linux + AMD GPU).
  *
  * Использование:
  * @code

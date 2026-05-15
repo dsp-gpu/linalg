@@ -11,7 +11,7 @@
 // ЗАЧЕМ:  В реальной DSP-системе данные уже в OpenCL после предыдущего этапа
 //         (FFT, фильтрация). Верифицирует, что Zero Copy прозрачен: результат
 //         идентичен прямому пути (max |Δz| < 1e-4).
-// ПОЧЕМУ: #if ENABLE_ROCM; требует AMD GPU с HSA Probe / DMA-BUF / SVM;
+// ПОЧЕМУ: ROCm-only; требует AMD GPU с HSA Probe / DMA-BUF / SVM;
 //         legacy migration (OpenCL → ROCm interop через ZeroCopyBridge).
 //         P=85 каналов, N=1000 отсчётов, f0=3 921 150 000 Гц.
 //
@@ -808,6 +808,6 @@ inline void run() {
 }  // namespace test_capon_opencl_to_rocm
 
 // ========================================================================
-// Заглушка для не-ROCm сборки (Windows / ENABLE_ROCM=OFF)
+// Заглушка для не-ROCm сборки (Windows)
 // ========================================================================
 

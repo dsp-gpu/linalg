@@ -53,7 +53,6 @@ namespace dsp::linalg {
  * @brief Layer 5 Ref03 Op: W = R^{-1}·U через rocBLAS CGEMM, результат в kWeight.
  *
  * @note Stateless (нет приватных буферов). kWeight — в shared ctx_.
- * @note Требует #if ENABLE_ROCM. Зависит от rocBLAS (через MatrixOpsROCm).
  * @note Предусловие: CaponInvertOp::Execute() вернул валидный R_inv_ptr.
  * @note Постусловие: kWeight содержит W[P×M] для CaponReliefOp И AdaptBeamformOp.
  * @see CaponInvertOp — поставщик R^{-1}

@@ -48,7 +48,6 @@ namespace dsp::linalg {
  * @brief Layer 5 Ref03 Op: финальный CGEMM Y_out = W^H·Y для адаптивного ДО.
  *
  * @note Stateless (нет приватных буферов). Все данные в shared-буферах ctx_.
- * @note Требует #if ENABLE_ROCM. Зависит от rocBLAS (через MatrixOpsROCm).
  * @note Предусловие: ComputeWeightsOp::Execute() уже записал W в kWeight.
  * @see ComputeWeightsOp — поставщик kWeight
  * @see CaponReliefOp — параллельный финальный Op (для рельефа вместо ДО)

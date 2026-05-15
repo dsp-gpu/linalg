@@ -54,7 +54,6 @@ namespace dsp::linalg {
  *
  * @note Move-only: copy запрещён, move передаёт non-owning указатель ctx_.
  * @note Не владеет GpuContext — ctx должен жить дольше MatrixOpsROCm.
- * @note Требует #if ENABLE_ROCM. На non-ROCm — stub с пустыми методами.
  * @see drv_gpu_lib::GpuContext (Layer 1 — lazy rocBLAS handle)
  * @see CaponProcessor (главный потребитель именованных shortcut'ов)
  */

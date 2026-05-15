@@ -56,7 +56,6 @@ namespace dsp::linalg {
  * @brief Layer 5 Ref03 Op: HIP kernel z[m] = 1/Re(u_m^H·W[:,m]) — рельеф Кейпона.
  *
  * @note Stateless (нет приватных буферов). Все данные в shared-буферах ctx_.
- * @note Требует #if ENABLE_ROCM. Кернел compute_capon_relief — в capon_kernels_rocm.hpp.
  * @note Предусловие: ComputeWeightsOp::Execute() уже записал W в kWeight.
  * @see ComputeWeightsOp — поставщик kWeight
  * @see AdaptBeamformOp — параллельный финальный Op (для ДО вместо рельефа)
